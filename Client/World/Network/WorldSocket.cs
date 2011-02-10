@@ -166,7 +166,7 @@ namespace Client.World.Network
 				// need to resize the buffer
 				byte temp = ReceiveData[0];
 				ReceiveData = new byte[5];
-				ReceiveData[0] = (byte)(temp & 0x7F);
+				ReceiveData[0] = (byte)(0x7f & temp);
 
 				Remaining = 4;
 			}

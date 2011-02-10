@@ -5,24 +5,36 @@ namespace Client.World.Network
 	class ClientHeader : Header
 	{
 		public WorldCommand Command { get; private set; }
+		private byte[] encryptedCommand;
 		public byte[] EncryptedCommand
 		{
 			get
 			{
-				byte[] data = BitConverter.GetBytes((uint)this.Command);
-				AuthenticationCrypto.Encrypt(data, 0, data.Length);
-				return data;
+				if (encryptedCommand == null)
+				{
+					encryptedCommand = BitConverter.GetBytes((uint)this.Command);
+					AuthenticationCrypto.Encrypt(encryptedCommand, 0, encryptedCommand.Length);
+				}
+
+				return encryptedCommand;
 			}
 		}
 
 		public int Size { get { return (int)Packet.BaseStream.Length + 4; } }
+
+		private byte[] encryptedSize;
 		public byte[] EncryptedSize
 		{
 			get
 			{
-				byte[] data = BitConverter.GetBytes(this.Size).SubArray(0, 2);
-				AuthenticationCrypto.Encrypt(data, 0, 2);
-				return data;
+				if (encryptedSize == null)
+				{
+					encryptedSize = BitConverter.GetBytes(this.Size).SubArray(0, 2);
+					Array.Reverse(encryptedSize);
+					AuthenticationCrypto.Encrypt(encryptedSize, 0, 2);
+				}
+
+				return encryptedSize;
 			}
 		}
 

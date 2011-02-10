@@ -15,12 +15,12 @@ namespace Client.World.Network
 		{
 			if (data.Length == 4)
 			{
-				Size = (int)(((uint)data[0]) >> 8 | data[1]);
+				Size = (int)(((uint)data[0]) << 8 | data[1]);
 				Command = (WorldCommand)BitConverter.ToUInt16(data, 2);
 			}
 			else
 			{
-				Size = (int)((((uint)data[0]) >> 16) | (((uint)data[0]) >> 8) | data[1]);
+				Size = (int)((((uint)data[0]) << 16) | (((uint)data[1]) << 8) | data[2]);
 				Command = (WorldCommand)BitConverter.ToUInt16(data, 3);
 			}
 

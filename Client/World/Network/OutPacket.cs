@@ -25,7 +25,6 @@ namespace Client.World.Network
 			{
 				byte[] data = new byte[6 + Buffer.Length];
 				byte[] size = ((ClientHeader)Header).EncryptedSize;
-				Array.Reverse(size);
 				byte[] command = ((ClientHeader)Header).EncryptedCommand;
 
 				Array.Copy(size, 0, data, 0, 2);

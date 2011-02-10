@@ -30,18 +30,27 @@ namespace Client.UI.CommandLine
 				selectedServer = worldServerList[0];
 			else
 			{
-				Log("\n\tName\tType\tPopulation");
+				LogLine("\n\tName\tType\tPopulation");
 
 				int index = 0;
 				foreach (WorldServerInfo server in worldServerList)
-					Log(string.Format("{3}\t{0}\t{1}\t{2}", server.Name, server.Type, server.Population, server.Flags, index++));
+					LogLine
+					(
+						string.Format("{3}\t{0}\t{1}\t{2}",
+						server.Name,
+						server.Type,
+						server.Population,
+						server.Flags,
+						index++)
+					);
 
 				// select a realm - default to the first realm if there is only one
 				index = worldServerList.Count == 1 ? 0 : -1;
 				while (index > worldServerList.Count || index < 0)
 				{
 					Log("Choose a realm:  ");
-					index = int.Parse(Console.ReadLine());
+					if (!int.TryParse(Console.ReadLine(), out index))
+						LogLine();
 				}
 				selectedServer = worldServerList[index];
 			}
@@ -53,6 +62,12 @@ namespace Client.UI.CommandLine
 		{
 			if (level >= LogLevel)
 				Console.Write(message);
+		}
+
+		public void LogLine(LogLevel level = LogLevel.Info)
+		{
+			if (level >= LogLevel)
+				Console.WriteLine();
 		}
 
 		public void LogLine(string message, LogLevel level = LogLevel.Info)

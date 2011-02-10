@@ -60,6 +60,7 @@
     <Compile Include="UI\IGameInterface.cs" />
     <Compile Include="UI\LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="World\CharacterEnumeration.cs" />
     <Compile Include="World\Network\AuthenticationCrypto.cs" />
     <Compile Include="World\Network\AuthResponse.cs" />
     <Compile Include="World\Network\ClientHeader.cs" />

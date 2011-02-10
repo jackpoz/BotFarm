@@ -123,7 +123,37 @@ namespace Client.World.Network
 			uint billingTimeRemaining = packet.ReadUInt32();
 			byte billingFlags = packet.ReadByte();
 			uint billingTimeRested = packet.ReadUInt32();
-			byte clientId = packet.ReadByte();
+			byte expansion = packet.ReadByte();
+
+			if (detail == CommandDetail.AuthSuccess)
+			{
+				OutPacket request = new OutPacket(WorldCommand.ClientEnumerateCharacters);
+				Send(request);
+			}
+			else
+			{
+				Game.UI.Log(string.Format("Authentication succeeded, but received response {0}", detail));
+				Game.UI.Exit();
+			}
+		}
+
+		[PacketHandler(WorldCommand.ServerCharacterEnumeration)]
+		void HandleCharEnum(InPacket packet)
+		{
+			byte count = packet.ReadByte();
+
+			if (count == 0)
+			{
+				Game.UI.Log("No characters found!");
+			}
+			else
+			{
+				Character[] characters = new Character[count];
+				for (byte i = 0; i < count; ++i)
+					characters[i] = new Character(packet);
+
+				Game.UI.PresentCharacterList(characters);
+			}
 		}
 
 		#endregion

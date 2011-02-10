@@ -1,5 +1,6 @@
 ﻿using System;
 using Client.Authentication;
+using Client.World;
 
 namespace Client.UI.CommandLine
 {
@@ -56,6 +57,46 @@ namespace Client.UI.CommandLine
 			}
 
 			Game.ConnectTo(selectedServer);
+		}
+
+		public void PresentCharacterList(Character[] characterList)
+		{
+			LogLine("\n\tName\tLevel Class Race");
+
+			Character selectedCharacter;
+			int index = 0;
+			foreach (Character character in characterList)
+				LogLine
+				(
+					string.Format("{4}\t{0}\t{1} {2} {3}",
+					character.Name,
+					character.Level,
+					character.Race,
+					character.Class,
+					index++)
+				);
+
+			if (characterList.Length < 10)
+				LogLine(string.Format("{0}\tCreate a new character", index));
+
+			int length = characterList.Length == 10 ? 10 : (characterList.Length + 1);
+			index = -1;
+			while (index > length || index < 0)
+			{
+				Log("Choose a character:  ");
+				if (!int.TryParse(Console.ReadLine(), out index))
+					LogLine();
+			}
+
+			if (index < characterList.Length)
+			{
+				selectedCharacter = characterList[index];
+				// TODO: enter world
+			}
+			else
+			{
+				// TODO: character creation
+			}
 		}
 
 		public void Log(string message, LogLevel level = LogLevel.Info)

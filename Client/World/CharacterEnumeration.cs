@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Client.World.Network;
+using Client.World.Definitions;
 
 namespace Client.World
 {
@@ -10,9 +11,9 @@ namespace Client.World
 	{
 		ulong GUID;
 		public string Name { get; private set; }
-		public byte Race { get; private set; }
-		public byte Class { get; private set; }
-		byte Gender;
+		public Race Race { get; private set; }
+		public Class Class { get; private set; }
+		Gender Gender;
 		byte[] Bytes;	// 5
 		public byte Level { get; private set; }
 		uint ZoneId;
@@ -29,9 +30,9 @@ namespace Client.World
 		{
 			GUID = packet.ReadUInt64();
 			Name = packet.ReadCString();
-			Race = packet.ReadByte();
-			Class = packet.ReadByte();
-			Gender = packet.ReadByte();
+			Race = (Race)packet.ReadByte();
+			Class = (Class)packet.ReadByte();
+			Gender = (Gender)packet.ReadByte();
 			Bytes = packet.ReadBytes(5);
 			Level = packet.ReadByte();
 			ZoneId = packet.ReadUInt32();
@@ -42,7 +43,7 @@ namespace Client.World
 			GuildId = packet.ReadUInt32();
 			Flags = packet.ReadUInt32();
 			packet.ReadUInt32();	// customize (rename, etc)
-			packet.ReadByte();		// first login?
+			packet.ReadByte();		// first login
 			PetInfoId = packet.ReadUInt32();
 			PetLevel = packet.ReadUInt32();
 			PetFamilyId = packet.ReadUInt32();

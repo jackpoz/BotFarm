@@ -8,6 +8,8 @@ using System.Threading;
 using Client.Authentication;
 using Client.Crypto;
 using Client.UI;
+using Client.Chat;
+using Client.Chat.Definitions;
 
 namespace Client.World.Network
 {
@@ -156,6 +158,66 @@ namespace Client.World.Network
             }
         }
 
+        [PacketHandler(WorldCommand.SMSG_MESSAGECHAT)]
+        void HandleMessageChat(InPacket packet)
+        {
+            var type = (ChatMessageType)packet.ReadByte();
+            var lang = (Language)packet.ReadInt32();
+            var guid = packet.ReadUInt64();
+            var unkInt = packet.ReadInt32();
+
+            switch (type)
+            {
+                case ChatMessageType.Say:
+                case ChatMessageType.Yell:
+                case ChatMessageType.Party:
+                case ChatMessageType.PartyLeader:
+                case ChatMessageType.Raid:
+                case ChatMessageType.RaidLeader:
+                case ChatMessageType.RaidWarning:
+                case ChatMessageType.Guild:
+                case ChatMessageType.Officer:
+                case ChatMessageType.Emote:
+                case ChatMessageType.TextEmote:
+                case ChatMessageType.Whisper:
+                case ChatMessageType.WhisperInform:
+                case ChatMessageType.System:
+                case ChatMessageType.Channel:
+                case ChatMessageType.Battleground:
+                case ChatMessageType.BattlegroundNeutral:
+                case ChatMessageType.BattlegroundAlliance:
+                case ChatMessageType.BattlegroundHorde:
+                case ChatMessageType.BattlegroundLeader:
+                case ChatMessageType.Achievement:
+                case ChatMessageType.GuildAchievement:
+                    {
+                        ChatChannel channel = new ChatChannel();
+                        channel.Type = type;
+
+                        if (type == ChatMessageType.Channel)
+                            channel.ChannelName = packet.ReadCString();
+
+                        //! TODO: GUID lookup
+                        channel.Sender = packet.ReadUInt64().ToString();
+
+                        ChatMessage message = new ChatMessage();
+                        var textLen = packet.ReadInt32();
+                        message.Message = packet.ReadCString();
+                        message.Language = lang;
+                        message.ChatTag = (ChatTag)packet.ReadByte();
+                        message.Timestamp = DateTime.Now;
+                        message.Sender = channel;
+
+                        Game.UI.Log(message.ToString());
+
+                        break;
+                    }
+                default:
+                    return;
+             }
+
+            
+        }
         #endregion
 
         #region Asynchronous Reading
@@ -276,7 +338,7 @@ namespace Client.World.Network
                         handler(packet);
                 }
                 else
-                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command));
+                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command), LogLevel.Debug);
 
                 // start new asynchronous read
                 Start();

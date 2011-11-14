@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using System.Threading;
-using System.Configuration;
 using Client.Authentication;
 using Client.Authentication.Network;
 using Client.UI;
@@ -20,6 +19,8 @@ namespace Client
         void Start();
 
         void Exit();
+
+        void SendPacket(OutPacket packet);
     }
 
     public class Game<T> : IGame
@@ -78,6 +79,12 @@ namespace Client
         public void Exit()
         {
             Running = false;
+        }
+
+        public void SendPacket(OutPacket packet)
+        {
+            if (socket is WorldSocket)
+                ((WorldSocket)socket).Send(packet);
         }
     }
 }

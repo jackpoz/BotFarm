@@ -53,6 +53,11 @@
     <Compile Include="Authentication\WorldServerList.cs" />
     <Compile Include="Authentication\ServerAuthChallenge.cs" />
     <Compile Include="Authentication\ServerAuthProof.cs" />
+    <Compile Include="Chat\ChatChannel.cs" />
+    <Compile Include="Chat\ChatMessage.cs" />
+    <Compile Include="Chat\Definitions\ChatMessageType.cs" />
+    <Compile Include="Chat\Definitions\ChatTag.cs" />
+    <Compile Include="Chat\Definitions\Language.cs" />
     <Compile Include="Crypto\ARC4.cs" />
     <Compile Include="Crypto\HashHelper.cs" />
     <Compile Include="Extensions.cs" />

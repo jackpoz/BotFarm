@@ -9,7 +9,7 @@ namespace Client.World
 {
     public class Character
     {
-        ulong GUID;
+        public ulong GUID;
         public string Name { get; private set; }
         public Race Race { get; private set; }
         public Class Class { get; private set; }

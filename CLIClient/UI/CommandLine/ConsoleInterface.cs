@@ -1,6 +1,8 @@
 ﻿using System;
 using Client.Authentication;
 using Client.World;
+using Client.World.Network;
+using Client;
 
 namespace Client.UI.CommandLine
 {
@@ -77,7 +79,7 @@ namespace Client.UI.CommandLine
                 );
 
             if (characterList.Length < 10)
-                LogLine(string.Format("{0}\tCreate a new character", index));
+                LogLine(string.Format("{0}\tCreate a new character. (NOT YET IMPLEMENTED)", index));
 
             int length = characterList.Length == 10 ? 10 : (characterList.Length + 1);
             index = -1;
@@ -92,6 +94,12 @@ namespace Client.UI.CommandLine
             {
                 selectedCharacter = characterList[index];
                 // TODO: enter world
+
+                LogLine(string.Format("Entering pseudo-world with character {0}", selectedCharacter.Name));
+                
+                OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
+                packet.Write(selectedCharacter.GUID);
+                Game.SendPacket(packet);
             }
             else
             {

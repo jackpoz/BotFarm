@@ -6,38 +6,38 @@ using System.Net.Sockets;
 
 namespace Client
 {
-	abstract class GameSocket : IDisposable
-	{
-		public IGame Game { get; protected set; }
+    abstract class GameSocket : IDisposable
+    {
+        public IGame Game { get; protected set; }
 
-		protected TcpClient connection { get; set; }
+        protected TcpClient connection { get; set; }
 
-		public bool IsConnected
-		{
-			get { return connection.Connected; }
-		}
+        public bool IsConnected
+        {
+            get { return connection.Connected; }
+        }
 
-		#region Asynchronous Reading
+        #region Asynchronous Reading
 
-		protected byte[] ReceiveData;
+        protected byte[] ReceiveData;
 
-		public abstract void Start();
+        public abstract void Start();
 
-		#endregion
+        #endregion
 
-		public abstract bool Connect();
+        public abstract bool Connect();
 
-		public void Dispose()
-		{
-			Disconnect();
-		}
+        public void Dispose()
+        {
+            Disconnect();
+        }
 
-		public void Disconnect()
-		{
-			if (connection != null)
-				connection.Close();
-		}
+        public void Disconnect()
+        {
+            if (connection != null)
+                connection.Close();
+        }
 
-		public abstract void InitHandlers();
-	}
+        public abstract void InitHandlers();
+    }
 }

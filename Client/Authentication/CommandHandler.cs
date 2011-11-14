@@ -1,5 +1,5 @@
 ﻿
 namespace Client.Authentication
 {
-	delegate void CommandHandler();
+    delegate void CommandHandler();
 }

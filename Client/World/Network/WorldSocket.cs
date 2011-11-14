@@ -11,330 +11,330 @@ using Client.UI;
 
 namespace Client.World.Network
 {
-	class WorldSocket : GameSocket
-	{
-		WorldServerInfo ServerInfo;
+    class WorldSocket : GameSocket
+    {
+        WorldServerInfo ServerInfo;
 
-		private long transferred;
-		public long Transferred { get { return transferred; } }
+        private long transferred;
+        public long Transferred { get { return transferred; } }
 
-		private long sent;
-		public long Sent { get { return sent; } }
+        private long sent;
+        public long Sent { get { return sent; } }
 
-		private long received;
-		public long Received { get { return received; } }
+        private long received;
+        public long Received { get { return received; } }
 
-		public WorldSocket(IGame program, WorldServerInfo serverInfo)
-		{
-			Game = program;
-			ServerInfo = serverInfo;
+        public WorldSocket(IGame program, WorldServerInfo serverInfo)
+        {
+            Game = program;
+            ServerInfo = serverInfo;
 
-			SendLock = new object();
-		}
+            SendLock = new object();
+        }
 
-		#region Handlers
+        #region Handlers
 
-		#region Handler registration
+        #region Handler registration
 
-		Dictionary<WorldCommand, PacketHandler> PacketHandlers;
+        Dictionary<WorldCommand, PacketHandler> PacketHandlers;
 
-		public override void InitHandlers()
-		{
-			PacketHandlers = new Dictionary<WorldCommand, PacketHandler>();
+        public override void InitHandlers()
+        {
+            PacketHandlers = new Dictionary<WorldCommand, PacketHandler>();
 
-			RegisterHandlersFrom(this);
-			RegisterHandlersFrom(Game);
-		}
+            RegisterHandlersFrom(this);
+            RegisterHandlersFrom(Game);
+        }
 
-		void RegisterHandlersFrom(object obj)
-		{
-			// create binding flags to discover all non-static methods
-			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        void RegisterHandlersFrom(object obj)
+        {
+            // create binding flags to discover all non-static methods
+            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			foreach (MethodInfo method in obj.GetType().GetMethods(flags))
-			{
-				PacketHandlerAttribute[] attributes = (PacketHandlerAttribute[])method.GetCustomAttributes(typeof(PacketHandlerAttribute), false);
-				if (attributes.Length == 0)
-					continue;
+            foreach (MethodInfo method in obj.GetType().GetMethods(flags))
+            {
+                PacketHandlerAttribute[] attributes = (PacketHandlerAttribute[])method.GetCustomAttributes(typeof(PacketHandlerAttribute), false);
+                if (attributes.Length == 0)
+                    continue;
 
-				PacketHandler handler = (PacketHandler)PacketHandler.CreateDelegate(typeof(PacketHandler), obj, method);
+                PacketHandler handler = (PacketHandler)PacketHandler.CreateDelegate(typeof(PacketHandler), obj, method);
 
-				foreach (PacketHandlerAttribute attribute in attributes)
-				{
-					Game.UI.LogLine(string.Format("Registered '{0}.{1}' to '{2}'", obj.GetType().Name, method.Name, attribute.Command), LogLevel.Debug);
-					PacketHandlers[attribute.Command] = handler;
-				}
-			}
-		}
+                foreach (PacketHandlerAttribute attribute in attributes)
+                {
+                    Game.UI.LogLine(string.Format("Registered '{0}.{1}' to '{2}'", obj.GetType().Name, method.Name, attribute.Command), LogLevel.Debug);
+                    PacketHandlers[attribute.Command] = handler;
+                }
+            }
+        }
 
-		#endregion
+        #endregion
 
-		[PacketHandler(WorldCommand.ServerAuthChallenge)]
-		void HandleServerAuthChallenge(InPacket packet)
-		{
-			uint one = packet.ReadUInt32();
-			uint seed = packet.ReadUInt32();
+        [PacketHandler(WorldCommand.ServerAuthChallenge)]
+        void HandleServerAuthChallenge(InPacket packet)
+        {
+            uint one = packet.ReadUInt32();
+            uint seed = packet.ReadUInt32();
 
-			BigInteger seed1 = packet.ReadBytes(16).ToBigInteger();
-			BigInteger seed2 = packet.ReadBytes(16).ToBigInteger();
+            BigInteger seed1 = packet.ReadBytes(16).ToBigInteger();
+            BigInteger seed2 = packet.ReadBytes(16).ToBigInteger();
 
-			var rand = System.Security.Cryptography.RandomNumberGenerator.Create();
-			byte[] bytes = new byte[4];
-			rand.GetBytes(bytes);
-			BigInteger ourSeed = bytes.ToBigInteger();
+            var rand = System.Security.Cryptography.RandomNumberGenerator.Create();
+            byte[] bytes = new byte[4];
+            rand.GetBytes(bytes);
+            BigInteger ourSeed = bytes.ToBigInteger();
 
-			uint zero = 0;
+            uint zero = 0;
 
-			byte[] authResponse = HashAlgorithm.SHA1.Hash
-			(
-				Encoding.ASCII.GetBytes(Game.Username.ToUpper()),
-				BitConverter.GetBytes(zero),
-				BitConverter.GetBytes((uint)ourSeed),
-				BitConverter.GetBytes(seed),
-				Game.Key.ToCleanByteArray()
-			);
+            byte[] authResponse = HashAlgorithm.SHA1.Hash
+            (
+                Encoding.ASCII.GetBytes(Game.Username.ToUpper()),
+                BitConverter.GetBytes(zero),
+                BitConverter.GetBytes((uint)ourSeed),
+                BitConverter.GetBytes(seed),
+                Game.Key.ToCleanByteArray()
+            );
 
-			OutPacket response = new OutPacket(WorldCommand.ClientAuthSession);
-			response.Write((uint)12340);		// client build
-			response.Write(zero);
-			response.Write(Game.Username.ToUpper().ToCString());
-			response.Write(zero);
-			response.Write((uint)ourSeed);
-			response.Write(zero);
-			response.Write(zero);
-			response.Write(zero);
-			response.Write((ulong)zero);
-			response.Write(authResponse);
-			response.Write(zero);			// length of addon data
+            OutPacket response = new OutPacket(WorldCommand.ClientAuthSession);
+            response.Write((uint)12340);        // client build
+            response.Write(zero);
+            response.Write(Game.Username.ToUpper().ToCString());
+            response.Write(zero);
+            response.Write((uint)ourSeed);
+            response.Write(zero);
+            response.Write(zero);
+            response.Write(zero);
+            response.Write((ulong)zero);
+            response.Write(authResponse);
+            response.Write(zero);            // length of addon data
 
-			Send(response);
+            Send(response);
 
-			// TODO: don't fully initialize here, auth may fail
-			// instead, initialize in HandleServerAuthResponse when auth succeeds
-			// will require special logic in network code to correctly decrypt/parse packet header
-			AuthenticationCrypto.Initialize(Game.Key.ToCleanByteArray());
-		}
+            // TODO: don't fully initialize here, auth may fail
+            // instead, initialize in HandleServerAuthResponse when auth succeeds
+            // will require special logic in network code to correctly decrypt/parse packet header
+            AuthenticationCrypto.Initialize(Game.Key.ToCleanByteArray());
+        }
 
-		[PacketHandler(WorldCommand.ServerAuthResponse)]
-		void HandleServerAuthResponse(InPacket packet)
-		{
-			CommandDetail detail = (CommandDetail)packet.ReadByte();
+        [PacketHandler(WorldCommand.ServerAuthResponse)]
+        void HandleServerAuthResponse(InPacket packet)
+        {
+            CommandDetail detail = (CommandDetail)packet.ReadByte();
 
-			uint billingTimeRemaining = packet.ReadUInt32();
-			byte billingFlags = packet.ReadByte();
-			uint billingTimeRested = packet.ReadUInt32();
-			byte expansion = packet.ReadByte();
+            uint billingTimeRemaining = packet.ReadUInt32();
+            byte billingFlags = packet.ReadByte();
+            uint billingTimeRested = packet.ReadUInt32();
+            byte expansion = packet.ReadByte();
 
-			if (detail == CommandDetail.AuthSuccess)
-			{
-				OutPacket request = new OutPacket(WorldCommand.ClientEnumerateCharacters);
-				Send(request);
-			}
-			else
-			{
-				Game.UI.Log(string.Format("Authentication succeeded, but received response {0}", detail));
-				Game.UI.Exit();
-			}
-		}
+            if (detail == CommandDetail.AuthSuccess)
+            {
+                OutPacket request = new OutPacket(WorldCommand.ClientEnumerateCharacters);
+                Send(request);
+            }
+            else
+            {
+                Game.UI.Log(string.Format("Authentication succeeded, but received response {0}", detail));
+                Game.UI.Exit();
+            }
+        }
 
-		[PacketHandler(WorldCommand.ServerCharacterEnumeration)]
-		void HandleCharEnum(InPacket packet)
-		{
-			byte count = packet.ReadByte();
+        [PacketHandler(WorldCommand.ServerCharacterEnumeration)]
+        void HandleCharEnum(InPacket packet)
+        {
+            byte count = packet.ReadByte();
 
-			if (count == 0)
-			{
-				Game.UI.Log("No characters found!");
-			}
-			else
-			{
-				Character[] characters = new Character[count];
-				for (byte i = 0; i < count; ++i)
-					characters[i] = new Character(packet);
+            if (count == 0)
+            {
+                Game.UI.Log("No characters found!");
+            }
+            else
+            {
+                Character[] characters = new Character[count];
+                for (byte i = 0; i < count; ++i)
+                    characters[i] = new Character(packet);
 
-				Game.UI.PresentCharacterList(characters);
-			}
-		}
+                Game.UI.PresentCharacterList(characters);
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Asynchronous Reading
+        #region Asynchronous Reading
 
-		int Index;
-		int Remaining;
+        int Index;
+        int Remaining;
 
-		private void BeginRead(AsyncCallback callback, object state = null)
-		{
-			this.connection.Client.BeginReceive
-			(
-				ReceiveData, Index, Remaining,
-				SocketFlags.None,
-				callback,
-				state
-			);
-		}
+        private void BeginRead(AsyncCallback callback, object state = null)
+        {
+            this.connection.Client.BeginReceive
+            (
+                ReceiveData, Index, Remaining,
+                SocketFlags.None,
+                callback,
+                state
+            );
+        }
 
-		/// <summary>
-		/// Determines how large the incoming header will be by
-		/// inspecting the first byte, then initiates reading the header.
-		/// </summary>
-		private void ReadSizeCallback(IAsyncResult result)
-		{
-			int bytesRead = this.connection.Client.EndReceive(result);
-			if (bytesRead == 0 && result.IsCompleted)
-			{
-				// TODO: world server disconnect
-				Game.Exit();
-			}
+        /// <summary>
+        /// Determines how large the incoming header will be by
+        /// inspecting the first byte, then initiates reading the header.
+        /// </summary>
+        private void ReadSizeCallback(IAsyncResult result)
+        {
+            int bytesRead = this.connection.Client.EndReceive(result);
+            if (bytesRead == 0 && result.IsCompleted)
+            {
+                // TODO: world server disconnect
+                Game.Exit();
+            }
 
-			Interlocked.Increment(ref transferred);
-			Interlocked.Increment(ref received);
+            Interlocked.Increment(ref transferred);
+            Interlocked.Increment(ref received);
 
-			AuthenticationCrypto.Decrypt(ReceiveData, 0, 1);
-			if ((ReceiveData[0] & 0x80) != 0)
-			{
-				// need to resize the buffer
-				byte temp = ReceiveData[0];
-				ReceiveData = new byte[5];
-				ReceiveData[0] = (byte)(0x7f & temp);
+            AuthenticationCrypto.Decrypt(ReceiveData, 0, 1);
+            if ((ReceiveData[0] & 0x80) != 0)
+            {
+                // need to resize the buffer
+                byte temp = ReceiveData[0];
+                ReceiveData = new byte[5];
+                ReceiveData[0] = (byte)(0x7f & temp);
 
-				Remaining = 4;
-			}
-			else
-				Remaining = 3;
+                Remaining = 4;
+            }
+            else
+                Remaining = 3;
 
-			Index = 1;
-			BeginRead(ReadHeaderCallback);
-		}
+            Index = 1;
+            BeginRead(ReadHeaderCallback);
+        }
 
-		/// <summary>
-		/// Reads the rest of the incoming header.
-		/// </summary>
-		private void ReadHeaderCallback(IAsyncResult result)
-		{
-			int bytesRead = this.connection.Client.EndReceive(result);
-			if (bytesRead == 0 && result.IsCompleted)
-			{
-				// TODO: world server disconnect
-				Game.Exit();
-			}
+        /// <summary>
+        /// Reads the rest of the incoming header.
+        /// </summary>
+        private void ReadHeaderCallback(IAsyncResult result)
+        {
+            int bytesRead = this.connection.Client.EndReceive(result);
+            if (bytesRead == 0 && result.IsCompleted)
+            {
+                // TODO: world server disconnect
+                Game.Exit();
+            }
 
-			Interlocked.Add(ref transferred, bytesRead);
-			Interlocked.Add(ref received, bytesRead);
+            Interlocked.Add(ref transferred, bytesRead);
+            Interlocked.Add(ref received, bytesRead);
 
-			if (bytesRead == Remaining)
-			{
-				// finished reading header
-				// the first byte was decrypted already, so skip it
-				AuthenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
-				ServerHeader header = new ServerHeader(ReceiveData);
+            if (bytesRead == Remaining)
+            {
+                // finished reading header
+                // the first byte was decrypted already, so skip it
+                AuthenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
+                ServerHeader header = new ServerHeader(ReceiveData);
 
-				Index = 0;
-				Remaining = header.Size;
-				ReceiveData = new byte[header.Size];
-				BeginRead(ReadPayloadCallback, header);
-			}
-			else
-			{
-				// more header to read
-				Index += bytesRead;
-				Remaining -= bytesRead;
-				BeginRead(ReadHeaderCallback);
-			}
-		}
+                Index = 0;
+                Remaining = header.Size;
+                ReceiveData = new byte[header.Size];
+                BeginRead(ReadPayloadCallback, header);
+            }
+            else
+            {
+                // more header to read
+                Index += bytesRead;
+                Remaining -= bytesRead;
+                BeginRead(ReadHeaderCallback);
+            }
+        }
 
-		/// <summary>
-		/// Reads the payload data.
-		/// </summary>
-		private void ReadPayloadCallback(IAsyncResult result)
-		{
-			int bytesRead = this.connection.Client.EndReceive(result);
-			if (bytesRead == 0 && result.IsCompleted)
-			{
-				// TODO: world server disconnect
-				Game.Exit();
-			}
+        /// <summary>
+        /// Reads the payload data.
+        /// </summary>
+        private void ReadPayloadCallback(IAsyncResult result)
+        {
+            int bytesRead = this.connection.Client.EndReceive(result);
+            if (bytesRead == 0 && result.IsCompleted)
+            {
+                // TODO: world server disconnect
+                Game.Exit();
+            }
 
-			Interlocked.Add(ref transferred, bytesRead);
-			Interlocked.Add(ref received, bytesRead);
+            Interlocked.Add(ref transferred, bytesRead);
+            Interlocked.Add(ref received, bytesRead);
 
-			if (bytesRead == Remaining)
-			{
-				// get header and packet
-				ServerHeader header = (ServerHeader)result.AsyncState;
-				InPacket packet = new InPacket(header, ReceiveData);
+            if (bytesRead == Remaining)
+            {
+                // get header and packet
+                ServerHeader header = (ServerHeader)result.AsyncState;
+                InPacket packet = new InPacket(header, ReceiveData);
 
-				PacketHandler handler;
-				if (PacketHandlers.TryGetValue((WorldCommand)header.Command, out handler))
-				{
-					Game.UI.LogLine(string.Format("Received {0}", header.Command), LogLevel.Debug);
+                PacketHandler handler;
+                if (PacketHandlers.TryGetValue((WorldCommand)header.Command, out handler))
+                {
+                    Game.UI.LogLine(string.Format("Received {0}", header.Command), LogLevel.Debug);
 
-					if (AuthenticationCrypto.Status == AuthStatus.Ready)
-						// AuthenticationCrypto is ready, handle the packet asynchronously
-						handler.BeginInvoke(packet, null, null);
-					else
-						handler(packet);
-				}
-				else
-					Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command));
+                    if (AuthenticationCrypto.Status == AuthStatus.Ready)
+                        // AuthenticationCrypto is ready, handle the packet asynchronously
+                        handler.BeginInvoke(packet, null, null);
+                    else
+                        handler(packet);
+                }
+                else
+                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command));
 
-				// start new asynchronous read
-				Start();
-			}
-			else
-			{
-				// more payload to read
-				Index += bytesRead;
-				Remaining -= bytesRead;
-				BeginRead(ReadHeaderCallback, result.AsyncState);
-			}
-		}
+                // start new asynchronous read
+                Start();
+            }
+            else
+            {
+                // more payload to read
+                Index += bytesRead;
+                Remaining -= bytesRead;
+                BeginRead(ReadHeaderCallback, result.AsyncState);
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region GameSocket Members
+        #region GameSocket Members
 
-		public override void Start()
-		{
-			ReceiveData = new byte[4];
-			Index = 0;
-			Remaining = 1;
-			BeginRead(ReadSizeCallback);
-		}
+        public override void Start()
+        {
+            ReceiveData = new byte[4];
+            Index = 0;
+            Remaining = 1;
+            BeginRead(ReadSizeCallback);
+        }
 
-		public override bool Connect()
-		{
-			try
-			{
-				Game.UI.Log(string.Format("Connecting to realm {0}... ", ServerInfo.Name));
+        public override bool Connect()
+        {
+            try
+            {
+                Game.UI.Log(string.Format("Connecting to realm {0}... ", ServerInfo.Name));
 
-				connection = new TcpClient(ServerInfo.Address, ServerInfo.Port);
+                connection = new TcpClient(ServerInfo.Address, ServerInfo.Port);
 
-				Game.UI.LogLine("done!");
-			}
-			catch (SocketException ex)
-			{
-				Game.UI.LogLine(string.Format("failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
-				return false;
-			}
+                Game.UI.LogLine("done!");
+            }
+            catch (SocketException ex)
+            {
+                Game.UI.LogLine(string.Format("failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		#endregion
+        #endregion
 
-		object SendLock;
+        object SendLock;
 
-		public void Send(OutPacket packet)
-		{
-			byte[] data = packet.Finalize();
+        public void Send(OutPacket packet)
+        {
+            byte[] data = packet.Finalize();
 
-			// TODO: switch to asynchronous send
-			lock (SendLock)
-				connection.Client.Send(data);
+            // TODO: switch to asynchronous send
+            lock (SendLock)
+                connection.Client.Send(data);
 
-			Interlocked.Add(ref transferred, data.Length);
-			Interlocked.Add(ref sent, data.Length);
-		}
-	}
+            Interlocked.Add(ref transferred, data.Length);
+            Interlocked.Add(ref sent, data.Length);
+        }
+    }
 }

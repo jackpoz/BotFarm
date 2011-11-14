@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Client.World.Network
 {
-	public interface Header
-	{
-		WorldCommand Command { get; }
-		int Size { get; }
-	}
+    public interface Header
+    {
+        WorldCommand Command { get; }
+        int Size { get; }
+    }
 }

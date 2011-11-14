@@ -4,45 +4,45 @@ using System.IO;
 
 namespace Client.Authentication
 {
-	public class WorldServerList : IEnumerable<WorldServerInfo>
-	{
-		public int Count { get; private set; }
-		private WorldServerInfo[] serverList;
+    public class WorldServerList : IEnumerable<WorldServerInfo>
+    {
+        public int Count { get; private set; }
+        private WorldServerInfo[] serverList;
 
-		public WorldServerList(BinaryReader reader)
-		{
-			reader.ReadUInt32();
+        public WorldServerList(BinaryReader reader)
+        {
+            reader.ReadUInt32();
 
-			Count = reader.ReadUInt16();
-			serverList = new WorldServerInfo[Count];
+            Count = reader.ReadUInt16();
+            serverList = new WorldServerInfo[Count];
 
-			for (int i = 0; i < Count; ++i)
-				serverList[i] = new WorldServerInfo(reader);
-		}
+            for (int i = 0; i < Count; ++i)
+                serverList[i] = new WorldServerInfo(reader);
+        }
 
-		public WorldServerInfo this[int index]
-		{
-			get { return serverList[index]; }
-		}
+        public WorldServerInfo this[int index]
+        {
+            get { return serverList[index]; }
+        }
 
-		#region IEnumerable<WorldServerInfo> Members
+        #region IEnumerable<WorldServerInfo> Members
 
-		public IEnumerator<WorldServerInfo> GetEnumerator()
-		{
-			foreach (WorldServerInfo server in serverList)
-				yield return server;
-		}
+        public IEnumerator<WorldServerInfo> GetEnumerator()
+        {
+            foreach (WorldServerInfo server in serverList)
+                yield return server;
+        }
 
-		#endregion
+        #endregion
 
-		#region IEnumerable Members
+        #region IEnumerable Members
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			foreach (WorldServerInfo realm in serverList)
-				yield return realm;
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            foreach (WorldServerInfo realm in serverList)
+                yield return realm;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

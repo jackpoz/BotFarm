@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Client.World.Network
 {
-	enum CommandDetail : byte
-	{
-		AuthSuccess = 0x0C,
-		AuthQueue,
-		AuthFailure
-	}
+    enum CommandDetail : byte
+    {
+        AuthSuccess = 0x0C,
+        AuthQueue,
+        AuthFailure
+    }
 }

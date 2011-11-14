@@ -2,8 +2,8 @@
 
 namespace Client.Authentication.Network
 {
-	interface ISendable
-	{
-		void Send(BinaryWriter writer);
-	}
+    interface ISendable
+    {
+        void Send(BinaryWriter writer);
+    }
 }

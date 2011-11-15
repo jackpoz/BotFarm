@@ -10,25 +10,32 @@ namespace Client.World.Network
         public WorldCommand Command { get; private set; }
         public int Size { get; private set; }
 
+        private int _inputDataLen = 0;
+
         internal ServerHeader(byte[] data)
         {
-            if (data.Length == 4)
+            _inputDataLen = data.Length;
+            if (_inputDataLen == 4)
             {
                 Size = (int)(((uint)data[0]) << 8 | data[1]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 2);
             }
-            else //if (data.Length == 5)
+            //! Apparantly this can be > 5 too
+            else //if (_inputDataLen == 5)
             {
                 Size = (int)(((((uint)data[0]) &~ 0x80) << 16) & 0xFF | (((uint)data[1]) << 8) | data[2]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 3);
             }
-//             else
-//             {
-//                 Console.WriteLine("Header Data Length {0}", data.Length);
-//                 return;
-            Console.WriteLine("Command {0} Header Size {1} Packet Size {2}", Command, data.Length, Size);            
+            // else
+               // throw new Exception(String.Format("Unsupported header size {0}", _inputDataLen));
+            
             // decrement since we already have command's two bytes
             Size -= 2;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Command {0} Header Size {1} Packet Size {2}", Command, _inputDataLen, Size);
         }
     }
 }

@@ -295,7 +295,6 @@ namespace Client.World.Network
 
         int Index;
         int Remaining;
-        bool PacketUnderRead = false;
 
         private void BeginRead(AsyncCallback callback, object state = null)
         {
@@ -314,11 +313,6 @@ namespace Client.World.Network
         /// </summary>
         private void ReadSizeCallback(IAsyncResult result)
         {
-            while (PacketUnderRead)
-                Thread.Sleep(1);
-
-            PacketUnderRead = true;
-
             int bytesRead = this.connection.Client.EndReceive(result);
             if (bytesRead == 0 && result.IsCompleted)
             {
@@ -335,7 +329,7 @@ namespace Client.World.Network
                 // need to resize the buffer
                 byte temp = ReceiveData[0];
                 ReceiveData = new byte[5];
-                ReceiveData[0] = (byte)((0x7f & temp));// &~0x80);
+                ReceiveData[0] = (byte)((0x7f & temp));
 
                 Remaining = 4;
             }
@@ -371,16 +365,13 @@ namespace Client.World.Network
                 AuthenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
                 ServerHeader header = new ServerHeader(ReceiveData);
 
+                Game.UI.Log(header.ToString(), LogLevel.Debug);
+
                 Index = 0;
                 Remaining = header.Size;
                 ReceiveData = new byte[header.Size];
                 BeginRead(new AsyncCallback(ReadPayloadCallback), header);
                 return;
-            }
-            else if (bytesRead > Remaining)
-            {
-                // Breakpoint
-                Console.WriteLine("Not ok");
             }
             else
             {
@@ -427,7 +418,6 @@ namespace Client.World.Network
                     Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command), LogLevel.Debug);
 
                 // start new asynchronous read
-                PacketUnderRead = false;
                 Start();
             }
             else

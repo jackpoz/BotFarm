@@ -59,6 +59,8 @@ namespace Client.Chat.Definitions
         GuildAchievement = 49,
         ArenaPoints = 50,
         PartyLeader = 51,
+        TargetIcons = 52,
+        //! Some random BN crap here
         Addon = uint.MaxValue
     }
 }

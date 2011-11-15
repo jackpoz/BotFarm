@@ -111,18 +111,24 @@ namespace Client.UI.CommandLine
         {
             if (level >= LogLevel)
                 Console.Write(message);
+
+            Console.ResetColor();
         }
 
         public void LogLine(LogLevel level = LogLevel.Info)
         {
             if (level >= LogLevel)
                 Console.WriteLine();
+
+            Console.ResetColor();
         }
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
             if (level >= LogLevel)
                 Console.WriteLine(message);
+
+            Console.ResetColor();
         }
 
         #endregion

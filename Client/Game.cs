@@ -4,6 +4,8 @@ using Client.Authentication;
 using Client.Authentication.Network;
 using Client.UI;
 using Client.World.Network;
+using Client.Chat;
+using System.Collections.Generic;
 
 namespace Client
 {
@@ -13,6 +15,8 @@ namespace Client
         string Username { get; }
 
         IGameUI UI { get; }
+
+        GameWorld World { get; }
 
         void ConnectTo(WorldServerInfo server);
 
@@ -35,10 +39,20 @@ namespace Client
 
         public IGameUI UI { get; protected set; }
 
+        public GameWorld World
+        {
+            get { return _world; }
+            private set { _world = value; }
+        }
+
+        private GameWorld _world;
+
         public Game(string hostname, int port, string username, string password)
         {
             UI = new T();
             UI.Game = this;
+
+            World = new GameWorld();
 
             this.Username = username;
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
+using System.Drawing;
 
 namespace Client
 {
@@ -69,6 +70,27 @@ namespace Client
             }
 
             return builder.ToString();
+        }
+
+        public static ulong ReadPackedGuid(this BinaryReader reader)
+        {
+            var mask = reader.ReadByte();
+
+            if (mask == 0)
+                return (ulong)0;
+
+            ulong res = 0;
+
+            var i = 0;
+            while (i < 8)
+            {
+                if ((mask & 1 << i) != 0)
+                    res += (ulong)reader.ReadByte() << (i * 8);
+
+                i++;
+            }
+
+            return res;
         }
 
         public static byte[] SubArray(this byte[] array, int start, int count)

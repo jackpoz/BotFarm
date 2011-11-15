@@ -17,12 +17,16 @@ namespace Client.World.Network
                 Size = (int)(((uint)data[0]) << 8 | data[1]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 2);
             }
-            else
+            else //if (data.Length == 5)
             {
-                Size = (int)((((uint)data[0]) << 16) | (((uint)data[1]) << 8) | data[2]);
+                Size = (int)(((((uint)data[0]) &~ 0x80) << 16) & 0xFF | (((uint)data[1]) << 8) | data[2]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 3);
             }
-
+//             else
+//             {
+//                 Console.WriteLine("Header Data Length {0}", data.Length);
+//                 return;
+            Console.WriteLine("Command {0} Header Size {1} Packet Size {2}", Command, data.Length, Size);            
             // decrement since we already have command's two bytes
             Size -= 2;
         }

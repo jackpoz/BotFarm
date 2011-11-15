@@ -295,6 +295,7 @@ namespace Client.World.Network
 
         int Index;
         int Remaining;
+        bool PacketUnderRead = false;
 
         private void BeginRead(AsyncCallback callback, object state = null)
         {
@@ -313,6 +314,11 @@ namespace Client.World.Network
         /// </summary>
         private void ReadSizeCallback(IAsyncResult result)
         {
+            while (PacketUnderRead)
+                Thread.Sleep(1);
+
+            PacketUnderRead = true;
+
             int bytesRead = this.connection.Client.EndReceive(result);
             if (bytesRead == 0 && result.IsCompleted)
             {
@@ -329,7 +335,7 @@ namespace Client.World.Network
                 // need to resize the buffer
                 byte temp = ReceiveData[0];
                 ReceiveData = new byte[5];
-                ReceiveData[0] = (byte)(0x7f & temp);
+                ReceiveData[0] = (byte)((0x7f & temp));// &~0x80);
 
                 Remaining = 4;
             }
@@ -337,7 +343,7 @@ namespace Client.World.Network
                 Remaining = 3;
 
             Index = 1;
-            BeginRead(ReadHeaderCallback);
+            BeginRead(new AsyncCallback(ReadHeaderCallback));
         }
 
         /// <summary>
@@ -345,6 +351,9 @@ namespace Client.World.Network
         /// </summary>
         private void ReadHeaderCallback(IAsyncResult result)
         {
+            //if (ReceiveData.Length != 4 && ReceiveData.Length != 5)
+              //  throw new Exception("ReceiveData.Length not in order");
+
             int bytesRead = this.connection.Client.EndReceive(result);
             if (bytesRead == 0 && result.IsCompleted)
             {
@@ -365,14 +374,20 @@ namespace Client.World.Network
                 Index = 0;
                 Remaining = header.Size;
                 ReceiveData = new byte[header.Size];
-                BeginRead(ReadPayloadCallback, header);
+                BeginRead(new AsyncCallback(ReadPayloadCallback), header);
+                return;
+            }
+            else if (bytesRead > Remaining)
+            {
+                // Breakpoint
+                Console.WriteLine("Not ok");
             }
             else
             {
                 // more header to read
                 Index += bytesRead;
                 Remaining -= bytesRead;
-                BeginRead(ReadHeaderCallback);
+                BeginRead(new AsyncCallback(ReadHeaderCallback));
             }
         }
 
@@ -412,6 +427,7 @@ namespace Client.World.Network
                     Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command), LogLevel.Debug);
 
                 // start new asynchronous read
+                PacketUnderRead = false;
                 Start();
             }
             else
@@ -419,7 +435,7 @@ namespace Client.World.Network
                 // more payload to read
                 Index += bytesRead;
                 Remaining -= bytesRead;
-                BeginRead(ReadHeaderCallback, result.AsyncState);
+                BeginRead(new AsyncCallback(ReadHeaderCallback), result.AsyncState);
             }
         }
 
@@ -432,7 +448,7 @@ namespace Client.World.Network
             ReceiveData = new byte[4];
             Index = 0;
             Remaining = 1;
-            BeginRead(ReadSizeCallback);
+            BeginRead(new AsyncCallback(ReadSizeCallback));
         }
 
         public override bool Connect()

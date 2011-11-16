@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -71,7 +72,7 @@ namespace Client.World.Network
 
         int Index;
         int Remaining;
-
+        
         private void BeginRead(AsyncCallback callback, object state = null)
         {
             this.connection.Client.BeginReceive
@@ -205,7 +206,7 @@ namespace Client.World.Network
                 // more payload to read
                 Index += bytesRead;
                 Remaining -= bytesRead;
-                BeginRead(new AsyncCallback(ReadHeaderCallback), result.AsyncState);
+                BeginRead(new AsyncCallback(ReadPayloadCallback), result.AsyncState);
             }
         }
 

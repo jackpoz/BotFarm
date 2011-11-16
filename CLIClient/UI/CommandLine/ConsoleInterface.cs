@@ -160,6 +160,14 @@ namespace Client.UI.CommandLine
             Console.ResetColor();
         }
 
+        public void LogException(string message)
+        {
+            var ex = new Exception(message);
+            _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
+            _logFile.WriteLine(Environment.StackTrace); // ex.StackTrace won't work for some reason
+            throw ex;
+        }
+
         #endregion
     }
 }

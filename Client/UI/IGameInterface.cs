@@ -17,5 +17,6 @@ namespace Client.UI
 
         void Log(string message, LogLevel level = LogLevel.Info);
         void LogLine(string message, LogLevel level = LogLevel.Info);
+        void LogException(string message);
     }
 }

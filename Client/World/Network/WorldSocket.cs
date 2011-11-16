@@ -142,6 +142,8 @@ namespace Client.World.Network
                 ServerHeader header = new ServerHeader(ReceiveData);
 
                 Game.UI.LogLine(header.ToString(), LogLevel.Debug);
+                if (header.InputDataLength > 5 || header.InputDataLength < 4)
+                    Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
 
                 Index = 0;
                 Remaining = header.Size;

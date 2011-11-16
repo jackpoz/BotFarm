@@ -149,11 +149,20 @@ namespace Client.World.Network
                 if (header.InputDataLength > 5 || header.InputDataLength < 4)
                     Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
 
-                Index = 0;
-                Remaining = header.Size;
-                ReceiveData = new byte[header.Size];
-                BeginRead(new AsyncCallback(ReadPayloadCallback), header);
-                return;
+                if (header.Size > 0)
+                {
+                    // read the packet payload
+                    Index = 0;
+                    Remaining = header.Size;
+                    ReceiveData = new byte[header.Size];
+                    BeginRead(new AsyncCallback(ReadPayloadCallback), header);
+                }
+                else
+                {
+                    // the packet is just a header, start next packet
+                    HandlePacket(new InPacket(header));
+                    Start();
+                }
             }
             else
             {
@@ -183,23 +192,10 @@ namespace Client.World.Network
 
             if (bytesRead == Remaining)
             {
-                // get header and packet
+                // get header and packet, handle it
                 ServerHeader header = (ServerHeader)result.AsyncState;
                 InPacket packet = new InPacket(header, ReceiveData);
-
-                PacketHandler handler;
-                if (PacketHandlers.TryGetValue((WorldCommand)header.Command, out handler))
-                {
-                    Game.UI.LogLine(string.Format("Received {0}", header.Command), LogLevel.Debug);
-
-                    if (AuthenticationCrypto.Status == AuthStatus.Ready)
-                        // AuthenticationCrypto is ready, handle the packet asynchronously
-                        handler.BeginInvoke(packet, null, null);
-                    else
-                        handler(packet);
-                }
-                else
-                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", header.Command), LogLevel.Debug);
+                HandlePacket(packet);
 
                 // start new asynchronous read
                 Start();
@@ -214,6 +210,23 @@ namespace Client.World.Network
         }
 
         #endregion
+
+        private void HandlePacket(InPacket packet)
+        {
+            PacketHandler handler;
+            if (PacketHandlers.TryGetValue((WorldCommand)packet.Header.Command, out handler))
+            {
+                Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
+
+                if (AuthenticationCrypto.Status == AuthStatus.Ready)
+                    // AuthenticationCrypto is ready, handle the packet asynchronously
+                    handler.BeginInvoke(packet, null, null);
+                else
+                    handler(packet);
+            }
+            else
+                Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+        }
 
         #region GameSocket Members
 

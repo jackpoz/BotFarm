@@ -6,6 +6,12 @@ namespace Client.World.Network
     {
         public Header Header { get; private set; }
 
+        internal InPacket(ServerHeader header)
+            : this(header, new byte[] { })
+        {
+
+        }
+
         internal InPacket(ServerHeader header, byte[] buffer)
             : base(new MemoryStream(buffer))
         {

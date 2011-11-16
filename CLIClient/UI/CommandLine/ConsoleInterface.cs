@@ -40,10 +40,10 @@ namespace Client.UI.CommandLine
 
         public void Exit()
         {
-            _logFile.Close();
-
             Console.Write("Press any key to continue...");
             Console.ReadKey(true);
+
+            _logFile.Close();
         }
 
         public void PresentRealmList(WorldServerList worldServerList)

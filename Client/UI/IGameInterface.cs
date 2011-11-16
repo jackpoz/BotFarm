@@ -7,6 +7,8 @@ namespace Client.UI
     {
         IGame Game { get; set; }
 
+        LogLevel LogLevel { get; set; }
+
         void Update();
         void Exit();
 

@@ -11,7 +11,8 @@ namespace Client
             var port = Settings.Default.Port;
             var username = Settings.Default.Username;
             var password = Settings.Default.Password;
-            var p = new Game<CommandLineUI>(hostname, port, username, password);
+            var logLevel = Settings.Default.Loglevel;
+            var p = new Game<CommandLineUI>(hostname, port, username, password, logLevel);
 
             p.Start();
         }

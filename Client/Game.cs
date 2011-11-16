@@ -47,10 +47,11 @@ namespace Client
 
         private GameWorld _world;
 
-        public Game(string hostname, int port, string username, string password)
+        public Game(string hostname, int port, string username, string password, LogLevel logLevel)
         {
             UI = new T();
             UI.Game = this;
+            UI.LogLevel = logLevel;
 
             World = new GameWorld();
 

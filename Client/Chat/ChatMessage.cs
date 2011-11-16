@@ -102,7 +102,6 @@ namespace Client.Chat
             sb.Append(Sender.Sender);
             sb.Append("]: ");
             sb.Append(Message);
-            sb.AppendLine();
 
             return sb.ToString();
         }

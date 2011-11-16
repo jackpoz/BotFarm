@@ -3,14 +3,31 @@ using Client.Authentication;
 using Client.World;
 using Client.World.Network;
 using Client;
+using System.IO;
 
 namespace Client.UI.CommandLine
 {
     class CommandLineUI : IGameUI
     {
-        LogLevel LogLevel = LogLevel.Info;
+        #region Private Members
+        private LogLevel _logLevel;
+
+        private StreamWriter _logFile;
+
+        #endregion
+
+        public CommandLineUI()
+        {
+            _logFile = new StreamWriter(String.Format("{0}.log", DateTime.Now).Replace(':', '_'));
+        }
 
         #region IGameInterface Members
+
+        public LogLevel LogLevel
+        {
+            get { return _logLevel; }
+            set { _logLevel = value; }
+        }
 
         public IGame Game { get; set; }
 
@@ -21,6 +38,8 @@ namespace Client.UI.CommandLine
 
         public void Exit()
         {
+            _logFile.Close();
+
             Console.Write("Press any key to continue...");
             Console.ReadKey(true);
         }
@@ -110,7 +129,10 @@ namespace Client.UI.CommandLine
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
             if (level >= LogLevel)
+            {
                 Console.Write(message);
+                _logFile.Write(String.Format("{0} : {1}", DateTime.Now, message));
+            }
 
             Console.ResetColor();
         }
@@ -118,7 +140,10 @@ namespace Client.UI.CommandLine
         public void LogLine(LogLevel level = LogLevel.Info)
         {
             if (level >= LogLevel)
+            {
                 Console.WriteLine();
+                _logFile.WriteLine();
+            }
 
             Console.ResetColor();
         }
@@ -126,7 +151,10 @@ namespace Client.UI.CommandLine
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
             if (level >= LogLevel)
+            {
                 Console.WriteLine(message);
+                _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
+            }
 
             Console.ResetColor();
         }

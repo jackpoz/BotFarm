@@ -134,7 +134,7 @@ namespace Client.World.Network
             }
             else
             {
-                Game.UI.Log(string.Format("Authentication succeeded, but received response {0}", detail));
+                Game.UI.LogLine(string.Format("Authentication succeeded, but received response {0}", detail));
                 Game.UI.Exit();
             }
         }
@@ -146,7 +146,7 @@ namespace Client.World.Network
 
             if (count == 0)
             {
-                Game.UI.Log("No characters found!");
+                Game.UI.LogLine("No characters found!");
             }
             else
             {
@@ -214,7 +214,7 @@ namespace Client.World.Network
                             Game.World.PlayerNameLookup.TryGetValue(sender, out senderName))
                         {
                             message.Sender.Sender = senderName;
-                            Game.UI.Log(message.ToString());
+                            Game.UI.LogLine(message.ToString());
                             return;
                         }
 
@@ -269,7 +269,7 @@ namespace Client.World.Network
                         //! Print with proper name and remove from queue
                         m = messageQueue.Dequeue();
                         m.Sender.Sender = name;
-                        Game.UI.Log(m.ToString());
+                        Game.UI.LogLine(m.ToString());
                     }
                 }
             }
@@ -365,7 +365,7 @@ namespace Client.World.Network
                 AuthenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
                 ServerHeader header = new ServerHeader(ReceiveData);
 
-                Game.UI.Log(header.ToString(), LogLevel.Debug);
+                Game.UI.LogLine(header.ToString(), LogLevel.Debug);
 
                 Index = 0;
                 Remaining = header.Size;

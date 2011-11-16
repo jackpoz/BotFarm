@@ -58,5 +58,14 @@ namespace Client.UI.CommandLine.Properties {
                 return ((string)(this["Hostname"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Info")]
+        public global::Client.UI.LogLevel Loglevel {
+            get {
+                return ((global::Client.UI.LogLevel)(this["Loglevel"]));
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 namespace Client
 {
-    abstract class GameSocket : IDisposable
+    public abstract class GameSocket : IDisposable
     {
         public IGame Game { get; protected set; }
 

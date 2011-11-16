@@ -5,7 +5,8 @@ namespace Client.World
 {
     public delegate void PacketHandler(InPacket packet);
 
-    public class PacketHandlerAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    public sealed class PacketHandlerAttribute : Attribute
     {
         public WorldCommand Command { get; private set; }
 

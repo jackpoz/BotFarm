@@ -93,7 +93,9 @@ namespace Client.World.Network
             if (bytesRead == 0 && result.IsCompleted)
             {
                 // TODO: world server disconnect
+                Game.UI.LogLine("Server has closed the connection");
                 Game.Exit();
+                return;
             }
 
             Interlocked.Increment(ref transferred);
@@ -128,7 +130,9 @@ namespace Client.World.Network
             if (bytesRead == 0 && result.IsCompleted)
             {
                 // TODO: world server disconnect
+                Game.UI.LogLine("Server has closed the connection");
                 Game.Exit();
+                return;
             }
 
             Interlocked.Add(ref transferred, bytesRead);
@@ -169,7 +173,9 @@ namespace Client.World.Network
             if (bytesRead == 0 && result.IsCompleted)
             {
                 // TODO: world server disconnect
+                Game.UI.LogLine("Server has closed the connection");
                 Game.Exit();
+                return;
             }
 
             Interlocked.Add(ref transferred, bytesRead);

@@ -5,7 +5,7 @@ namespace Client.World.Definitions
     public enum Race : byte
     {
         Human = 1,
-        Ord = 2,
+        Orc = 2,
         Dwarf = 3,
         Nightelf = 4,
         Undead = 5,

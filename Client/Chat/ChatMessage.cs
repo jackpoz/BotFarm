@@ -82,6 +82,9 @@ namespace Client.Chat
                     //sb.ForeColor(Color.FromArgb(64, 192, 64));
                     Console.ForegroundColor = ConsoleColor.DarkGreen;//Color.DarkSeaGreen;
                     break;
+                case ChatMessageType.Yell:
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    break;
                 case ChatMessageType.Say:
                 default:
                     //sb.ForeColor(Color.FromArgb(255, 255, 255));

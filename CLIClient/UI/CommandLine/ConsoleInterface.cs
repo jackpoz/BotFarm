@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using Client.Authentication;
 using Client.World;
 using Client.World.Network;
 using Client;
-using System.IO;
 
 namespace Client.UI.CommandLine
 {
@@ -162,10 +163,9 @@ namespace Client.UI.CommandLine
 
         public void LogException(string message)
         {
-            var ex = new Exception(message);
-            _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
-            _logFile.WriteLine(Environment.StackTrace); // ex.StackTrace won't work for some reason
-            throw ex;
+            _logFile.WriteLine(String.Format("{0} : Exception: {1}", DateTime.Now, message));
+            _logFile.WriteLine((new StackTrace(1, true)).ToString());
+            throw new Exception(message);
         }
 
         #endregion

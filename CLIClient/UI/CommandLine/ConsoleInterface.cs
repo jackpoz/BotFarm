@@ -130,35 +130,44 @@ namespace Client.UI.CommandLine
 
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
-            if (level >= LogLevel)
+            lock (Console.Out)
             {
-                Console.Write(message);
-                _logFile.Write(String.Format("{0} : {1}", DateTime.Now, message));
-            }
+                if (level >= LogLevel)
+                {
+                    Console.Write(message);
+                    _logFile.Write(String.Format("{0} : {1}", DateTime.Now, message));
+                }
 
-            Console.ResetColor();
+                Console.ResetColor();
+            }
         }
 
         public void LogLine(LogLevel level = LogLevel.Info)
         {
-            if (level >= LogLevel)
+            lock (Console.Out)
             {
-                Console.WriteLine();
-                _logFile.WriteLine();
-            }
+                if (level >= LogLevel)
+                {
+                    Console.WriteLine();
+                    _logFile.WriteLine();
+                }
 
-            Console.ResetColor();
+                Console.ResetColor();
+            }
         }
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
-            if (level >= LogLevel)
+            lock (Console.Out)
             {
-                Console.WriteLine(message);
-                _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
-            }
+                if (level >= LogLevel)
+                {
+                    Console.WriteLine(message);
+                    _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
+                }
 
-            Console.ResetColor();
+                Console.ResetColor();
+            }
         }
 
         public void LogException(string message)

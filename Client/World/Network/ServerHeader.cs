@@ -21,7 +21,7 @@ namespace Client.World.Network
             }
             else if (InputDataLength == 5)
             {
-                Size = (int)(((((uint)data[0]) & ~0x80) << 16) & 0xFF | (((uint)data[1]) << 8) | data[2]);
+                Size = (int)(((((uint)data[0]) & 0x7F) << 16) | (((uint)data[1]) << 8) | data[2]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 3);
             }
             else

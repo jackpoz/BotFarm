@@ -20,14 +20,13 @@ namespace Client.World.Network
                 Size = (int)(((uint)data[0]) << 8 | data[1]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 2);
             }
-            //! Apparantly this can be > 5 too
-            else //if (_inputDataLen == 5)
+            else if (_inputDataLen == 5)
             {
                 Size = (int)(((((uint)data[0]) &~ 0x80) << 16) & 0xFF | (((uint)data[1]) << 8) | data[2]);
                 Command = (WorldCommand)BitConverter.ToUInt16(data, 3);
             }
-            // else
-               // throw new Exception(String.Format("Unsupported header size {0}", _inputDataLen));
+            else
+                throw new Exception(String.Format("Unsupported header size {0}", _inputDataLen));
             
             // decrement since we already have command's two bytes
             Size -= 2;

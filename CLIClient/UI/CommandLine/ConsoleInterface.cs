@@ -19,7 +19,7 @@ namespace Client.UI.CommandLine
 
         public CommandLineUI()
         {
-            _logFile = new StreamWriter(String.Format("{0}.log", DateTime.Now).Replace(':', '_'));
+            _logFile = new StreamWriter(String.Format("{0}.log", DateTime.Now).Replace(':', '_').Replace('/', '-'));
             _logFile.AutoFlush = true;
         }
 

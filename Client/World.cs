@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Client.Chat;
+using Client.World;
 
 namespace Client
 {
@@ -16,5 +17,8 @@ namespace Client
 
         //! Message queue for when sender's name hasn't been queried trough NAME_QUERY yet
         public Dictionary<ulong, Queue<ChatMessage>> QueuedChatMessages = new Dictionary<ulong, Queue<ChatMessage>>();
+
+        //! Character currently logged into world
+        public Character SelectedCharacter;
     }
 }

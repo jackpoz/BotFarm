@@ -55,7 +55,6 @@ namespace Client.World.Network
                         message.Message = packet.ReadCString();
                         message.Language = lang;
                         message.ChatTag = (ChatTag)packet.ReadByte();
-                        message.Timestamp = DateTime.Now;
                         message.Sender = channel;
 
                         //! If we know the name of the sender GUID, use it
@@ -94,6 +93,12 @@ namespace Client.World.Network
                 default:
                     return;
             }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_CHAT_PLAYER_NOT_FOUND)]
+        void HandleChatPlayerNotFound(InPacket packet)
+        {
+            Game.UI.LogLine(String.Format("Player {0} not found!", packet.ReadCString()));
         }
     }
 }

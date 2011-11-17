@@ -13,14 +13,11 @@ namespace Client.Chat
         public Language Language;
         public ChatTag ChatTag;
         public string Message;
-        public DateTime Timestamp;
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(Timestamp);
-            sb.Append(": ");
-            sb.Append(Sender.Type.ToString());
+            sb.Append(Sender.Type == ChatMessageType.WhisperInform ? "To: " : Sender.Type.ToString());
             //! Color codes taken from default chat_cache in WTF folder
             //! TODO: RTF form?
             switch (Sender.Type)

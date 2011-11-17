@@ -85,6 +85,7 @@ namespace Client
             while (Running)
             {
                 // main loop here
+                UI.Update();
                 Thread.Sleep(100);
             }
 

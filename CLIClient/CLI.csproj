@@ -53,6 +53,8 @@
     <Compile Include="UI\CommandLine\ConsoleInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\CommandLine\KeyBindHandlers\Whisper.cs" />
+    <Compile Include="UI\CommandLine\KeyBindings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj">

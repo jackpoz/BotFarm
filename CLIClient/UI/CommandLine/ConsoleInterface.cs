@@ -8,7 +8,7 @@ using Client;
 
 namespace Client.UI.CommandLine
 {
-    class CommandLineUI : IGameUI
+    public partial class CommandLineUI : IGameUI
     {
         #region Private Members
         private LogLevel _logLevel;
@@ -21,6 +21,8 @@ namespace Client.UI.CommandLine
         {
             _logFile = new StreamWriter(String.Format("{0}.log", DateTime.Now).Replace(':', '_').Replace('/', '-'));
             _logFile.AutoFlush = true;
+
+            InitializeKeybinds();
         }
 
         #region IGameInterface Members
@@ -35,7 +37,13 @@ namespace Client.UI.CommandLine
 
         public void Update()
         {
+            if (Game.World.SelectedCharacter == null)
+                return;
 
+            ConsoleKeyInfo keyPress = Console.ReadKey();
+            KeyBind handler;
+            if (_keyPressHandlers.TryGetValue(keyPress.Key, out handler))
+                handler();
         }
 
         public void Exit()
@@ -86,7 +94,6 @@ namespace Client.UI.CommandLine
         {
             LogLine("\n\tName\tLevel Class Race");
 
-            Character selectedCharacter;
             int index = 0;
             foreach (Character character in characterList)
                 LogLine
@@ -113,13 +120,13 @@ namespace Client.UI.CommandLine
 
             if (index < characterList.Length)
             {
-                selectedCharacter = characterList[index];
+                Game.World.SelectedCharacter = characterList[index];
                 // TODO: enter world
 
-                LogLine(string.Format("Entering pseudo-world with character {0}", selectedCharacter.Name));
+                LogLine(string.Format("Entering pseudo-world with character {0}", Game.World.SelectedCharacter.Name));
                 
                 OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
-                packet.Write(selectedCharacter.GUID);
+                packet.Write(Game.World.SelectedCharacter.GUID);
                 Game.SendPacket(packet);
             }
             else

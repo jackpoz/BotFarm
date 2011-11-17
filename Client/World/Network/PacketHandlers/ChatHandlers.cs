@@ -64,7 +64,7 @@ namespace Client.World.Network
                             Game.World.PlayerNameLookup.TryGetValue(sender, out senderName))
                         {
                             message.Sender.Sender = senderName;
-                            Game.UI.LogLine(message.ToString());
+                            Game.UI.PresentChatMessage(message);
                             return;
                         }
 

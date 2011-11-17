@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using Client;
 using Client.Authentication;
+using Client.Chat;
+using Client.Chat.Definitions;
 using Client.World;
 using Client.World.Network;
-using Client;
 
 namespace Client.UI.CommandLine
 {
@@ -12,7 +15,6 @@ namespace Client.UI.CommandLine
     {
         #region Private Members
         private LogLevel _logLevel;
-
         private StreamWriter _logFile;
 
         #endregion
@@ -124,7 +126,7 @@ namespace Client.UI.CommandLine
                 // TODO: enter world
 
                 LogLine(string.Format("Entering pseudo-world with character {0}", Game.World.SelectedCharacter.Name));
-                
+
                 OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
                 packet.Write(Game.World.SelectedCharacter.GUID);
                 Game.SendPacket(packet);
@@ -133,6 +135,95 @@ namespace Client.UI.CommandLine
             {
                 // TODO: character creation
             }
+        }
+
+        public void PresentChatMessage(ChatMessage message)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(message.Sender.Type == ChatMessageType.WhisperInform ? "To: " : message.Sender.Type.ToString());
+            //! Color codes taken from default chat_cache in WTF folder
+            //! TODO: RTF form?
+            switch (message.Sender.Type)
+            {
+            case ChatMessageType.Channel:
+                {
+                    //sb.ForeColor(Color.FromArgb(255, 192, 192));
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;//Color.DarkSalmon;
+                    sb.Append(" [");
+                    sb.Append(message.Sender.ChannelName);
+                    sb.Append("] ");
+                    break;
+                }
+            case ChatMessageType.Whisper:
+            case ChatMessageType.WhisperInform:
+            case ChatMessageType.WhisperForeign:
+                    //sb.ForeColor(Color.FromArgb(255, 128, 255));
+                Console.ForegroundColor = ConsoleColor.Magenta;//Color.DeepPink;
+                break;
+            case ChatMessageType.System:
+            case ChatMessageType.Money:
+            case ChatMessageType.TargetIcons:
+            case ChatMessageType.Achievement:
+                    //sb.ForeColor(Color.FromArgb(255, 255, 0));
+                Console.ForegroundColor = ConsoleColor.Yellow;//Color.Gold;
+                break;
+            case ChatMessageType.Emote:
+            case ChatMessageType.TextEmote:
+            case ChatMessageType.MonsterEmote:
+                    //sb.ForeColor(Color.FromArgb(255, 128, 64));
+                Console.ForegroundColor = ConsoleColor.DarkRed;//Color.Chocolate;
+                break;
+            case ChatMessageType.Party:
+                    //sb.ForeColor(Color.FromArgb(170, 170, 255));
+                Console.ForegroundColor = ConsoleColor.DarkCyan;//Color.CornflowerBlue;
+                break;
+            case ChatMessageType.PartyLeader:
+                    //sb.ForeColor(Color.FromArgb(118, 200, 255));
+                Console.ForegroundColor = ConsoleColor.Cyan;//Color.DodgerBlue;
+                break;
+            case ChatMessageType.Raid:
+                    //sb.ForeColor(Color.FromArgb(255, 172, 0));
+                Console.ForegroundColor = ConsoleColor.Red;//Color.DarkOrange;
+                break;
+            case ChatMessageType.RaidLeader:
+                    //sb.ForeColor(Color.FromArgb(255, 72, 9));
+                Console.ForegroundColor = ConsoleColor.Red;//Color.DarkOrange;
+                break;
+            case ChatMessageType.RaidWarning:
+                    //sb.ForeColor(Color.FromArgb(255, 72, 0));
+                Console.ForegroundColor = ConsoleColor.Red;//Color.DarkOrange;
+                break;
+            case ChatMessageType.Guild:
+            case ChatMessageType.GuildAchievement:
+                    //sb.ForeColor(Color.FromArgb(64, 255, 64));
+                Console.ForegroundColor = ConsoleColor.Green;//Color.LimeGreen;
+                break;
+            case ChatMessageType.Officer:
+                    //sb.ForeColor(Color.FromArgb(64, 192, 64));
+                Console.ForegroundColor = ConsoleColor.DarkGreen;//Color.DarkSeaGreen;
+                break;
+            case ChatMessageType.Yell:
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                break;
+            case ChatMessageType.Say:
+            default:
+                    //sb.ForeColor(Color.FromArgb(255, 255, 255));
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
+            }
+
+            sb.Append("[");
+            if (message.ChatTag.HasFlag(ChatTag.Gm))
+                sb.Append("<GM>");
+            if (message.ChatTag.HasFlag(ChatTag.Afk))
+                sb.Append("<AFK>");
+            if (message.ChatTag.HasFlag(ChatTag.Dnd))
+                sb.Append("<DND>");
+            sb.Append(message.Sender.Sender);
+            sb.Append("]: ");
+            sb.Append(message.Message);
+
+            LogLine(sb.ToString());
         }
 
         public void Log(string message, LogLevel level = LogLevel.Info)

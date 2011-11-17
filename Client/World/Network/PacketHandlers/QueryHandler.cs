@@ -30,7 +30,7 @@ namespace Client.World.Network
                         //! Print with proper name and remove from queue
                         m = messageQueue.Dequeue();
                         m.Sender.Sender = name;
-                        Game.UI.LogLine(m.ToString());
+                        Game.UI.PresentChatMessage(m);
                     }
                 }
             }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Numerics;
-using Client.Authentication;
+using System.Text;
 using Client.Crypto;
 
 namespace Client.World.Network

@@ -15,8 +15,8 @@ namespace Client.UI
 
         void PresentRealmList(WorldServerList realmList);
         void PresentCharacterList(Character[] characterList);
-		
-		void PresentChatMessage(ChatMessage message);
+
+        void PresentChatMessage(ChatMessage message);
 
         void Log(string message, LogLevel level = LogLevel.Info);
         void LogLine(string message, LogLevel level = LogLevel.Info);

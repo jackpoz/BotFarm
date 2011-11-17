@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using Client.Authentication;
 using Client.UI;
-using Client.Chat;
-using Client.Chat.Definitions;
 
 namespace Client.World.Network
 {

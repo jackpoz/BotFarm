@@ -1,5 +1,4 @@
 ﻿using System;
-using Client.Chat;
 using Client.Chat.Definitions;
 using Client.World;
 using Client.World.Definitions;
@@ -9,7 +8,7 @@ namespace Client.UI.CommandLine
 {
     public partial class CommandLineUI
     {
-        [KeyBindAttribute(ConsoleKey.W)]
+        [KeyBind(ConsoleKey.W)]
         public void HandleWhisper()
         {
             LogLine("Enter name of player to whisper, or enter 'Q' to go back.");

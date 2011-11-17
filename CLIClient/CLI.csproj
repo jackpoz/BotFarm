@@ -75,12 +75,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="UI\CommandLine\ConsoleInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\CommandLine\KeyBindHandlers\Whisper.cs" />
     <Compile Include="UI\CommandLine\KeyBindings.cs" />
     <Compile Include="UI\CommandLine\PacketHandlers\DummyHandler.cs" />
+    <Compile Include="UI\CommandLine\CommandLineUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj">

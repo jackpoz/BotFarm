@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Client.Chat.Definitions;
+﻿using Client.Chat.Definitions;
 
 namespace Client.Chat
 {
@@ -13,6 +9,6 @@ namespace Client.Chat
     {
         public ChatMessageType Type;
         public string Sender;
-        public string ChannelName = String.Empty; // Optional
+        public string ChannelName = string.Empty; // Optional
     }
 }

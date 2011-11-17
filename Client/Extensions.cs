@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
-using System.Drawing;
 
 namespace Client
 {
@@ -85,6 +86,20 @@ namespace Client
             Array.Copy(Encoding.ASCII.GetBytes(str), data, str.Length);
             data[data.Length - 1] = 0;
             return data;
+        }
+
+        public static IEnumerable<T> GetAttributes<T>(this MemberInfo member, bool inherit)
+            where T : Attribute
+        {
+            return (T[])member.GetCustomAttributes(typeof(T), inherit) ?? new T[] { };
+        }
+
+        public static bool TryGetAttributes<T>(this MemberInfo member, bool inherit, out IEnumerable<T> attributes)
+            where T : Attribute
+        {
+            var attrs = (T[])member.GetCustomAttributes(typeof(T), inherit) ?? new T[] { };
+            attributes = attrs;
+            return attrs.Length > 0;
         }
     }
 }

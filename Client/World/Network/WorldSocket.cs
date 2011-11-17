@@ -50,15 +50,15 @@ namespace Client.World.Network
             // create binding flags to discover all non-static methods
             BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            foreach (MethodInfo method in obj.GetType().GetMethods(flags))
+            IEnumerable<PacketHandlerAttribute> attributes;
+            foreach (var method in obj.GetType().GetMethods(flags))
             {
-                PacketHandlerAttribute[] attributes = (PacketHandlerAttribute[])method.GetCustomAttributes(typeof(PacketHandlerAttribute), false);
-                if (attributes.Length == 0)
+                if (!method.TryGetAttributes(false, out attributes))
                     continue;
 
                 PacketHandler handler = (PacketHandler)PacketHandler.CreateDelegate(typeof(PacketHandler), obj, method);
 
-                foreach (PacketHandlerAttribute attribute in attributes)
+                foreach (var attribute in attributes)
                 {
                     Game.UI.LogLine(string.Format("Registered '{0}.{1}' to '{2}'", obj.GetType().Name, method.Name, attribute.Command), LogLevel.Debug);
                     PacketHandlers[attribute.Command] = handler;

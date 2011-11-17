@@ -27,10 +27,10 @@ namespace Client.UI.CommandLine
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
+            IEnumerable<KeyBindAttribute> attributes;
             foreach (var method in this.GetType().GetMethods(flags))
             {
-                var attributes = (KeyBindAttribute[])method.GetCustomAttributes(typeof(KeyBindAttribute), false);
-                if (attributes.Length == 0)
+                if (!method.TryGetAttributes(false, out attributes))
                     continue;
 
                 var handler = (KeyBind)KeyBind.CreateDelegate(typeof(KeyBind), this, method);

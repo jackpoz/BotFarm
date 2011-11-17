@@ -1,5 +1,6 @@
 ﻿using Client.Authentication;
 using Client.World;
+using Client.Chat;
 
 namespace Client.UI
 {
@@ -14,6 +15,8 @@ namespace Client.UI
 
         void PresentRealmList(WorldServerList realmList);
         void PresentCharacterList(Character[] characterList);
+		
+		void PresentChatMessage(ChatMessage message);
 
         void Log(string message, LogLevel level = LogLevel.Info);
         void LogLine(string message, LogLevel level = LogLevel.Info);

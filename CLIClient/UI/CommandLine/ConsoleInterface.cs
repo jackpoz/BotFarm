@@ -25,7 +25,7 @@ namespace Client.UI.CommandLine
             InitializeKeybinds();
         }
 
-        #region IGameInterface Members
+        #region IGameUI Members
 
         public LogLevel LogLevel
         {

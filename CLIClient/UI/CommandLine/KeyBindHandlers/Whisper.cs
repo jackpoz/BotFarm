@@ -14,7 +14,7 @@ namespace Client.UI.CommandLine
             LogLine("Enter name of player to whisper, or enter 'Q' to go back.");
             Log("To: ");
             var target = Console.ReadLine();
-            if (target.Equals('Q'))
+            if (target == "Q")
                 return;
 
             Log("Message: ");

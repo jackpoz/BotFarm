@@ -20,5 +20,8 @@ namespace Client
 
         //! Character currently logged into world
         public Character SelectedCharacter;
+
+        //! Persons who last whispered the client
+        public Queue<string> LastWhisperers = new Queue<string>();
     }
 }

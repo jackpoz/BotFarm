@@ -155,6 +155,8 @@ namespace Client.UI.CommandLine
                     break;
                 }
             case ChatMessageType.Whisper:
+                    Game.World.LastWhisperers.Enqueue(message.Sender.Sender);
+                    goto case ChatMessageType.WhisperInform;
             case ChatMessageType.WhisperInform:
             case ChatMessageType.WhisperForeign:
                     //sb.ForeColor(Color.FromArgb(255, 128, 255));
@@ -234,9 +236,8 @@ namespace Client.UI.CommandLine
                 {
                     Console.Write(message);
                     _logFile.Write(String.Format("{0} : {1}", DateTime.Now, message));
+                    Console.ResetColor();
                 }
-
-                Console.ResetColor();
             }
         }
 
@@ -248,9 +249,8 @@ namespace Client.UI.CommandLine
                 {
                     Console.WriteLine();
                     _logFile.WriteLine();
+                    Console.ResetColor();
                 }
-
-                Console.ResetColor();
             }
         }
 
@@ -262,9 +262,8 @@ namespace Client.UI.CommandLine
                 {
                     Console.WriteLine(message);
                     _logFile.WriteLine(String.Format("{0} : {1}", DateTime.Now, message));
+                    Console.ResetColor();
                 }
-
-                Console.ResetColor();
             }
         }
 
@@ -273,6 +272,36 @@ namespace Client.UI.CommandLine
             _logFile.WriteLine(String.Format("{0} : Exception: {1}", DateTime.Now, message));
             _logFile.WriteLine((new StackTrace(1, true)).ToString());
             throw new Exception(message);
+        }
+
+        public string ReadLine()
+        {
+            //! We don't want to clutter the console, so wait for input before printing output
+            string ret;
+            lock (Console.Out)
+                ret = Console.ReadLine();
+
+            return ret;
+        }
+
+        public int Read()
+        {
+            //! We don't want to clutter the console, so wait for input before printing output
+            int ret;
+            lock (Console.Out)
+                ret = Console.Read();
+
+            return ret;
+        }
+
+        public ConsoleKeyInfo ReadKey()
+        {
+            //! We don't want to clutter the console, so wait for input before printing output
+            ConsoleKeyInfo ret;
+            lock (Console.Out)
+                ret = Console.ReadKey();
+
+            return ret;
         }
 
         #endregion

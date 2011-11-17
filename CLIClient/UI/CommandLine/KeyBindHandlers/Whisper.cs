@@ -25,10 +25,7 @@ namespace Client.UI.CommandLine
 
             response.Write((uint)ChatMessageType.Whisper);
             var race = Game.World.SelectedCharacter.Race;
-            var language = (race == Race.Bloodelf || race == Race.Orc || race == Race.Tauren || race == Race.Troll ||
-                            race == Race.Undead)
-                               ? Language.Orcish
-                               : Language.Common;
+            var language = race.IsHorde() ? Language.Orcish : Language.Common;
             response.Write((uint)language);
             response.Write(target.ToCString());
             response.Write(message.ToCString());

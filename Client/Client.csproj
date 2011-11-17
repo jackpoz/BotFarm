@@ -87,6 +87,7 @@
     <Compile Include="World\PacketHandler.cs" />
     <Compile Include="World\WorldCommand.cs" />
     <Compile Include="UI\IGameUI.cs" />
+    <Compile Include="World\Definitions\Extensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

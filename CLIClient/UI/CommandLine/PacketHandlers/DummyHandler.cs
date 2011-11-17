@@ -1,6 +1,9 @@
-﻿namespace Client.World.Network
+using Client.World;
+using Client.World.Network;
+
+namespace Client.UI.CommandLine
 {
-    public partial class WorldSocket
+    partial class CommandLineUI
     {
         //! Ignore the packet.
         [PacketHandler(WorldCommand.SMSG_POWER_UPDATE)]
@@ -29,3 +32,4 @@
         }
     }
 }
+

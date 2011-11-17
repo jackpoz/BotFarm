@@ -80,7 +80,6 @@
     <Compile Include="World\Network\Packet.cs" />
     <Compile Include="World\Network\PacketHandlers\AuthHandlers.cs" />
     <Compile Include="World\Network\PacketHandlers\ChatHandlers.cs" />
-    <Compile Include="World\Network\PacketHandlers\DummyHandler.cs" />
     <Compile Include="World\Network\PacketHandlers\QueryHandler.cs" />
     <Compile Include="World\Network\ServerHeader.cs" />
     <Compile Include="World\Network\WorldSocket.cs" />

@@ -225,7 +225,7 @@ namespace Client.UI.CommandLine
             sb.Append("]: ");
             sb.Append(message.Message);
 
-            LogLine(sb.ToString());
+            LogLine(sb.ToString(), message.Language == Language.Addon ? LogLevel.Debug : LogLevel.Info);
         }
 
         public void Log(string message, LogLevel level = LogLevel.Info)

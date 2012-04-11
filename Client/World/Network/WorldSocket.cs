@@ -217,7 +217,7 @@ namespace Client.World.Network
 
                 if (AuthenticationCrypto.Status == AuthStatus.Ready)
                     // AuthenticationCrypto is ready, handle the packet asynchronously
-                    handler.BeginInvoke(packet, null, null);
+                    handler.BeginInvoke(packet, result => handler.EndInvoke(result), null);
                 else
                     handler(packet);
             }

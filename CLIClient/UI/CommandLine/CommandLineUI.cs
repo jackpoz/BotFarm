@@ -70,12 +70,12 @@ namespace Client.UI.CommandLine
                 foreach (WorldServerInfo server in worldServerList)
                     LogLine
                     (
-                        string.Format("{3}\t{0}\t{1}\t{2}",
+                        string.Format("{0}\t{1}\t{2}\t{3}",
+                        index++,
                         server.Name,
                         server.Type,
-                        server.Population,
-                        server.Flags,
-                        index++)
+                        server.Population
+                        )
                     );
 
                 // select a realm - default to the first realm if there is only one

@@ -42,8 +42,6 @@ namespace Client.Authentication
                 version_bugfix = reader.ReadByte();
                 build = reader.ReadUInt16();
             }
-
-            unk2 = reader.ReadUInt16();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using Client;
 using Client.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,18 +25,27 @@ namespace TrinityCore_UnitTests
             Console.InputEncoding = Encoding.UTF8;
 
             game.Start();
+            while (!game.LoggedIn)
+                Thread.Sleep(1000);
+            Thread.Sleep(5000);
+            game.Enqueue(() => game.DoSayChat("Connected"));
         }
 
         [TestMethod]
         public void TestMethod()
         {
-            System.Threading.Thread.Sleep(10000);
+            game.Enqueue(() =>
+                {
+                    game.DoSayChat("teleing to start position");
+                    game.DoSayChat(".tele goldshire");
+                });
         }
 
         public void Dispose()
         {
+            game.Enqueue(() => game.DoSayChat("Disconnecting"));
             if (game != null)
-                game.Exit();
+                game.Dispose();
         }
     }
 }

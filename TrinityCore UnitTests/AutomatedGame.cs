@@ -12,10 +12,12 @@ using Client.World.Network;
 using Client.Authentication.Network;
 using System.Threading;
 using System.Numerics;
+using Client.Chat.Definitions;
+using Client.World.Definitions;
 
 namespace TrinityCore_UnitTests
 {
-    class AutomatedGame : IGame, IGameUI
+    class AutomatedGame : IGame, IGameUI, IDisposable
     {
         bool Running;
 
@@ -23,6 +25,7 @@ namespace TrinityCore_UnitTests
 
         public BigInteger Key { get; private set; }
         public string Username { get; private set; }
+        public bool LoggedIn { get; private set; }
 
         Queue<Action> scheduledActions;
 
@@ -72,14 +75,14 @@ namespace TrinityCore_UnitTests
                     {
                         // main loop here
                         Update();
-                        Thread.Sleep(100);
+                        Thread.Sleep(1000);
                     }
                 });
         }
 
         public void Update()
         {
-            if (Game.World.SelectedCharacter == null)
+            if (World.SelectedCharacter == null)
                 return;
 
             if (scheduledActions.Count == 0)
@@ -124,15 +127,16 @@ namespace TrinityCore_UnitTests
 
         public void PresentRealmList(WorldServerList realmList)
         {
-            Game.ConnectTo(realmList.First());
+            ConnectTo(realmList.First());
         }
 
         public void PresentCharacterList(Character[] characterList)
         {
-            Game.World.SelectedCharacter = characterList.First();
+            World.SelectedCharacter = characterList.First();
             OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
-            packet.Write(Game.World.SelectedCharacter.GUID);
-            Game.SendPacket(packet);
+            packet.Write(World.SelectedCharacter.GUID);
+            SendPacket(packet);
+            LoggedIn = true;
         }
 
         public string ReadLine()
@@ -148,6 +152,23 @@ namespace TrinityCore_UnitTests
         public ConsoleKeyInfo ReadKey()
         {
             throw new NotImplementedException();
+        }
+
+        public void DoSayChat(string message)
+        {
+            var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+            response.Write((uint)ChatMessageType.Say);
+            var race = World.SelectedCharacter.Race;
+            var language = race.IsHorde() ? Language.Orcish : Language.Common;
+            response.Write((uint)language);
+            response.Write(message.ToCString());
+            SendPacket(response);
+        }
+
+        public void Enqueue(Action action)
+        {
+            scheduledActions.Enqueue(action);
         }
 
         #region Unused Methods
@@ -175,5 +196,18 @@ namespace TrinityCore_UnitTests
         {
         }
         #endregion
+
+        public void Dispose()
+        {
+            while (scheduledActions.Count > 0)
+                Thread.Sleep(1000);
+
+            Exit();
+
+            Thread.Sleep(5000);
+
+            if (socket != null)
+                socket.Dispose();
+        }
     }
 }

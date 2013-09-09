@@ -10,7 +10,7 @@ using Client.UI;
 
 namespace Client.Authentication.Network
 {
-    class AuthSocket : GameSocket
+    public class AuthSocket : GameSocket
     {
         public BigInteger Key { get; private set; }
         byte[] m2;

@@ -86,6 +86,9 @@ namespace Client.World.Network
         /// </summary>
         private void ReadSizeCallback(IAsyncResult result)
         {
+            if (this.connection.Client == null)
+                return;
+
             int bytesRead = this.connection.Client.EndReceive(result);
             if (bytesRead == 0 && result.IsCompleted)
             {

@@ -21,12 +21,15 @@ namespace TrinityCore_UnitTests
             var password = Settings.Default.Password;
             game = new AutomatedGame(hostname, port, username, password);
 
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.InputEncoding = Encoding.UTF8;
-
             game.Start();
+            int tries = 0;
             while (!game.LoggedIn)
+            {
                 Thread.Sleep(1000);
+                tries++;
+                if (tries > 15)
+                    throw new TimeoutException("Could not login after 15 tries");
+            }
             Thread.Sleep(5000);
             game.Enqueue(() => game.DoSayChat("Connected"));
         }

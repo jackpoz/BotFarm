@@ -27,6 +27,7 @@ namespace TrinityCore_UnitTests
         public string Username { get; private set; }
         public bool LoggedIn { get; private set; }
         public int RealmID { get; private set; }
+        public int Character { get; private set; }
 
         Queue<Action> scheduledActions;
 
@@ -38,9 +39,10 @@ namespace TrinityCore_UnitTests
 
         private GameWorld _world;
 
-        public AutomatedGame(string hostname, int port, string username, string password, int realmId)
+        public AutomatedGame(string hostname, int port, string username, string password, int realmId, int character)
         {
             this.RealmID = realmId;
+            this.Character = character;
             scheduledActions = new Queue<Action>();
             World = new GameWorld();
 
@@ -134,7 +136,7 @@ namespace TrinityCore_UnitTests
 
         public void PresentCharacterList(Character[] characterList)
         {
-            World.SelectedCharacter = characterList.First();
+            World.SelectedCharacter = characterList[Character];
             OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
             packet.Write(World.SelectedCharacter.GUID);
             SendPacket(packet);

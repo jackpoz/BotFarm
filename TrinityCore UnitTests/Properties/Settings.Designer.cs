@@ -82,5 +82,17 @@ namespace TrinityCore_UnitTests.Properties {
                 this["RealmID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Character {
+            get {
+                return ((int)(this["Character"]));
+            }
+            set {
+                this["Character"] = value;
+            }
+        }
     }
 }

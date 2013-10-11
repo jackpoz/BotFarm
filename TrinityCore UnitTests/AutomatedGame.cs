@@ -26,6 +26,7 @@ namespace TrinityCore_UnitTests
         public BigInteger Key { get; private set; }
         public string Username { get; private set; }
         public bool LoggedIn { get; private set; }
+        public int RealmID { get; private set; }
 
         Queue<Action> scheduledActions;
 
@@ -37,8 +38,9 @@ namespace TrinityCore_UnitTests
 
         private GameWorld _world;
 
-        public AutomatedGame(string hostname, int port, string username, string password)
+        public AutomatedGame(string hostname, int port, string username, string password, int realmId)
         {
+            this.RealmID = realmId;
             scheduledActions = new Queue<Action>();
             World = new GameWorld();
 
@@ -127,7 +129,7 @@ namespace TrinityCore_UnitTests
 
         public void PresentRealmList(WorldServerList realmList)
         {
-            ConnectTo(realmList.First());
+            ConnectTo(realmList[RealmID]);
         }
 
         public void PresentCharacterList(Character[] characterList)

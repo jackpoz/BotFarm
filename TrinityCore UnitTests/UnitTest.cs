@@ -19,7 +19,8 @@ namespace TrinityCore_UnitTests
             var port = Settings.Default.Port;
             var username = Settings.Default.Username;
             var password = Settings.Default.Password;
-            game = new AutomatedGame(hostname, port, username, password);
+            var realmId = Settings.Default.RealmID;
+            game = new AutomatedGame(hostname, port, username, password, realmId);
 
             game.Start();
             int tries = 0;

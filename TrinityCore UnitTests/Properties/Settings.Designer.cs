@@ -70,5 +70,17 @@ namespace TrinityCore_UnitTests.Properties {
                 this["Password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int RealmID {
+            get {
+                return ((int)(this["RealmID"]));
+            }
+            set {
+                this["RealmID"] = value;
+            }
+        }
     }
 }

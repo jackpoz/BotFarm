@@ -32,7 +32,7 @@ namespace TrinityCore_UnitTests
         }
 
         [TestMethod]
-        public void TestMethod()
+        public void Teleport()
         {
             game.Enqueue(() =>
                 {

@@ -9,11 +9,12 @@ using TrinityCore_UnitTests.Properties;
 namespace TrinityCore_UnitTests
 {
     [TestClass]
-    public class UnitTest : IDisposable
+    public class UnitTest
     {
-        AutomatedGame game;
+        static AutomatedGame game;
 
-        public UnitTest()
+        [ClassInitialize]
+        public static void UnitTestInitialize(TestContext context)
         {
             var hostname = Settings.Default.Hostname;
             var port = Settings.Default.Port;
@@ -46,7 +47,17 @@ namespace TrinityCore_UnitTests
                 });
         }
 
-        public void Dispose()
+        [TestMethod]
+        public void CastSpells()
+        {
+            game.Enqueue(() =>
+                {
+                    game.DoSayChat("testing spells");
+                });
+        }
+
+        [ClassCleanup]
+        public static void Cleanup()
         {
             game.Enqueue(() => game.DoSayChat("Disconnecting"));
             if (game != null)

@@ -79,7 +79,7 @@ namespace TrinityCore_UnitTests
                     {
                         // main loop here
                         Update();
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
                     }
                 });
         }
@@ -158,6 +158,7 @@ namespace TrinityCore_UnitTests
             throw new NotImplementedException();
         }
 
+        #region Commands
         public void DoSayChat(string message)
         {
             var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
@@ -168,7 +169,21 @@ namespace TrinityCore_UnitTests
             response.Write((uint)language);
             response.Write(message.ToCString());
             SendPacket(response);
+            Thread.Sleep(500);
         }
+
+        public void Tele(string teleport)
+        {
+            DoSayChat(".tele " + teleport);
+        }
+
+        public void CastSpell(int spellid, bool chatLog = true)
+        {
+            DoSayChat(".cast " + spellid);
+            if (chatLog)
+                DoSayChat("Casted spellid " + spellid);
+        }
+        #endregion
 
         public void Enqueue(Action action)
         {
@@ -208,7 +223,7 @@ namespace TrinityCore_UnitTests
 
             Exit();
 
-            Thread.Sleep(5000);
+            Thread.Sleep(1000);
 
             if (socket != null)
                 socket.Dispose();

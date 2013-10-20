@@ -43,7 +43,7 @@ namespace TrinityCore_UnitTests
             game.Enqueue(() =>
                 {
                     game.DoSayChat("teleing to start position");
-                    game.DoSayChat(".tele goldshire");
+                    game.Tele("goldshire");
                 });
         }
 
@@ -53,6 +53,9 @@ namespace TrinityCore_UnitTests
             game.Enqueue(() =>
                 {
                     game.DoSayChat("testing spells");
+                    game.DoSayChat(".go xyz -8790.59 349.3 101.02 0 4.57");
+                    game.CastSpell(139);
+                    game.DoSayChat("finished testing spells");
                 });
         }
 

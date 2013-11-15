@@ -17,7 +17,7 @@ using Client.World.Definitions;
 
 namespace TrinityCore_UnitTests
 {
-    class AutomatedGame : IGame, IGameUI, IDisposable
+    public class AutomatedGame : IGame, IGameUI, IDisposable
     {
         bool Running;
 

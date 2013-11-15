@@ -15,7 +15,7 @@ using System.Numerics;
 using Client.Chat.Definitions;
 using Client.World.Definitions;
 
-namespace TrinityCore_UnitTests
+namespace Client
 {
     public class AutomatedGame : IGame, IGameUI, IDisposable
     {

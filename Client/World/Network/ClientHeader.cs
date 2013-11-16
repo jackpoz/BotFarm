@@ -6,36 +6,30 @@ namespace Client.World.Network
     {
         public WorldCommand Command { get; private set; }
         private byte[] encryptedCommand;
-        public byte[] EncryptedCommand
+        public byte[] EncryptedCommand(AuthenticationCrypto authenticationCrypto)
         {
-            get
+            if (encryptedCommand == null)
             {
-                if (encryptedCommand == null)
-                {
-                    encryptedCommand = BitConverter.GetBytes((uint)this.Command);
-                    AuthenticationCrypto.Encrypt(encryptedCommand, 0, encryptedCommand.Length);
-                }
-
-                return encryptedCommand;
+                encryptedCommand = BitConverter.GetBytes((uint)this.Command);
+                authenticationCrypto.Encrypt(encryptedCommand, 0, encryptedCommand.Length);
             }
+
+            return encryptedCommand;
         }
 
         public int Size { get { return (int)Packet.BaseStream.Length + 4; } }
 
         private byte[] encryptedSize;
-        public byte[] EncryptedSize
+        public byte[] EncryptedSize (AuthenticationCrypto authenticationCrypto)
         {
-            get
+            if (encryptedSize == null)
             {
-                if (encryptedSize == null)
-                {
-                    encryptedSize = BitConverter.GetBytes(this.Size).SubArray(0, 2);
-                    Array.Reverse(encryptedSize);
-                    AuthenticationCrypto.Encrypt(encryptedSize, 0, 2);
-                }
-
-                return encryptedSize;
+                encryptedSize = BitConverter.GetBytes(this.Size).SubArray(0, 2);
+                Array.Reverse(encryptedSize);
+                authenticationCrypto.Encrypt(encryptedSize, 0, 2);
             }
+
+            return encryptedSize;
         }
 
         private OutPacket Packet;

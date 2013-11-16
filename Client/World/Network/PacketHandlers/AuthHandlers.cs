@@ -50,7 +50,7 @@ namespace Client.World.Network
             // TODO: don't fully initialize here, auth may fail
             // instead, initialize in HandleServerAuthResponse when auth succeeds
             // will require special logic in network code to correctly decrypt/parse packet header
-            AuthenticationCrypto.Initialize(Game.Key.ToCleanByteArray());
+            authenticationCrypto.Initialize(Game.Key.ToCleanByteArray());
         }
 
         [PacketHandler(WorldCommand.ServerAuthResponse)]

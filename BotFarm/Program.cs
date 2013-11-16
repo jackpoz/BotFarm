@@ -12,7 +12,7 @@ namespace BotFarm
         static void Main(string[] args)
         {
             BotFactory factory = new BotFactory();
-            factory.SetupFactory(0);
+            factory.SetupFactory(1);
             Console.ReadLine();
             GC.KeepAlive(factory);
         }

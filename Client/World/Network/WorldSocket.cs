@@ -101,7 +101,7 @@ namespace Client.World.Network
             Interlocked.Increment(ref transferred);
             Interlocked.Increment(ref received);
 
-            AuthenticationCrypto.Decrypt(ReceiveData, 0, 1);
+            authenticationCrypto.Decrypt(ReceiveData, 0, 1);
             if ((ReceiveData[0] & 0x80) != 0)
             {
                 // need to resize the buffer
@@ -142,7 +142,7 @@ namespace Client.World.Network
             {
                 // finished reading header
                 // the first byte was decrypted already, so skip it
-                AuthenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
+                authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
                 ServerHeader header = new ServerHeader(ReceiveData);
 
                 Game.UI.LogLine(header.ToString(), LogLevel.Debug);
@@ -218,7 +218,7 @@ namespace Client.World.Network
             {
                 Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
 
-                if (AuthenticationCrypto.Status == AuthStatus.Ready)
+                if (authenticationCrypto.Status == AuthStatus.Ready)
                     // AuthenticationCrypto is ready, handle the packet asynchronously
                     handler.BeginInvoke(packet, result => handler.EndInvoke(result), null);
                 else
@@ -263,7 +263,7 @@ namespace Client.World.Network
 
         public void Send(OutPacket packet)
         {
-            byte[] data = packet.Finalize();
+            byte[] data = packet.Finalize(authenticationCrypto);
 
             // TODO: switch to asynchronous send
             lock (SendLock)

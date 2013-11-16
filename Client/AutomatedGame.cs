@@ -14,6 +14,7 @@ using System.Threading;
 using System.Numerics;
 using Client.Chat.Definitions;
 using Client.World.Definitions;
+using System.Diagnostics;
 
 namespace Client
 {
@@ -28,6 +29,7 @@ namespace Client
         public bool LoggedIn { get; private set; }
         public int RealmID { get; private set; }
         public int Character { get; private set; }
+        public bool Connected { get; private set; }
 
         Queue<Action> scheduledActions;
 
@@ -63,7 +65,10 @@ namespace Client
             socket.InitHandlers();
 
             if (socket.Connect())
+            {
                 socket.Start();
+                Connected = true;
+            }
             else
                 Exit();
         }
@@ -158,6 +163,29 @@ namespace Client
             throw new NotImplementedException();
         }
 
+        public void CreateCharacter()
+        {
+            OutPacket createCharacterPacket = new OutPacket(WorldCommand.CMSG_CHAR_CREATE);
+            StringBuilder charName = new StringBuilder("Bot");
+            foreach (char c in Username.Substring(3))
+	        {
+                charName.Append((char)(97 + int.Parse(c.ToString())));
+	        }
+            charName.Length = 12;
+            createCharacterPacket.Write(charName.ToString().ToCString());
+            byte race = 1; createCharacterPacket.Write(race);
+            byte _class = 5; createCharacterPacket.Write(_class);
+            byte gender = 0; createCharacterPacket.Write(gender);
+            byte skin = 6; createCharacterPacket.Write(skin);
+            byte face = 5; createCharacterPacket.Write(face);
+            byte hairStyle = 0; createCharacterPacket.Write(hairStyle);
+            byte hairColor = 1; createCharacterPacket.Write(hairColor);
+            byte facialHair = 5; createCharacterPacket.Write(facialHair);
+            byte outfitId = 0; createCharacterPacket.Write(outfitId);
+
+            SendPacket(createCharacterPacket);
+        }
+
         #region Commands
         public void DoSayChat(string message)
         {
@@ -193,14 +221,21 @@ namespace Client
         #region Unused Methods
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
+#if DEBUG
+            Console.WriteLine(message);
+#endif
         }
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
+#if DEBUG
+            Console.WriteLine(message);
+#endif
         }
 
         public void LogException(string message)
         {
+            Console.WriteLine(message);
         }
 
         public IGameUI UI

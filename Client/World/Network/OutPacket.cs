@@ -19,13 +19,13 @@ namespace Client.World.Network
             base.OutStream = Buffer;
         }
 
-        public byte[] Finalize()
+        public byte[] Finalize(AuthenticationCrypto authenticationCrypto)
         {
             if (FinalizedPacket == null)
             {
                 byte[] data = new byte[6 + Buffer.Length];
-                byte[] size = ((ClientHeader)Header).EncryptedSize;
-                byte[] command = ((ClientHeader)Header).EncryptedCommand;
+                byte[] size = ((ClientHeader)Header).EncryptedSize(authenticationCrypto);
+                byte[] command = ((ClientHeader)Header).EncryptedCommand(authenticationCrypto);
 
                 Array.Copy(size, 0, data, 0, 2);
                 Array.Copy(command, 0, data, 2, 4);

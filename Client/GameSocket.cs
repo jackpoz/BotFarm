@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net.Sockets;
+using Client.World.Network;
 
 namespace Client
 {
@@ -11,6 +12,8 @@ namespace Client
         public IGame Game { get; protected set; }
 
         protected TcpClient connection { get; set; }
+
+        public AuthenticationCrypto authenticationCrypto = new AuthenticationCrypto();
 
         public bool IsConnected
         {

@@ -1,5 +1,7 @@
 ﻿using BotFarm.Properties;
 using Client;
+using Client.World;
+using Client.World.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +37,26 @@ namespace BotFarm
 
         public AutomatedGame CreateBot()
         {
-            throw new NotImplementedException();
+            Random random = new Random();
+            string username = "BOT" + random.Next();
+            string password = random.Next().ToString();
+            factoryGame.DoSayChat(".account create " + username + " " + password);
+            Thread.Sleep(1000);
+
+            AutomatedGame game = new AutomatedGame(Settings.Default.Hostname,
+                                                   Settings.Default.Port,
+                                                   username,
+                                                   password,
+                                                   Settings.Default.RealmID,
+                                                   0);
+            game.Start();
+            while(!game.Connected)
+                Thread.Sleep(1000);
+            game.CreateCharacter();
+            Thread.Sleep(1000);
+            game.SendPacket(new OutPacket(WorldCommand.ClientEnumerateCharacters));
+            Thread.Sleep(1000);
+            return game;
         }
 
         public void SetupFactory(int botCount)

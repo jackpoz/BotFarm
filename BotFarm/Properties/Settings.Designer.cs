@@ -82,5 +82,17 @@ namespace BotFarm.Properties {
                 this["RealmID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int BotsCount {
+            get {
+                return ((int)(this["BotsCount"]));
+            }
+            set {
+                this["BotsCount"] = value;
+            }
+        }
     }
 }

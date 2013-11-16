@@ -221,14 +221,14 @@ namespace Client
         #region Unused Methods
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
-#if DEBUG
+#if DEBUG_LOG
             Console.WriteLine(message);
 #endif
         }
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
-#if DEBUG
+#if DEBUG_LOG
             Console.WriteLine(message);
 #endif
         }

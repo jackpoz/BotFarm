@@ -86,10 +86,11 @@ namespace Client.World.Network
         /// </summary>
         private void ReadSizeCallback(IAsyncResult result)
         {
-            if (this.connection.Client == null)
+            var client = this.connection.Client;
+            if (client == null)
                 return;
 
-            int bytesRead = this.connection.Client.EndReceive(result);
+            int bytesRead = client.EndReceive(result);
             if (bytesRead == 0 && result.IsCompleted)
             {
                 // TODO: world server disconnect

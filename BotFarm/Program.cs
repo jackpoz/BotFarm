@@ -1,4 +1,5 @@
-﻿using Client;
+﻿using BotFarm.Properties;
+using Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,12 @@ namespace BotFarm
     {
         static void Main(string[] args)
         {
-            BotFactory factory = new BotFactory();
-            factory.SetupFactory(1);
-            Console.ReadLine();
-            GC.KeepAlive(factory);
+            using (BotFactory factory = new BotFactory())
+            {
+                factory.SetupFactory(Settings.Default.BotsCount);
+                Console.ReadLine();
+                GC.KeepAlive(factory);
+            }
         }
     }
 }

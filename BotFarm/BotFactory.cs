@@ -27,8 +27,15 @@ namespace BotFarm
                 botInfos = new List<BotInfo>();
             else using (StreamReader sr = new StreamReader(botsInfosPath))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(List<BotInfo>));
-                botInfos = (List<BotInfo>)serializer.Deserialize(sr);
+                try
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<BotInfo>));
+                    botInfos = (List<BotInfo>)serializer.Deserialize(sr);
+                }
+                catch(InvalidOperationException)
+                {
+                    botInfos = new List<BotInfo>();
+                }
             }
 
             factoryGame = new AutomatedGame(Settings.Default.Hostname,
@@ -113,6 +120,8 @@ namespace BotFarm
             {
                 bots.Add(LoadBot(info));
                 createdBots++;
+                if (createdBots == botCount)
+                    return;
             }
 
             for (; createdBots < botCount; createdBots++)

@@ -10,6 +10,89 @@ namespace Client.World.Network
 {
     public partial class WorldSocket : GameSocket
     {
+        static List<WorldCommand> IgnoredOpcodes = new List<WorldCommand>()
+        {
+            WorldCommand.SMSG_ADDON_INFO,
+            WorldCommand.SMSG_CLIENTCACHE_VERSION,
+            WorldCommand.SMSG_TUTORIAL_FLAGS,
+            WorldCommand.SMSG_WARDEN_DATA,
+            WorldCommand.SMSG_CRITERIA_UPDATE,
+            WorldCommand.MSG_SET_DUNGEON_DIFFICULTY,
+            WorldCommand.SMSG_ACCOUNT_DATA_TIMES,
+            WorldCommand.SMSG_FEATURE_SYSTEM_STATUS,
+            WorldCommand.SMSG_MOTD,
+            WorldCommand.SMSG_GUILD_EVENT,
+            WorldCommand.SMSG_GUILD_BANK_LIST,
+            WorldCommand.SMSG_GUILD_ROSTER,
+            WorldCommand.SMSG_LEARNED_DANCE_MOVES,
+            WorldCommand.SMSG_SET_PCT_SPELL_MODIFIER,
+            WorldCommand.SMSG_CONTACT_LIST,
+            WorldCommand.SMSG_BINDPOINTUPDATE,
+            WorldCommand.SMSG_INSTANCE_DIFFICULTY,
+            WorldCommand.SMSG_SEND_UNLEARN_SPELLS,
+            WorldCommand.SMSG_ACTION_BUTTONS,
+            WorldCommand.SMSG_ALL_ACHIEVEMENT_DATA,
+            WorldCommand.SMSG_EQUIPMENT_SET_LIST,
+            WorldCommand.SMSG_LOGIN_SETTIMESPEED,
+            WorldCommand.SMSG_INIT_WORLD_STATES,
+            WorldCommand.SMSG_UPDATE_WORLD_STATE,
+            WorldCommand.SMSG_WEATHER,
+            WorldCommand.SMSG_TIME_SYNC_REQ,
+            WorldCommand.SMSG_NOTIFICATION,
+            WorldCommand.SMSG_SPLINE_MOVE_STOP_SWIM,
+            WorldCommand.SMSG_SPLINE_MOVE_SET_WALK_MODE,
+            WorldCommand.SMSG_SPLINE_MOVE_SET_RUN_MODE,
+            WorldCommand.SMSG_SPLINE_MOVE_START_SWIM,
+            WorldCommand.MSG_MOVE_SET_FACING,
+            WorldCommand.SMSG_CHAR_CREATE,
+            WorldCommand.SMSG_TRIGGER_CINEMATIC,
+            WorldCommand.SMSG_TRANSFER_PENDING,
+            WorldCommand.SMSG_UPDATE_INSTANCE_OWNERSHIP,
+            WorldCommand.SMSG_EMOTE,
+
+        };
+
+        static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()
+        {
+            WorldCommand.SMSG_SET_PROFICIENCY,
+            WorldCommand.SMSG_POWER_UPDATE,
+            WorldCommand.SMSG_CANCEL_COMBAT,
+            WorldCommand.SMSG_LOGIN_VERIFY_WORLD,
+            WorldCommand.SMSG_TALENTS_INFO,
+            WorldCommand.SMSG_INITIAL_SPELLS,
+            WorldCommand.SMSG_INITIALIZE_FACTIONS,
+            WorldCommand.SMSG_SET_FORCED_REACTIONS,
+            WorldCommand.SMSG_COMPRESSED_UPDATE_OBJECT,
+            WorldCommand.SMSG_UPDATE_OBJECT,
+            WorldCommand.SMSG_AURA_UPDATE,
+            WorldCommand.SMSG_DESTROY_OBJECT,
+            WorldCommand.SMSG_MONSTER_MOVE,
+            WorldCommand.SMSG_SPELL_GO,
+            WorldCommand.SMSG_AURA_UPDATE_ALL,
+            WorldCommand.SMSG_AI_REACTION,
+            WorldCommand.SMSG_HIGHEST_THREAT_UPDATE,
+            WorldCommand.SMSG_THREAT_UPDATE,
+            WorldCommand.SMSG_NEW_WORLD,
+            WorldCommand.MSG_MOVE_START_FORWARD,
+            WorldCommand.MSG_MOVE_JUMP,
+            WorldCommand.MSG_MOVE_START_STRAFE_RIGHT,
+            WorldCommand.MSG_MOVE_STOP,
+            WorldCommand.MSG_MOVE_HEARTBEAT,
+            WorldCommand.MSG_MOVE_FALL_LAND,
+            WorldCommand.SMSG_SPELL_START,
+            WorldCommand.SMSG_SPELLHEALLOG,
+            WorldCommand.SMSG_ATTACKSTART,
+            WorldCommand.SMSG_ATTACKERSTATEUPDATE,
+            WorldCommand.SMSG_ATTACKSTOP,
+            WorldCommand.SMSG_THREAT_REMOVE,
+            WorldCommand.SMSG_PERIODICAURALOG,
+            WorldCommand.MSG_MOVE_START_STRAFE_LEFT,
+            WorldCommand.MSG_MOVE_STOP_STRAFE,
+            WorldCommand.SMSG_SPELLNONMELEEDAMAGELOG,
+            WorldCommand.SMSG_LOOT_LIST,
+            WorldCommand.SMSG_THREAT_CLEAR,
+        };
+
         WorldServerInfo ServerInfo;
 
         private long transferred;
@@ -86,37 +169,41 @@ namespace Client.World.Network
         /// </summary>
         private void ReadSizeCallback(IAsyncResult result)
         {
-            var client = this.connection.Client;
-            if (client == null)
-                return;
-
-            int bytesRead = client.EndReceive(result);
-            if (bytesRead == 0 && result.IsCompleted)
+            try
             {
-                // TODO: world server disconnect
-                Game.UI.LogLine("Server has closed the connection");
-                Game.Exit();
-                return;
+                int bytesRead = this.connection.Client.EndReceive(result);
+                if (bytesRead == 0 && result.IsCompleted)
+                {
+                    // TODO: world server disconnect
+                    Game.UI.LogLine("Server has closed the connection");
+                    Game.Exit();
+                    return;
+                }
+
+                Interlocked.Increment(ref transferred);
+                Interlocked.Increment(ref received);
+
+                authenticationCrypto.Decrypt(ReceiveData, 0, 1);
+                if ((ReceiveData[0] & 0x80) != 0)
+                {
+                    // need to resize the buffer
+                    byte temp = ReceiveData[0];
+                    ReceiveData = new byte[5];
+                    ReceiveData[0] = (byte)((0x7f & temp));
+
+                    Remaining = 4;
+                }
+                else
+                    Remaining = 3;
+
+                Index = 1;
+                BeginRead(new AsyncCallback(ReadHeaderCallback));
             }
-
-            Interlocked.Increment(ref transferred);
-            Interlocked.Increment(ref received);
-
-            authenticationCrypto.Decrypt(ReceiveData, 0, 1);
-            if ((ReceiveData[0] & 0x80) != 0)
-            {
-                // need to resize the buffer
-                byte temp = ReceiveData[0];
-                ReceiveData = new byte[5];
-                ReceiveData[0] = (byte)((0x7f & temp));
-
-                Remaining = 4;
-            }
-            else
-                Remaining = 3;
-
-            Index = 1;
-            BeginRead(new AsyncCallback(ReadHeaderCallback));
+            // these exceptions can happen as race condition on shutdown
+            catch(ObjectDisposedException)
+            { }
+            catch(NullReferenceException)
+            { }
         }
 
         /// <summary>
@@ -124,54 +211,62 @@ namespace Client.World.Network
         /// </summary>
         private void ReadHeaderCallback(IAsyncResult result)
         {
-            //if (ReceiveData.Length != 4 && ReceiveData.Length != 5)
-              //  throw new Exception("ReceiveData.Length not in order");
-
-            int bytesRead = this.connection.Client.EndReceive(result);
-            if (bytesRead == 0 && result.IsCompleted)
+            try
             {
-                // TODO: world server disconnect
-                Game.UI.LogLine("Server has closed the connection");
-                Game.Exit();
-                return;
-            }
+                //if (ReceiveData.Length != 4 && ReceiveData.Length != 5)
+                //  throw new Exception("ReceiveData.Length not in order");
 
-            Interlocked.Add(ref transferred, bytesRead);
-            Interlocked.Add(ref received, bytesRead);
-
-            if (bytesRead == Remaining)
-            {
-                // finished reading header
-                // the first byte was decrypted already, so skip it
-                authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
-                ServerHeader header = new ServerHeader(ReceiveData);
-
-                Game.UI.LogLine(header.ToString(), LogLevel.Debug);
-                if (header.InputDataLength > 5 || header.InputDataLength < 4)
-                    Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
-
-                if (header.Size > 0)
+                int bytesRead = this.connection.Client.EndReceive(result);
+                if (bytesRead == 0 && result.IsCompleted)
                 {
-                    // read the packet payload
-                    Index = 0;
-                    Remaining = header.Size;
-                    ReceiveData = new byte[header.Size];
-                    BeginRead(new AsyncCallback(ReadPayloadCallback), header);
+                    // TODO: world server disconnect
+                    Game.UI.LogLine("Server has closed the connection");
+                    Game.Exit();
+                    return;
+                }
+
+                Interlocked.Add(ref transferred, bytesRead);
+                Interlocked.Add(ref received, bytesRead);
+
+                if (bytesRead == Remaining)
+                {
+                    // finished reading header
+                    // the first byte was decrypted already, so skip it
+                    authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
+                    ServerHeader header = new ServerHeader(ReceiveData);
+
+                    Game.UI.LogLine(header.ToString(), LogLevel.Debug);
+                    if (header.InputDataLength > 5 || header.InputDataLength < 4)
+                        Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
+
+                    if (header.Size > 0)
+                    {
+                        // read the packet payload
+                        Index = 0;
+                        Remaining = header.Size;
+                        ReceiveData = new byte[header.Size];
+                        BeginRead(new AsyncCallback(ReadPayloadCallback), header);
+                    }
+                    else
+                    {
+                        // the packet is just a header, start next packet
+                        HandlePacket(new InPacket(header));
+                        Start();
+                    }
                 }
                 else
                 {
-                    // the packet is just a header, start next packet
-                    HandlePacket(new InPacket(header));
-                    Start();
+                    // more header to read
+                    Index += bytesRead;
+                    Remaining -= bytesRead;
+                    BeginRead(new AsyncCallback(ReadHeaderCallback));
                 }
             }
-            else
-            {
-                // more header to read
-                Index += bytesRead;
-                Remaining -= bytesRead;
-                BeginRead(new AsyncCallback(ReadHeaderCallback));
-            }
+            // these exceptions can happen as race condition on shutdown
+            catch (ObjectDisposedException)
+            { }
+            catch (NullReferenceException)
+            { }
         }
 
         /// <summary>
@@ -215,7 +310,7 @@ namespace Client.World.Network
         private void HandlePacket(InPacket packet)
         {
             PacketHandler handler;
-            if (PacketHandlers.TryGetValue((WorldCommand)packet.Header.Command, out handler))
+            if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
             {
                 Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
 
@@ -226,7 +321,10 @@ namespace Client.World.Network
                     handler(packet);
             }
             else
-                Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+            {
+                if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
+                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+            }
         }
 
         #region GameSocket Members

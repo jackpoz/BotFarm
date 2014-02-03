@@ -331,21 +331,29 @@ namespace Client.Authentication.Network
 
         protected void ReadCallback(IAsyncResult result)
         {
-            int size = this.connection.Client.EndReceive(result);
-
-            if (size == 0)
+            try
             {
-                Game.UI.LogLine("Server has disconnected.", LogLevel.Info);
-                Game.Exit();
+                int size = this.connection.Client.EndReceive(result);
+
+                if (size == 0)
+                {
+                    Game.UI.LogLine("Server has disconnected.", LogLevel.Info);
+                    Game.Exit();
+                }
+
+                AuthCommand command = (AuthCommand)ReceiveData[0];
+
+                CommandHandler handler;
+                if (Handlers.TryGetValue(command, out handler))
+                    handler();
+                else
+                    Game.UI.LogLine(string.Format("Unkown or unhandled command '{0}'", command), LogLevel.Debug);
             }
-
-            AuthCommand command = (AuthCommand)ReceiveData[0];
-
-            CommandHandler handler;
-            if (Handlers.TryGetValue(command, out handler))
-                handler();
-            else
-                Game.UI.LogLine(string.Format("Unkown or unhandled command '{0}'", command), LogLevel.Debug);
+            // these exceptions can happen as race condition on shutdown
+            catch (ObjectDisposedException)
+            { }
+            catch (NullReferenceException)
+            { }
         }
 
         public override bool Connect()

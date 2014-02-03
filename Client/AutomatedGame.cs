@@ -218,6 +218,9 @@ namespace Client
             scheduledActions.Enqueue(action);
         }
 
+        #region Handlers
+        #endregion
+
         #region Unused Methods
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
@@ -228,7 +231,7 @@ namespace Client
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
-#if DEBUG_LOG
+#if DEBUG
             Console.WriteLine(message);
 #endif
         }

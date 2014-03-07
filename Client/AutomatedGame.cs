@@ -78,13 +78,13 @@ namespace Client
             // the initial socket is an AuthSocket - it will initiate its own asynch read
             Running = socket.Connect();
 
-            Task.Run(() =>
+            Task.Run(async () =>
                 {
                     while (Running)
                     {
                         // main loop here
                         Update();
-                        Thread.Sleep(500);
+                        await Task.Delay(500);
                     }
                 });
         }

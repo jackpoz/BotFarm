@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using Client.Authentication;
 using Client.UI;
+using System.IO;
 
 namespace Client.World.Network
 {
@@ -372,7 +373,16 @@ namespace Client.World.Network
 
             // TODO: switch to asynchronous send
             lock (SendLock)
-                connection.Client.Send(data);
+            {
+                try
+                {
+                    connection.Client.Send(data);
+                }
+                catch(ObjectDisposedException)
+                { }
+                catch(EndOfStreamException)
+                { }
+            }
 
             Interlocked.Add(ref transferred, data.Length);
             Interlocked.Add(ref sent, data.Length);

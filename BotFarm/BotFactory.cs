@@ -126,6 +126,8 @@ namespace BotFarm
 
             for (; createdBots < botCount; createdBots++)
                 bots.Add(CreateBot());
+
+            Log("Finished setting up bot factory with " + botCount + " bots");
         }
 
         public void Dispose()

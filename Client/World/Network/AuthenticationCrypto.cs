@@ -24,9 +24,6 @@ namespace Client.World.Network
             0x12, 0xDD, 0xC0, 0x93, 0x42, 0x91, 0x53, 0x57
         };
 
-        static readonly HMACSHA1 outputHMAC = new HMACSHA1(encryptionKey);
-        static readonly HMACSHA1 inputHMAC = new HMACSHA1(decryptionKey);
-
         ARC4 encryptionStream;
         ARC4 decryptionStream;
 
@@ -50,11 +47,13 @@ namespace Client.World.Network
         public void Initialize(byte[] sessionKey)
         {
             // create RC4-drop[1024] stream
-            encryptionStream = new ARC4(outputHMAC.ComputeHash(sessionKey));
+            using(HMACSHA1 outputHMAC = new HMACSHA1(encryptionKey))
+                encryptionStream = new ARC4(outputHMAC.ComputeHash(sessionKey));
             encryptionStream.Process(new byte[1024], 0, 1024);
 
             // create RC4-drop[1024] stream
-            decryptionStream = new ARC4(inputHMAC.ComputeHash(sessionKey));
+            using(HMACSHA1 inputHMAC = new HMACSHA1(decryptionKey))
+                decryptionStream = new ARC4(inputHMAC.ComputeHash(sessionKey));
             decryptionStream.Process(new byte[1024], 0, 1024);
 
             Status = AuthStatus.Ready;

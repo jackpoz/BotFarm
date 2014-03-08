@@ -140,6 +140,12 @@ namespace Client.Authentication.Network
 
                     byte[] keyHash;
                     byte[] sData = S.ToCleanByteArray();
+                    if (sData.Length < 32)
+                    {
+                        var tmpBuffer = new byte[32];
+                        Buffer.BlockCopy(sData, 0, tmpBuffer, 32 - sData.Length, sData.Length);
+                        sData = tmpBuffer;
+                    }
                     byte[] keyData = new byte[40];
                     byte[] temp = new byte[16];
 

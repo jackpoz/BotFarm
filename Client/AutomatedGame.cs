@@ -234,7 +234,7 @@ namespace Client
 #if !DEBUG_LOG
             if (level > LogLevel.Debug)
 #endif
-            Console.WriteLine(message);
+            Console.WriteLine(Username + " - " + message);
         }
 
         public void LogException(string message)

@@ -204,6 +204,10 @@ namespace Client.World.Network
             { }
             catch(NullReferenceException)
             { }
+            catch(InvalidOperationException)
+            { }
+            catch(SocketException)
+            { }
         }
 
         /// <summary>

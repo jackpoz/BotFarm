@@ -176,7 +176,7 @@ namespace Client.World.Network
                 {
                     // TODO: world server disconnect
                     Game.UI.LogLine("Server has closed the connection");
-                    Game.Exit();
+                    Game.Reconnect();
                     return;
                 }
 
@@ -225,7 +225,7 @@ namespace Client.World.Network
                 {
                     // TODO: world server disconnect
                     Game.UI.LogLine("Server has closed the connection");
-                    Game.Exit();
+                    Game.Reconnect();
                     return;
                 }
 
@@ -283,7 +283,7 @@ namespace Client.World.Network
             {
                 // TODO: world server disconnect
                 Game.UI.LogLine("Server has closed the connection");
-                Game.Exit();
+                Game.Reconnect();
                 return;
             }
 
@@ -347,9 +347,11 @@ namespace Client.World.Network
             {
                 Game.UI.Log(string.Format("Connecting to realm {0}... ", ServerInfo.Name));
 
+                if (connection != null)
+                    connection.Close();
                 connection = new TcpClient(ServerInfo.Address, ServerInfo.Port);
 
-                Game.UI.LogLine("done!");
+                Game.UI.LogLine("done!", LogLevel.Debug);
             }
             catch (SocketException ex)
             {

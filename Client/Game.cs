@@ -22,6 +22,8 @@ namespace Client
 
         void Start();
 
+        void Reconnect();
+
         void Exit();
 
         void SendPacket(OutPacket packet);
@@ -90,6 +92,11 @@ namespace Client
             }
 
             UI.Exit();
+        }
+
+        public void Reconnect()
+        {
+            Exit();
         }
 
         public void Exit()

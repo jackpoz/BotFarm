@@ -25,7 +25,10 @@ namespace Client
         GameSocket socket;
 
         public BigInteger Key { get; private set; }
+        public string Hostname { get; private set; }
+        public int Port { get; private set; }
         public string Username { get; private set; }
+        public string Password { get; private set; }
         public bool LoggedIn { get; private set; }
         public int RealmID { get; private set; }
         public int Character { get; private set; }
@@ -48,9 +51,12 @@ namespace Client
             scheduledActions = new Queue<Action>();
             World = new GameWorld();
 
+            this.Hostname = hostname;
+            this.Port = port;
             this.Username = username;
+            this.Password = password;
 
-            socket = new AuthSocket(this, hostname, port, username, password);
+            socket = new AuthSocket(this, Hostname, Port, Username, Password);
             socket.InitHandlers();
         }
 
@@ -99,6 +105,18 @@ namespace Client
 
             var action = scheduledActions.Dequeue();
             action();
+        }
+
+        public void Reconnect()
+        {
+            if (Running)
+            {
+                socket.Disconnect();
+                scheduledActions.Clear();
+                socket = new AuthSocket(this, Hostname, Port, Username, Password);
+                socket.InitHandlers();
+                socket.Connect();
+            }
         }
 
         public void Exit()

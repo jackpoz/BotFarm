@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Text;
 using Client.Crypto;
 using Client.UI;
+using System.Threading;
 
 namespace Client.Authentication.Network
 {
@@ -260,6 +261,7 @@ namespace Client.Authentication.Network
                 case AuthResult.NO_MATCH:
                 case AuthResult.UNKNOWN2:
                     Game.UI.LogLine("Wrong password or invalid account or authentication error", LogLevel.Error);
+                    Thread.Sleep(1000);
                     break;
                 case AuthResult.WRONG_BUILD_NUMBER:
                     Game.UI.LogLine("Wrong build number", LogLevel.Error);
@@ -372,7 +374,7 @@ namespace Client.Authentication.Network
                 output = new BinaryWriter(connection.GetStream());
                 input = new BinaryReader(connection.GetStream());
 
-                Game.UI.LogLine("done!");
+                Game.UI.LogLine("done!", LogLevel.Debug);
 
                 SendLogonChallenge();
             }

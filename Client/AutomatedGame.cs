@@ -231,9 +231,10 @@ namespace Client
 
         public void LogLine(string message, LogLevel level = LogLevel.Info)
         {
-#if DEBUG
-            Console.WriteLine(message);
+#if !DEBUG_LOG
+            if (level > LogLevel.Debug)
 #endif
+            Console.WriteLine(message);
         }
 
         public void LogException(string message)

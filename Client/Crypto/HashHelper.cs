@@ -19,25 +19,31 @@ namespace Client.Crypto
         private delegate byte[] HashFunction(params byte[][] data);
 
         static Dictionary<HashAlgorithm, HashFunction> HashFunctions;
-        static Dictionary<HashAlgorithm, HashAlgo> HashAlgorithms;
 
         static HashHelper()
         {
             HashFunctions = new Dictionary<HashAlgorithm, HashFunction>();
-            HashAlgorithms = new Dictionary<HashAlgorithm, HashAlgo>();
 
             HashFunctions[HashAlgorithm.SHA1] = SHA1;
-            HashAlgorithms[HashAlgorithm.SHA1] = CryptoNS.SHA1.Create();
         }
 
         private static byte[] Combine(byte[][] buffers)
         {
-            MemoryStream stream = new MemoryStream();
+            int length = 0;
+            foreach (var buffer in buffers)
+                length += buffer.Length;
 
-            foreach (byte[] buffer in buffers)
-                stream.Write(buffer, 0, buffer.Length);
+            byte[] result = new byte[length];
 
-            return stream.ToArray();
+            int position = 0;
+
+            foreach (var buffer in buffers)
+            {
+                Buffer.BlockCopy(buffer, 0, result, position, buffer.Length);
+                position += buffer.Length;
+            }
+
+            return result;
         }
 
         public static byte[] Hash(this HashAlgorithm algorithm, params byte[][] data)
@@ -47,7 +53,10 @@ namespace Client.Crypto
 
         private static byte[] SHA1(params byte[][] data)
         {
-            return HashAlgorithms[HashAlgorithm.SHA1].ComputeHash(Combine(data));
+            using (System.Security.Cryptography.SHA1 alg = CryptoNS.SHA1.Create())
+            {
+                return alg.ComputeHash(Combine(data));
+            }
         }
     }
 }

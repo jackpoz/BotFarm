@@ -121,7 +121,7 @@ namespace BotFarm
                 bots.Add(LoadBot(info));
                 createdBots++;
                 if (createdBots == botCount)
-                    return;
+                    break;
             }
 
             for (; createdBots < botCount; createdBots++)

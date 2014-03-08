@@ -82,7 +82,7 @@ namespace Client.World.Network
 
             if (count == 0)
             {
-                Game.UI.LogLine("No characters found!");
+                Game.UI.LogLine("No characters found!", UI.LogLevel.Debug);
             }
             else
             {

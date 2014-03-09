@@ -314,21 +314,28 @@ namespace Client.World.Network
 
         private void HandlePacket(InPacket packet)
         {
-            PacketHandler handler;
-            if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
+            try
             {
-                Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
+                PacketHandler handler;
+                if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
+                {
+                    Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
 
-                if (authenticationCrypto.Status == AuthStatus.Ready)
-                    // AuthenticationCrypto is ready, handle the packet asynchronously
-                    handler.BeginInvoke(packet, result => handler.EndInvoke(result), null);
+                    if (authenticationCrypto.Status == AuthStatus.Ready)
+                        // AuthenticationCrypto is ready, handle the packet asynchronously
+                        handler.BeginInvoke(packet, result => handler.EndInvoke(result), null);
+                    else
+                        handler(packet);
+                }
                 else
-                    handler(packet);
+                {
+                    if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
+                        Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
-                    Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+                Game.UI.LogException(ex);
             }
         }
 

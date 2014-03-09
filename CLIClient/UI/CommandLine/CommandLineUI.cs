@@ -274,6 +274,12 @@ namespace Client.UI.CommandLine
             throw new Exception(message);
         }
 
+        public void LogException(Exception ex)
+        {
+            _logFile.WriteLine(String.Format("{0} : Exception: {1} : Stacktrace : {2}", DateTime.Now, ex.Message, ex.StackTrace));
+            throw ex;
+        }
+
         public string ReadLine()
         {
             //! We don't want to clutter the console, so wait for input before printing output

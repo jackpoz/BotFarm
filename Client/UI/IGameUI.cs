@@ -29,6 +29,8 @@ namespace Client.UI
         void LogLine(string message, LogLevel level = LogLevel.Info);
         void LogException(string message);
 
+        void LogException(Exception ex);
+
         #endregion
 
         #region UI Input

@@ -260,6 +260,11 @@ namespace Client
             Console.WriteLine(message);
         }
 
+        public void LogException(Exception ex)
+        {
+            Console.WriteLine(string.Format("{0} {1}", ex.Message, ex.StackTrace));
+        }
+
         public IGameUI UI
         {
             get

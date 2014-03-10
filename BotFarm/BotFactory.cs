@@ -116,13 +116,11 @@ namespace BotFarm
         {
             Log("Setting up bot factory with " + botCount + " bots");
             int createdBots = 0;
-            foreach (var info in botInfos)
+            Parallel.ForEach<BotInfo>(botInfos.Take(botCount), info =>
             {
                 bots.Add(LoadBot(info));
                 createdBots++;
-                if (createdBots == botCount)
-                    break;
-            }
+            });
 
             for (; createdBots < botCount; createdBots++)
                 bots.Add(CreateBot());
@@ -152,8 +150,9 @@ namespace BotFarm
 
         public void Dispose()
         {
-            foreach (var bot in bots)
-                bot.Dispose();
+            Parallel.ForEach<AutomatedGame>(bots, 
+                bot => bot.Dispose());
+
             factoryGame.Dispose();
 
             using (StreamWriter sw = new StreamWriter(botsInfosPath))

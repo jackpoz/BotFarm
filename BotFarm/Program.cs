@@ -15,7 +15,6 @@ namespace BotFarm
             using (BotFactory factory = new BotFactory())
             {
                 factory.SetupFactory(Settings.Default.BotsCount);
-                Console.ReadLine();
                 GC.KeepAlive(factory);
             }
         }

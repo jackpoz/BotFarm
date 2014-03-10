@@ -128,6 +128,26 @@ namespace BotFarm
                 bots.Add(CreateBot());
 
             Log("Finished setting up bot factory with " + botCount + " bots");
+
+            for (; ; )
+            {
+                string line = Console.ReadLine();
+                switch(line)
+                {
+                    case "quit":
+                    case "exit":
+                    case "close":
+                    case "shutdown":
+                        return;
+                    case "info":
+                    case "infos":
+                    case "stats":
+                    case "statistics":
+                        Console.WriteLine(bots.Where(bot => bot.Connected).Count() + " bots are connected");
+                        Console.WriteLine(bots.Where(bot => bot.LoggedIn).Count() + " bots are ingame");
+                        break;
+                }
+            }
         }
 
         public void Dispose()

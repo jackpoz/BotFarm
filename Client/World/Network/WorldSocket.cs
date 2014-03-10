@@ -109,8 +109,6 @@ namespace Client.World.Network
         {
             Game = program;
             ServerInfo = serverInfo;
-
-            SendLock = new object();
         }
 
         #region Handler registration
@@ -372,24 +370,18 @@ namespace Client.World.Network
 
         #endregion
 
-        object SendLock;
-
         public void Send(OutPacket packet)
         {
             byte[] data = packet.Finalize(authenticationCrypto);
 
-            // TODO: switch to asynchronous send
-            lock (SendLock)
+            try
             {
-                try
-                {
-                    connection.Client.Send(data);
-                }
-                catch(ObjectDisposedException)
-                { }
-                catch(EndOfStreamException)
-                { }
+                connection.Client.BeginSend(data, 0, data.Length, SocketFlags.None, null, null);
             }
+            catch(ObjectDisposedException)
+            { }
+            catch(EndOfStreamException)
+            { }
 
             Interlocked.Add(ref transferred, data.Length);
             Interlocked.Add(ref sent, data.Length);

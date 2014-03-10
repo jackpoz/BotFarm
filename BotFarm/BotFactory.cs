@@ -16,13 +16,21 @@ namespace BotFarm
 {
     class BotFactory : IDisposable
     {
-        List<AutomatedGame> bots = new List<AutomatedGame>();
+        public static BotFactory Instance
+        {
+            get;
+            private set;
+        }
+
+        List<BotGame> bots = new List<BotGame>();
         AutomatedGame factoryGame;
         List<BotInfo> botInfos;
         const string botsInfosPath = "botsinfos.xml";
 
         public BotFactory()
         {
+            Instance = this;
+
             if (!File.Exists(botsInfosPath))
                 botInfos = new List<BotInfo>();
             else using (StreamReader sr = new StreamReader(botsInfosPath))
@@ -55,11 +63,11 @@ namespace BotFarm
             }
         }
 
-        public AutomatedGame CreateBot()
+        public BotGame CreateBot()
         {
             Log("Creating new bot");
             Random random = new Random();
-            AutomatedGame game = null;
+            BotGame game = null;
 
             do
             {
@@ -70,12 +78,13 @@ namespace BotFarm
 
                 for (int loginTries = 0; loginTries < 5; loginTries++)
                 {
-                    game = new AutomatedGame(Settings.Default.Hostname,
+                    game = new BotGame(Settings.Default.Hostname,
                                                        Settings.Default.Port,
                                                        username,
                                                        password,
                                                        Settings.Default.RealmID,
                                                        0);
+                    game.SettingUp = true;
                     game.Start();
                     for (int tries = 0; !game.Connected && tries < 10; tries++)
                         Thread.Sleep(1000);
@@ -97,12 +106,13 @@ namespace BotFarm
             Thread.Sleep(1000);
             game.SendPacket(new OutPacket(WorldCommand.ClientEnumerateCharacters));
             Thread.Sleep(1000);
+            game.SettingUp = false;
             return game;
         }
 
-        public AutomatedGame LoadBot(BotInfo info)
+        public BotGame LoadBot(BotInfo info)
         {
-            AutomatedGame game = new AutomatedGame(Settings.Default.Hostname,
+            BotGame game = new BotGame(Settings.Default.Hostname,
                                                    Settings.Default.Port,
                                                    info.Username,
                                                    info.Password,
@@ -116,7 +126,8 @@ namespace BotFarm
         {
             Log("Setting up bot factory with " + botCount + " bots");
             int createdBots = 0;
-            Parallel.ForEach<BotInfo>(botInfos.Take(botCount), info =>
+            var infos = botInfos.Take(botCount).ToList();
+            Parallel.ForEach<BotInfo>(infos, info =>
             {
                 bots.Add(LoadBot(info));
                 createdBots++;
@@ -150,7 +161,7 @@ namespace BotFarm
 
         public void Dispose()
         {
-            Parallel.ForEach<AutomatedGame>(bots, 
+            Parallel.ForEach<BotGame>(bots, 
                 bot => bot.Dispose());
 
             factoryGame.Dispose();
@@ -166,6 +177,13 @@ namespace BotFarm
         public void Log(string message)
         {
             Console.WriteLine(message);
+        }
+
+        public void RemoveBot(BotGame bot)
+        {
+            botInfos.Remove(botInfos.Single(info => info.Username == bot.Username && info.Password == bot.Password));
+            bots.Remove(bot);
+            bot.Dispose();
         }
     }
 }

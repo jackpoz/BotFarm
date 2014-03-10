@@ -24,6 +24,8 @@ namespace Client
 
         void Reconnect();
 
+        void NoCharactersFound();
+
         void Exit();
 
         void SendPacket(OutPacket packet);
@@ -109,5 +111,8 @@ namespace Client
             if (socket is WorldSocket)
                 ((WorldSocket)socket).Send(packet);
         }
+
+        public void NoCharactersFound()
+        { }
     }
 }

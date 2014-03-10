@@ -290,5 +290,8 @@ namespace Client
             if (socket != null)
                 socket.Dispose();
         }
+
+        public virtual void NoCharactersFound()
+        { }
     }
 }

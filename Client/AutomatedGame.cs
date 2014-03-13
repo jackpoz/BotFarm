@@ -109,6 +109,8 @@ namespace Client
 
         public void Reconnect()
         {
+            Connected = false;
+            LoggedIn = false;
             if (Running)
             {
                 socket.Disconnect();
@@ -121,6 +123,8 @@ namespace Client
 
         public void Exit()
         {
+            Connected = false;
+            LoggedIn = false;
             Running = false;
         }
 

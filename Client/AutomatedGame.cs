@@ -20,7 +20,7 @@ namespace Client
 {
     public class AutomatedGame : IGame, IGameUI, IDisposable
     {
-        bool Running;
+        public bool Running { get; private set; }
 
         GameSocket socket;
 
@@ -76,7 +76,7 @@ namespace Client
                 Connected = true;
             }
             else
-                Exit();
+                Reconnect();
         }
 
         public void Start()
@@ -111,13 +111,18 @@ namespace Client
         {
             Connected = false;
             LoggedIn = false;
-            if (Running)
+            while (Running)
             {
                 socket.Disconnect();
                 scheduledActions.Clear();
                 socket = new AuthSocket(this, Hostname, Port, Username, Password);
                 socket.InitHandlers();
-                socket.Connect();
+                // exit from loop if the socket connected successfully
+                if (socket.Connect())
+                    break;
+
+                // try again later
+                Thread.Sleep(10000);
             }
         }
 

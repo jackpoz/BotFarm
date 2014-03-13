@@ -369,7 +369,7 @@ namespace Client.World.Network
             }
             catch (SocketException ex)
             {
-                Game.UI.LogLine(string.Format("failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
+                Game.UI.LogLine(string.Format("World connect failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
                 return false;
             }
 

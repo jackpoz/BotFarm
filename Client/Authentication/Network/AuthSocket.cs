@@ -380,7 +380,7 @@ namespace Client.Authentication.Network
             }
             catch (SocketException ex)
             {
-                Game.UI.LogLine(string.Format("failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
+                Game.UI.LogLine(string.Format("Auth socket failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
                 return false;
             }
 

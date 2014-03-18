@@ -362,6 +362,8 @@ namespace Client.Authentication.Network
             { }
             catch (NullReferenceException)
             { }
+            catch (SocketException)
+            { }
         }
 
         public override bool Connect()

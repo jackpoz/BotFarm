@@ -76,8 +76,12 @@ namespace Client.World.Network
             WorldCommand.SMSG_NEW_WORLD,
             WorldCommand.MSG_MOVE_START_FORWARD,
             WorldCommand.MSG_MOVE_JUMP,
+            WorldCommand.MSG_MOVE_START_BACKWARD,
             WorldCommand.MSG_MOVE_START_STRAFE_RIGHT,
+            WorldCommand.MSG_MOVE_START_TURN_RIGHT,
+            WorldCommand.MSG_MOVE_START_TURN_LEFT,
             WorldCommand.MSG_MOVE_STOP,
+            WorldCommand.MSG_MOVE_STOP_TURN,
             WorldCommand.MSG_MOVE_HEARTBEAT,
             WorldCommand.MSG_MOVE_FALL_LAND,
             WorldCommand.SMSG_SPELL_START,
@@ -92,9 +96,7 @@ namespace Client.World.Network
             WorldCommand.SMSG_SPELLNONMELEEDAMAGELOG,
             WorldCommand.SMSG_LOOT_LIST,
             WorldCommand.SMSG_THREAT_CLEAR,
-            WorldCommand.SMSG_GROUP_LIST,
             WorldCommand.SMSG_GM_MESSAGECHAT,
-            WorldCommand.SMSG_GROUP_DESTROYED,
         };
 
         WorldServerInfo ServerInfo;

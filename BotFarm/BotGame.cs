@@ -1,4 +1,6 @@
 ﻿using Client;
+using Client.World;
+using Client.World.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,12 @@ namespace BotFarm
                 Log("Removing current bot because there are no characters");
                 BotFactory.Instance.RemoveBot(this);
             }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
+        void HandlePartyInvite(InPacket packet)
+        {
+            SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
         }
     }
 }

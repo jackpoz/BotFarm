@@ -10,13 +10,16 @@ namespace Client.World.Network
         private readonly MemoryStream Buffer;
         private byte[] FinalizedPacket;
 
-        public OutPacket(WorldCommand command)
+        public OutPacket(WorldCommand command, int emptyOffset = 0)
             : base()
         {
             this.Header = new ClientHeader(command, this);
 
             Buffer = new MemoryStream();
             base.OutStream = Buffer;
+
+            if (emptyOffset > 0)
+                Write(new byte[emptyOffset]);
         }
 
         public byte[] Finalize(AuthenticationCrypto authenticationCrypto)

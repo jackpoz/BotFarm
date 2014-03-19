@@ -50,7 +50,7 @@ namespace Client.World.Network
             WorldCommand.SMSG_TRANSFER_PENDING,
             WorldCommand.SMSG_UPDATE_INSTANCE_OWNERSHIP,
             WorldCommand.SMSG_EMOTE,
-
+            WorldCommand.SMSG_LFG_OTHER_TIMEDOUT,
         };
 
         static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()
@@ -92,6 +92,9 @@ namespace Client.World.Network
             WorldCommand.SMSG_SPELLNONMELEEDAMAGELOG,
             WorldCommand.SMSG_LOOT_LIST,
             WorldCommand.SMSG_THREAT_CLEAR,
+            WorldCommand.SMSG_GROUP_LIST,
+            WorldCommand.SMSG_GM_MESSAGECHAT,
+            WorldCommand.SMSG_GROUP_DESTROYED,
         };
 
         WorldServerInfo ServerInfo;
@@ -336,7 +339,7 @@ namespace Client.World.Network
                 else
                 {
                     if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
-                        Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+                        Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Warning);
                 }
             }
             catch(Exception ex)

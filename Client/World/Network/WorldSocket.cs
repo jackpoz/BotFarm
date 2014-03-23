@@ -64,6 +64,10 @@ namespace Client.World.Network
             WorldCommand.SMSG_SPELLENERGIZELOG,
             WorldCommand.SMSG_PET_SPELLS,
             WorldCommand.SMSG_MOVE_SET_CAN_FLY,
+            WorldCommand.SMSG_RECEIVED_MAIL,
+            WorldCommand.MSG_CHANNEL_START,
+            WorldCommand.MSG_CHANNEL_UPDATE,
+            WorldCommand.SMSG_FRIEND_STATUS,
         };
 
         static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()

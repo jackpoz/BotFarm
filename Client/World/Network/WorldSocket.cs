@@ -204,14 +204,23 @@ namespace Client.World.Network
                 BeginRead(new AsyncCallback(ReadHeaderCallback));
             }
             // these exceptions can happen as race condition on shutdown
-            catch(ObjectDisposedException)
-            { }
-            catch(NullReferenceException)
-            { }
-            catch(InvalidOperationException)
-            { }
-            catch(SocketException)
-            { }
+            catch(ObjectDisposedException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch(NullReferenceException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch(InvalidOperationException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch(SocketException ex)
+            {
+                Game.UI.LogException(ex);
+                Game.Reconnect();
+            }
         }
 
         /// <summary>
@@ -271,10 +280,14 @@ namespace Client.World.Network
                 }
             }
             // these exceptions can happen as race condition on shutdown
-            catch (ObjectDisposedException)
-            { }
-            catch (NullReferenceException)
-            { }
+            catch (ObjectDisposedException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch (NullReferenceException ex)
+            {
+                Game.UI.LogException(ex);
+            }
         }
 
         /// <summary>
@@ -282,34 +295,43 @@ namespace Client.World.Network
         /// </summary>
         private void ReadPayloadCallback(IAsyncResult result)
         {
-            int bytesRead = this.connection.Client.EndReceive(result);
-            if (bytesRead == 0 && result.IsCompleted)
+            try
             {
-                // TODO: world server disconnect
-                Game.UI.LogLine("Server has closed the connection");
+                int bytesRead = this.connection.Client.EndReceive(result);
+                if (bytesRead == 0 && result.IsCompleted)
+                {
+                    // TODO: world server disconnect
+                    Game.UI.LogLine("Server has closed the connection");
+                    Game.Reconnect();
+                    return;
+                }
+
+                Interlocked.Add(ref transferred, bytesRead);
+                Interlocked.Add(ref received, bytesRead);
+
+                if (bytesRead == Remaining)
+                {
+                    // get header and packet, handle it
+                    ServerHeader header = (ServerHeader)result.AsyncState;
+                    InPacket packet = new InPacket(header, ReceiveData);
+                    HandlePacket(packet);
+
+                    // start new asynchronous read
+                    Start();
+                }
+                else
+                {
+                    // more payload to read
+                    Index += bytesRead;
+                    Remaining -= bytesRead;
+                    BeginRead(new AsyncCallback(ReadPayloadCallback), result.AsyncState);
+                }
+            }
+            catch(SocketException ex)
+            {
+                Game.UI.LogException(ex);
                 Game.Reconnect();
                 return;
-            }
-
-            Interlocked.Add(ref transferred, bytesRead);
-            Interlocked.Add(ref received, bytesRead);
-
-            if (bytesRead == Remaining)
-            {
-                // get header and packet, handle it
-                ServerHeader header = (ServerHeader)result.AsyncState;
-                InPacket packet = new InPacket(header, ReceiveData);
-                HandlePacket(packet);
-
-                // start new asynchronous read
-                Start();
-            }
-            else
-            {
-                // more payload to read
-                Index += bytesRead;
-                Remaining -= bytesRead;
-                BeginRead(new AsyncCallback(ReadPayloadCallback), result.AsyncState);
             }
         }
 
@@ -391,10 +413,14 @@ namespace Client.World.Network
             {
                 connection.Client.BeginSend(data, 0, data.Length, SocketFlags.None, null, null);
             }
-            catch(ObjectDisposedException)
-            { }
-            catch(EndOfStreamException)
-            { }
+            catch(ObjectDisposedException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch(EndOfStreamException ex)
+            {
+                Game.UI.LogException(ex);
+            }
 
             Interlocked.Add(ref transferred, data.Length);
             Interlocked.Add(ref sent, data.Length);

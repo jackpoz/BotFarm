@@ -358,12 +358,19 @@ namespace Client.Authentication.Network
                     Game.UI.LogLine(string.Format("Unkown or unhandled command '{0}'", command), LogLevel.Debug);
             }
             // these exceptions can happen as race condition on shutdown
-            catch (ObjectDisposedException)
-            { }
-            catch (NullReferenceException)
-            { }
-            catch (SocketException)
-            { }
+            catch (ObjectDisposedException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch (NullReferenceException ex)
+            {
+                Game.UI.LogException(ex);
+            }
+            catch (SocketException ex)
+            {
+                Game.UI.LogException(ex);
+                Game.Reconnect();
+            }
         }
 
         public override bool Connect()

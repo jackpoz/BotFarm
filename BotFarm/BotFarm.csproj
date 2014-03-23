@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotBehaviorSettings.cs" />
     <Compile Include="BotFactory.cs" />
     <Compile Include="BotGame.cs" />
     <Compile Include="BotInfo.cs" />

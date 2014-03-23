@@ -1,4 +1,5 @@
-﻿using Client;
+﻿using BotFarm.Properties;
+using Client;
 using Client.World;
 using Client.World.Network;
 using System;
@@ -38,7 +39,8 @@ namespace BotFarm
         [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
         void HandlePartyInvite(InPacket packet)
         {
-            SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
+            if(Settings.Default.Behavior.AutoAcceptGroupInvites)
+                SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
         }
 
         [PacketHandler(WorldCommand.SMSG_GROUP_LIST)]

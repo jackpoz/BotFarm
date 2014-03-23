@@ -68,6 +68,13 @@ namespace Client.World.Network
             WorldCommand.MSG_CHANNEL_START,
             WorldCommand.MSG_CHANNEL_UPDATE,
             WorldCommand.SMSG_FRIEND_STATUS,
+            WorldCommand.SMSG_UNKNOWN_1236,
+            WorldCommand.SMSG_UNKNOWN_1235,
+            WorldCommand.SMSG_SPLINE_MOVE_UNSET_FLYING,
+            WorldCommand.SMSG_SPLINE_MOVE_ROOT,
+            WorldCommand.SMSG_GAMEOBJECT_DESPAWN_ANIM,
+            WorldCommand.SMSG_DISMOUNT,
+            WorldCommand.CMSG_MOVE_FALL_RESET,
         };
 
         static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()
@@ -117,6 +124,9 @@ namespace Client.World.Network
             WorldCommand.SMSG_SET_FLAT_SPELL_MODIFIER,
             WorldCommand.SMSG_SPELL_FAILURE,
             WorldCommand.SMSG_SPELL_FAILED_OTHER,
+            WorldCommand.SMSG_MONSTER_MOVE_TRANSPORT,
+            WorldCommand.SMSG_MOVE_WATER_WALK,
+            WorldCommand.SMSG_BREAK_TARGET,
         };
 
         WorldServerInfo ServerInfo;

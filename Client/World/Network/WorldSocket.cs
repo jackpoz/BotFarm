@@ -327,6 +327,10 @@ namespace Client.World.Network
                     BeginRead(new AsyncCallback(ReadPayloadCallback), result.AsyncState);
                 }
             }
+            catch(NullReferenceException ex)
+            {
+                Game.UI.LogException(ex);
+            }
             catch(SocketException ex)
             {
                 Game.UI.LogException(ex);

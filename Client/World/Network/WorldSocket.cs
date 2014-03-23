@@ -51,6 +51,19 @@ namespace Client.World.Network
             WorldCommand.SMSG_UPDATE_INSTANCE_OWNERSHIP,
             WorldCommand.SMSG_EMOTE,
             WorldCommand.SMSG_LFG_OTHER_TIMEDOUT,
+            WorldCommand.SMSG_FORCE_SWIM_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_SWIM_BACK_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_RUN_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_RUN_BACK_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_FLIGHT_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_FLIGHT_SPEED_CHANGE,
+            WorldCommand.SMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE,
+            WorldCommand.CMSG_UNKNOWN_1303,
+            WorldCommand.SMSG_ITEM_TIME_UPDATE,
+            WorldCommand.SMSG_SPLINE_MOVE_UNROOT,
+            WorldCommand.SMSG_SPELLENERGIZELOG,
+            WorldCommand.SMSG_PET_SPELLS,
+            WorldCommand.SMSG_MOVE_SET_CAN_FLY,
         };
 
         static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()
@@ -97,6 +110,9 @@ namespace Client.World.Network
             WorldCommand.SMSG_LOOT_LIST,
             WorldCommand.SMSG_THREAT_CLEAR,
             WorldCommand.SMSG_GM_MESSAGECHAT,
+            WorldCommand.SMSG_SET_FLAT_SPELL_MODIFIER,
+            WorldCommand.SMSG_SPELL_FAILURE,
+            WorldCommand.SMSG_SPELL_FAILED_OTHER,
         };
 
         WorldServerInfo ServerInfo;

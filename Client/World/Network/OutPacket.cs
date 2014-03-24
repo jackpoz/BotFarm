@@ -39,5 +39,10 @@ namespace Client.World.Network
 
             return FinalizedPacket;
         }
+
+        public override string ToString()
+        {
+            return Header.Command.ToString();
+        }
     }
 }

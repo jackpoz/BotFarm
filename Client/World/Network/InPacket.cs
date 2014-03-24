@@ -38,5 +38,10 @@ namespace Client.World.Network
 
             return res;
         }
+
+        public override string ToString()
+        {
+            return Header.Command.ToString();
+        }
     }
 }

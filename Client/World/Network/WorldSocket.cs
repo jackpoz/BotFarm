@@ -140,6 +140,9 @@ namespace Client.World.Network
         private long received;
         public long Received { get { return received; } }
 
+        protected OutPacket lastOutPacket;
+        protected InPacket lastInPacket;
+
         public WorldSocket(IGame program, WorldServerInfo serverInfo)
         {
             Game = program;
@@ -249,6 +252,8 @@ namespace Client.World.Network
             catch(SocketException ex)
             {
                 Game.UI.LogException(ex);
+                Game.UI.LogLine("Last InPacket: " + lastInPacket.ToString(), LogLevel.Warning);
+                Game.UI.LogLine("Last OutPacket: " + lastOutPacket.ToString(), LogLevel.Warning);
                 Game.Reconnect();
             }
         }
@@ -375,6 +380,7 @@ namespace Client.World.Network
         {
             try
             {
+                lastInPacket = packet;
                 PacketHandler handler;
                 if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
                 {
@@ -441,6 +447,7 @@ namespace Client.World.Network
 
         public void Send(OutPacket packet)
         {
+            lastOutPacket = packet;
             byte[] data = packet.Finalize(authenticationCrypto);
 
             try

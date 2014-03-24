@@ -266,12 +266,12 @@ namespace Client
 
         public void LogException(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine(Username + " - " + message);
         }
 
         public void LogException(Exception ex)
         {
-            Console.WriteLine(string.Format("{0} {1}", ex.Message, ex.StackTrace));
+            Console.WriteLine(string.Format(Username + " - {0} {1}", ex.Message, ex.StackTrace));
         }
 
         public IGameUI UI

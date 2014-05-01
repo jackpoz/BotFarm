@@ -197,7 +197,7 @@ namespace BotFarm
 #endif
             {
                 Console.WriteLine(message);
-                logger.Write(message);
+                logger.WriteLine(message);
             }
         }
 

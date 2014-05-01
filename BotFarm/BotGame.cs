@@ -84,7 +84,7 @@ namespace BotFarm
         #region Logging
         public override void Log(string message, LogLevel level = LogLevel.Info)
         {
-            BotFactory.Instance.Log(message, level);
+            BotFactory.Instance.Log(Username + " - " + message, level);
         }
 
         public override void LogLine(string message, LogLevel level = LogLevel.Info)

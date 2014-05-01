@@ -249,14 +249,14 @@ namespace Client
         #endregion
 
         #region Unused Methods
-        public void Log(string message, LogLevel level = LogLevel.Info)
+        public virtual void Log(string message, LogLevel level = LogLevel.Info)
         {
 #if DEBUG_LOG
             Console.WriteLine(message);
 #endif
         }
 
-        public void LogLine(string message, LogLevel level = LogLevel.Info)
+        public virtual void LogLine(string message, LogLevel level = LogLevel.Info)
         {
 #if !DEBUG_LOG
             if (level > LogLevel.Debug)
@@ -264,12 +264,12 @@ namespace Client
             Console.WriteLine(Username + " - " + message);
         }
 
-        public void LogException(string message)
+        public virtual void LogException(string message)
         {
             Console.WriteLine(Username + " - " + message);
         }
 
-        public void LogException(Exception ex)
+        public virtual void LogException(Exception ex)
         {
             Console.WriteLine(string.Format(Username + " - {0} {1}", ex.Message, ex.StackTrace));
         }

@@ -1,9 +1,11 @@
 ﻿using BotFarm.Properties;
 using Client;
+using Client.UI;
 using Client.World;
 using Client.World.Network;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,5 +80,27 @@ namespace BotFarm
             GroupLeaderGuid = 0;
             GroupMembersGuids.Clear();
         }
+
+        #region Logging
+        public override void Log(string message, LogLevel level = LogLevel.Info)
+        {
+            BotFactory.Instance.Log(message, level);
+        }
+
+        public override void LogLine(string message, LogLevel level = LogLevel.Info)
+        {
+            BotFactory.Instance.Log(Username + " - " + message, level);
+        }
+
+        public override void LogException(string message)
+        {
+            BotFactory.Instance.Log(Username + " - " + message, LogLevel.Error);
+        }
+
+        public override void LogException(Exception ex)
+        {
+            BotFactory.Instance.Log(string.Format(Username + " - {0} {1}", ex.Message, ex.StackTrace), LogLevel.Error);
+        }
+        #endregion
     }
 }

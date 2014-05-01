@@ -1,5 +1,6 @@
 ﻿using BotFarm.Properties;
 using Client;
+using Client.UI;
 using Client.World;
 using Client.World.Network;
 using System;
@@ -26,10 +27,15 @@ namespace BotFarm
         AutomatedGame factoryGame;
         List<BotInfo> botInfos;
         const string botsInfosPath = "botsinfos.xml";
+        const string logPath = "botfactory.log";
+        StreamWriter logger;
 
         public BotFactory()
         {
             Instance = this;
+
+            logger = new StreamWriter(logPath);
+            logger.WriteLine("Starting BotFactory");
 
             if (!File.Exists(botsInfosPath))
                 botInfos = new List<BotInfo>();
@@ -172,12 +178,27 @@ namespace BotFarm
                 XmlSerializer serializer = new XmlSerializer(typeof(List<BotInfo>));
                 serializer.Serialize(sw, botInfos);
             }
+
+            logger.WriteLine("Shutting down BotFactory");
+            logger.WriteLine("");
+            logger.Dispose();
+            logger = null;
         }
 
-        [Conditional("DEBUG")]
         public void Log(string message)
         {
-            Console.WriteLine(message);
+            Log(message, LogLevel.Debug);
+        }
+
+        public void Log(string message, LogLevel level = LogLevel.Info)
+        {
+#if !DEBUG_LOG
+            if (level > LogLevel.Debug)
+#endif
+            {
+                Console.WriteLine(message);
+                logger.Write(message);
+            }
         }
 
         public void RemoveBot(BotGame bot)

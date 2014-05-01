@@ -332,8 +332,9 @@ namespace Client.Authentication.Network
                     null                // state object
                 );
             }
-            catch
+            catch(Exception ex)
             {
+                Game.UI.LogException(ex);
             }
         }
 

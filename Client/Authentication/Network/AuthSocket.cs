@@ -134,11 +134,7 @@ namespace Client.Authentication.Network
                     u = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), B.ToCleanByteArray()).ToBigInteger();
 
                     // compute session key
-                    // TODO: session key computation fails for some reason
-                    //     all variables match exactly to the server side, but
-                    //     S is different
-                    S = (B - k * g.ModPow(x, N)).ModPow(a + u * x, N);
-
+                    S = ((B + k * (N - g.ModPow(x, N))) % N).ModPow(a + (u * x), N);
                     byte[] keyHash;
                     byte[] sData = S.ToCleanByteArray();
                     if (sData.Length < 32)
@@ -356,7 +352,7 @@ namespace Client.Authentication.Network
                 if (Handlers.TryGetValue(command, out handler))
                     handler();
                 else
-                    Game.UI.LogLine(string.Format("Unkown or unhandled command '{0}'", command), LogLevel.Debug);
+                    Game.UI.LogLine(string.Format("Unkown or unhandled command '{0}'", command), LogLevel.Warning);
             }
             // these exceptions can happen as race condition on shutdown
             catch (ObjectDisposedException ex)

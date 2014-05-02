@@ -283,7 +283,11 @@ namespace Client.Authentication.Network
                     break;
 
             if (!equal)
+            {
                 Game.UI.LogLine("Server auth failed!", LogLevel.Error);
+                SendLogonChallenge();
+                return;
+            }
             else
             {
                 Game.UI.LogLine("Authentication succeeded!");

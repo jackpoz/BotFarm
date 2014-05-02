@@ -34,7 +34,7 @@ namespace Client
         public int Character { get; private set; }
         public bool Connected { get; private set; }
 
-        Queue<Action> scheduledActions;
+        SortedList<DateTime, RepeatingAction> scheduledActions;
 
         public GameWorld World
         {
@@ -48,7 +48,7 @@ namespace Client
         {
             this.RealmID = realmId;
             this.Character = character;
-            scheduledActions = new Queue<Action>();
+            scheduledActions = new SortedList<DateTime, RepeatingAction>();
             World = new GameWorld();
 
             this.Hostname = hostname;
@@ -79,7 +79,7 @@ namespace Client
                 Reconnect();
         }
 
-        public void Start()
+        public virtual void Start()
         {
             // the initial socket is an AuthSocket - it will initiate its own asynch read
             Running = socket.Connect();
@@ -103,8 +103,16 @@ namespace Client
             if (scheduledActions.Count == 0)
                 return;
 
-            var action = scheduledActions.Dequeue();
-            action();
+            // execute only 1 scheduled action at time in each Update().
+            // actions are sorted by time so it's enough to check the first in the list
+            var scheduledAction = scheduledActions.First();
+            if (scheduledAction.Key <= DateTime.Now)
+            {
+                scheduledActions.RemoveAt(0);
+                scheduledAction.Value.action();
+                if (scheduledAction.Value.interval > TimeSpan.Zero)
+                    ScheduleAction(scheduledAction.Value.action, DateTime.Now + scheduledAction.Value.interval, scheduledAction.Value.interval);
+            }
         }
 
         public void Reconnect()
@@ -240,12 +248,25 @@ namespace Client
         }
         #endregion
 
-        public void Enqueue(Action action)
+        public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan))
         {
-            scheduledActions.Enqueue(action);
+            ScheduleAction(action, DateTime.Now, interval);
+        }
+
+        public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan))
+        {
+            scheduledActions.Add(time, new RepeatingAction(action, interval));
         }
 
         #region Handlers
+        public void DoTextEmote(TextEmote emote)
+        {
+            var packet = new OutPacket(WorldCommand.CMSG_TEXT_EMOTE);
+            packet.Write((uint)emote);
+            packet.Write((uint)0);
+            packet.Write((ulong)0);
+            SendPacket(packet);
+        }
         #endregion
 
         #region Unused Methods
@@ -289,8 +310,7 @@ namespace Client
 
         public void Dispose()
         {
-            while (scheduledActions.Count > 0)
-                Thread.Sleep(1000);
+            scheduledActions.Clear();
 
             Exit();
 
@@ -302,5 +322,26 @@ namespace Client
 
         public virtual void NoCharactersFound()
         { }
+    }
+
+    public class RepeatingAction
+    {
+        public Action action
+        {
+            get;
+            set;
+        }
+
+        public TimeSpan interval
+        {
+            get;
+            set;
+        }
+
+        public RepeatingAction(Action action, TimeSpan interval)
+        {
+            this.action = action;
+            this.interval = interval;
+        }
     }
 }

@@ -34,13 +34,13 @@ namespace TrinityCore_UnitTests
                     throw new TimeoutException("Could not login after 15 tries");
             }
             Thread.Sleep(5000);
-            game.Enqueue(() => game.DoSayChat("Connected"));
+            game.ScheduleAction(() => game.DoSayChat("Connected"));
         }
 
         [TestMethod]
         public void Teleport()
         {
-            game.Enqueue(() =>
+            game.ScheduleAction(() =>
                 {
                     game.DoSayChat("teleing to start position");
                     game.Tele("goldshire");
@@ -50,7 +50,7 @@ namespace TrinityCore_UnitTests
         [TestMethod]
         public void CastSpells()
         {
-            game.Enqueue(() =>
+            game.ScheduleAction(() =>
                 {
                     game.DoSayChat("testing spells");
                     game.DoSayChat(".go xyz -8790.59 349.3 101.02 0 4.57");
@@ -62,7 +62,7 @@ namespace TrinityCore_UnitTests
         [ClassCleanup]
         public static void Cleanup()
         {
-            game.Enqueue(() => game.DoSayChat("Disconnecting"));
+            game.ScheduleAction(() => game.DoSayChat("Disconnecting"));
             if (game != null)
                 game.Dispose();
         }

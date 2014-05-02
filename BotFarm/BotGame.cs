@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Client.World.Definitions;
 
 namespace BotFarm
 {
@@ -28,6 +29,13 @@ namespace BotFarm
         public BotGame(string hostname, int port, string username, string password, int realmId, int character)
             : base(hostname, port, username, password, realmId, character)
         { }
+
+        public override void Start()
+        {
+            base.Start();
+
+            ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
+        }
 
         public override void NoCharactersFound()
         {

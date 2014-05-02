@@ -73,6 +73,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="World.cs" />
     <Compile Include="World\CharacterEnumeration.cs" />
+    <Compile Include="World\Definitions\TextEmote.cs" />
     <Compile Include="World\Definitions\Gender.cs" />
     <Compile Include="World\Definitions\PlayerClass.cs" />
     <Compile Include="World\Definitions\Race.cs" />

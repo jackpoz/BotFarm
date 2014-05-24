@@ -15,6 +15,7 @@ using System.Numerics;
 using Client.Chat.Definitions;
 using Client.World.Definitions;
 using System.Diagnostics;
+using Client.World.Entities;
 
 namespace Client
 {
@@ -38,11 +39,15 @@ namespace Client
 
         public GameWorld World
         {
-            get { return _world; }
-            private set { _world = value; }
+            get;
+            private set;
         }
 
-        private GameWorld _world;
+        public Player Player
+        {
+            get;
+            protected set;
+        }
 
         public AutomatedGame(string hostname, int port, string username, string password, int realmId, int character)
         {
@@ -181,6 +186,8 @@ namespace Client
             packet.Write(World.SelectedCharacter.GUID);
             SendPacket(packet);
             LoggedIn = true;
+            Player = new Player();
+            Player.GUID = World.SelectedCharacter.GUID;
         }
 
         public string ReadLine()
@@ -246,6 +253,7 @@ namespace Client
             if (chatLog)
                 DoSayChat("Casted spellid " + spellid);
         }
+
         #endregion
 
         public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan))
@@ -258,7 +266,12 @@ namespace Client
             scheduledActions.Add(time, new RepeatingAction(action, interval));
         }
 
-        #region Handlers
+        #region Actions
+        public void MoveTo(Position destination)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DoTextEmote(TextEmote emote)
         {
             var packet = new OutPacket(WorldCommand.CMSG_TEXT_EMOTE);
@@ -266,6 +279,60 @@ namespace Client
             packet.Write((uint)0);
             packet.Write((ulong)0);
             SendPacket(packet);
+        }
+        #endregion
+
+        #region Packet Handlers
+        [PacketHandler(WorldCommand.SMSG_LOGIN_VERIFY_WORLD)]
+        void HandleLoginVerifyWorld(InPacket packet)
+        {
+            Player.MapID = (int)packet.ReadUInt32();
+            Player.X = packet.ReadSingle();
+            Player.Y = packet.ReadSingle();
+            Player.Z = packet.ReadSingle();
+            Player.O = packet.ReadSingle();
+        }
+
+        [PacketHandler(WorldCommand.SMSG_NEW_WORLD)]
+        void HandleNewWorld(InPacket packet)
+        {
+            Player.MapID = (int)packet.ReadUInt32();
+            Player.X = packet.ReadSingle();
+            Player.Y = packet.ReadSingle();
+            Player.Z = packet.ReadSingle();
+            Player.O = packet.ReadSingle();
+        }
+
+        [PacketHandler(WorldCommand.SMSG_TRANSFER_PENDING)]
+        void HandleTransferPending(InPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PacketHandler(WorldCommand.MSG_MOVE_TELEPORT_ACK)]
+        void HandleMoveTeleportAck(InPacket packet)
+        {
+            var packGuid = packet.ReadPackedGuid();
+            packet.ReadUInt32();
+            var movementFlags = packet.ReadUInt32();
+            var extraMovementFlags = packet.ReadUInt16();
+            var time = packet.ReadUInt32();
+            Player.X = packet.ReadSingle();
+            Player.Y = packet.ReadSingle();
+            Player.Z = packet.ReadSingle();
+            Player.O = packet.ReadSingle();
+
+            OutPacket result = new OutPacket(WorldCommand.MSG_MOVE_TELEPORT_ACK);
+            result.WritePacketGuid(Player.GUID);
+            result.Write((UInt32)0);
+            result.Write(time);
+            SendPacket(result);
+        }
+
+        [PacketHandler(WorldCommand.MSG_MOVE_TELEPORT)]
+        void HandleMoveTeleport(InPacket packet)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

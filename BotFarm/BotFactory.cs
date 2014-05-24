@@ -59,14 +59,6 @@ namespace BotFarm
                                             Settings.Default.RealmID,
                                             0);
             factoryGame.Start();
-            int tries = 0;
-            while (!factoryGame.LoggedIn)
-            {
-                Thread.Sleep(1000);
-                tries++;
-                if (tries > 15)
-                    throw new TimeoutException("Could not login after 15 tries");
-            }
         }
 
         public BotGame CreateBot()

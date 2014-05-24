@@ -77,6 +77,10 @@
     <Compile Include="World\Definitions\Gender.cs" />
     <Compile Include="World\Definitions\PlayerClass.cs" />
     <Compile Include="World\Definitions\Race.cs" />
+    <Compile Include="World\Entities\Player.cs" />
+    <Compile Include="World\Entities\Position.cs" />
+    <Compile Include="World\Entities\Unit.cs" />
+    <Compile Include="World\Entities\WorldObject.cs" />
     <Compile Include="World\Network\AuthenticationCrypto.cs" />
     <Compile Include="World\Network\AuthResponse.cs" />
     <Compile Include="World\Network\ClientHeader.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Client.World.Network
 {
@@ -38,6 +39,25 @@ namespace Client.World.Network
             }
 
             return FinalizedPacket;
+        }
+
+        public void WritePacketGuid(UInt64 guid)
+        {
+            byte[] packGUID = new byte[8+1];
+            packGUID[0] = 0;
+            var size = 1;
+            for (byte i = 0;guid != 0;++i)
+            {
+                if ((guid & 0xFF) != 0)
+                {
+                    packGUID[0] |= (byte)(1 << i);
+                    packGUID[size] =  (byte)(guid & 0xFF);
+                    ++size;
+                }
+
+                guid >>= 8;
+            }
+            Write(packGUID.Take(size).ToArray());
         }
 
         public override string ToString()

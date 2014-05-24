@@ -17,17 +17,21 @@
     <Setting Name="RealmID" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="BotsCount" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">10</Value>
-    </Setting>
-    <Setting Name="Behavior" Type="BotFarm.BotBehaviorSettings" Scope="User">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;BotBehaviorSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
-&lt;/BotBehaviorSettings&gt;</Value>
-    </Setting>
     <Setting Name="RandomBots" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MaxBotsCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="Behavior" Type="BotFarm.BotBehaviorSettings" Scope="User">
+      <Value Profile="(Default)">
+                    &lt;BotBehaviorSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+                        &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
+                    &lt;/BotBehaviorSettings&gt;
+                </Value>
+    </Setting>
+    <Setting Name="MinBotsCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
     </Setting>
   </Settings>
 </SettingsFile>

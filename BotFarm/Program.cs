@@ -14,7 +14,8 @@ namespace BotFarm
         {
             using (BotFactory factory = new BotFactory())
             {
-                factory.SetupFactory(Settings.Default.BotsCount);
+                Random random = new Random();
+                factory.SetupFactory(random.Next(Settings.Default.MinBotsCount, Settings.Default.MaxBotsCount));
                 GC.KeepAlive(factory);
             }
         }

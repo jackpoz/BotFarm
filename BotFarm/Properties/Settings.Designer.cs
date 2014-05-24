@@ -85,22 +85,35 @@ namespace BotFarm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int BotsCount {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RandomBots {
             get {
-                return ((int)(this["BotsCount"]));
+                return ((bool)(this["RandomBots"]));
             }
             set {
-                this["BotsCount"] = value;
+                this["RandomBots"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<BotBehaviorSettings xmlns:xsi=\"http://w" +
-            "ww.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
-            "\r\n  <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>\r\n</BotBehaviorSettings" +
-            ">")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int MaxBotsCount {
+            get {
+                return ((int)(this["MaxBotsCount"]));
+            }
+            set {
+                this["MaxBotsCount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"
+                    <BotBehaviorSettings xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+                        <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>
+                    </BotBehaviorSettings>
+                ")]
         public global::BotFarm.BotBehaviorSettings Behavior {
             get {
                 return ((global::BotFarm.BotBehaviorSettings)(this["Behavior"]));
@@ -112,13 +125,13 @@ namespace BotFarm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool RandomBots {
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int MinBotsCount {
             get {
-                return ((bool)(this["RandomBots"]));
+                return ((int)(this["MinBotsCount"]));
             }
             set {
-                this["RandomBots"] = value;
+                this["MinBotsCount"] = value;
             }
         }
     }

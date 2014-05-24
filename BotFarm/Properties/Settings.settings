@@ -23,15 +23,16 @@
     <Setting Name="MaxBotsCount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
+    <Setting Name="MinBotsCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
     <Setting Name="Behavior" Type="BotFarm.BotBehaviorSettings" Scope="User">
       <Value Profile="(Default)">
                     &lt;BotBehaviorSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
                         &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
+                        &lt;AutoAcceptResurrectRequests&gt;true&lt;/AutoAcceptResurrectRequests&gt;
                     &lt;/BotBehaviorSettings&gt;
                 </Value>
-    </Setting>
-    <Setting Name="MinBotsCount" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">15</Value>
     </Setting>
   </Settings>
 </SettingsFile>

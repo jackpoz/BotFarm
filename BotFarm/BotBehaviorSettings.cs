@@ -11,5 +11,6 @@ namespace BotFarm
     public struct BotBehaviorSettings
     {
         public bool AutoAcceptGroupInvites;
+        public bool AutoAcceptResurrectRequests;
     }
 }

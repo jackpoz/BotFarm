@@ -109,9 +109,22 @@ namespace BotFarm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int MinBotsCount {
+            get {
+                return ((int)(this["MinBotsCount"]));
+            }
+            set {
+                this["MinBotsCount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"
                     <BotBehaviorSettings xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
                         <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>
+                        <AutoAcceptResurrectRequests>true</AutoAcceptResurrectRequests>
                     </BotBehaviorSettings>
                 ")]
         public global::BotFarm.BotBehaviorSettings Behavior {
@@ -120,18 +133,6 @@ namespace BotFarm.Properties {
             }
             set {
                 this["Behavior"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
-        public int MinBotsCount {
-            get {
-                return ((int)(this["MinBotsCount"]));
-            }
-            set {
-                this["MinBotsCount"] = value;
             }
         }
     }

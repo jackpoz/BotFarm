@@ -344,12 +344,6 @@ namespace Client
             result.Write(time);
             SendPacket(result);
         }
-
-        [PacketHandler(WorldCommand.MSG_MOVE_TELEPORT)]
-        void HandleMoveTeleport(InPacket packet)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Unused Methods

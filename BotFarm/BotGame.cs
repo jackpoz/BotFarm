@@ -46,6 +46,7 @@ namespace BotFarm
             }
         }
 
+        #region Handlers
         [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
         void HandlePartyInvite(InPacket packet)
         {
@@ -88,6 +89,31 @@ namespace BotFarm
             GroupLeaderGuid = 0;
             GroupMembersGuids.Clear();
         }
+
+        [PacketHandler(WorldCommand.SMSG_RESURRECT_REQUEST)]
+        void HandlerResurrectRequest(InPacket packet)
+        {
+            var resurrectorGuid = packet.ReadUInt64();
+            OutPacket response = new OutPacket(WorldCommand.CMSG_RESURRECT_RESPONSE);
+            response.Write(resurrectorGuid);
+            if (Settings.Default.Behavior.AutoAcceptResurrectRequests)
+            {
+                response.Write((byte)1);
+                SendPacket(response);
+
+                OutPacket result = new OutPacket(WorldCommand.MSG_MOVE_TELEPORT_ACK);
+                result.WritePacketGuid(Player.GUID);
+                result.Write((UInt32)0);
+                result.Write(DateTime.Now.Millisecond);
+                SendPacket(result);
+            }
+            else
+            {
+                response.Write((byte)0);
+                SendPacket(response);
+            }
+        }
+        #endregion
 
         #region Logging
         public override void Log(string message, LogLevel level = LogLevel.Info)

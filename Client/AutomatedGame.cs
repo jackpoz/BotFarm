@@ -21,10 +21,9 @@ namespace Client
 {
     public class AutomatedGame : IGame, IGameUI, IDisposable
     {
+        #region Properties
         public bool Running { get; private set; }
-
         GameSocket socket;
-
         public BigInteger Key { get; private set; }
         public string Hostname { get; private set; }
         public int Port { get; private set; }
@@ -34,20 +33,38 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
-
         SortedList<DateTime, RepeatingAction> scheduledActions;
-
         public GameWorld World
         {
             get;
             private set;
         }
-
         public Player Player
         {
             get;
             protected set;
         }
+        public LogLevel LogLevel
+        {
+            get
+            {
+                return Client.UI.LogLevel.Error;
+            }
+            set
+            {
+            }
+        }
+        public IGame Game
+        {
+            get
+            {
+                return this;
+            }
+            set
+            {
+            }
+        }
+        #endregion
 
         public AutomatedGame(string hostname, int port, string username, string password, int realmId, int character)
         {
@@ -65,6 +82,7 @@ namespace Client
             socket.InitHandlers();
         }
 
+        #region Basic Methods
         public void ConnectTo(WorldServerInfo server)
         {
             if (socket is AuthSocket)
@@ -152,28 +170,6 @@ namespace Client
                 ((WorldSocket)socket).Send(packet);
         }
 
-        public IGame Game
-        {
-            get
-            {
-                return this;
-            }
-            set
-            {
-            }
-        }
-
-        public LogLevel LogLevel
-        {
-            get
-            {
-                return Client.UI.LogLevel.Error;
-            }
-            set
-            {
-            }
-        }
-
         public void PresentRealmList(WorldServerList realmList)
         {
             ConnectTo(realmList[RealmID]);
@@ -205,6 +201,16 @@ namespace Client
             throw new NotImplementedException();
         }
 
+        public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan))
+        {
+            ScheduleAction(action, DateTime.Now, interval);
+        }
+
+        public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan))
+        {
+            scheduledActions.Add(time, new RepeatingAction(action, interval));
+        }
+
         public void CreateCharacter()
         {
             OutPacket createCharacterPacket = new OutPacket(WorldCommand.CMSG_CHAR_CREATE);
@@ -227,6 +233,22 @@ namespace Client
 
             SendPacket(createCharacterPacket);
         }
+
+        public void Dispose()
+        {
+            scheduledActions.Clear();
+
+            Exit();
+
+            Thread.Sleep(1000);
+
+            if (socket != null)
+                socket.Dispose();
+        }
+
+        public virtual void NoCharactersFound()
+        { }
+        #endregion
 
         #region Commands
         public void DoSayChat(string message)
@@ -255,16 +277,6 @@ namespace Client
         }
 
         #endregion
-
-        public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan))
-        {
-            ScheduleAction(action, DateTime.Now, interval);
-        }
-
-        public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan))
-        {
-            scheduledActions.Add(time, new RepeatingAction(action, interval));
-        }
 
         #region Actions
         public void MoveTo(Position destination)
@@ -378,21 +390,6 @@ namespace Client
         {
         }
         #endregion
-
-        public void Dispose()
-        {
-            scheduledActions.Clear();
-
-            Exit();
-
-            Thread.Sleep(1000);
-
-            if (socket != null)
-                socket.Dispose();
-        }
-
-        public virtual void NoCharactersFound()
-        { }
     }
 
     public class RepeatingAction

@@ -124,7 +124,11 @@ namespace BotFarm
         {
             Log("Setting up bot factory with " + botCount + " bots");
             int createdBots = 0;
-            var infos = botInfos.Take(botCount).ToList();
+            List<BotInfo> infos;
+            if (Settings.Default.RandomBots)
+                infos = botInfos.TakeRandom(botCount).ToList();
+            else
+                infos = botInfos.Take(botCount).ToList();
             Parallel.ForEach<BotInfo>(infos, info =>
             {
                 bots.Add(LoadBot(info));

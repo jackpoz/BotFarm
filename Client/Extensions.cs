@@ -4,6 +4,7 @@ using System.IO;
 using System.Numerics;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 
 namespace Client
 {
@@ -100,6 +101,24 @@ namespace Client
             var attrs = (T[])member.GetCustomAttributes(typeof(T), inherit) ?? new T[] { };
             attributes = attrs;
             return attrs.Length > 0;
+        }
+
+        public static IEnumerable<TSource> TakeRandom<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            Random random = new Random();
+            List<int> indexes = new List<int>(source.Count());
+            for (int index = 0; index < indexes.Capacity; index++)
+                indexes.Add(index);
+
+            List<TSource> result = new List<TSource>(count);
+            for (int index = 0; index < count && indexes.Count() > 0; index++)
+            {
+                int randomIndex = random.Next(indexes.Count());
+                result.Add(source.ElementAt(randomIndex));
+                indexes.Remove(randomIndex);
+            }
+
+            return result;
         }
     }
 }

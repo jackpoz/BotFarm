@@ -26,5 +26,8 @@
   &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
 &lt;/BotBehaviorSettings&gt;</Value>
     </Setting>
+    <Setting Name="RandomBots" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

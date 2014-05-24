@@ -382,20 +382,7 @@ namespace Client.World.Network
                 if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
                 {
                     Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
-
-                    if (authenticationCrypto.Status == AuthStatus.Ready)
-                        // AuthenticationCrypto is ready, handle the packet asynchronously
-                        handler.BeginInvoke(packet, result =>
-                            {
-                                try
-                                {
-                                    handler.EndInvoke(result);
-                                }
-                                catch
-                                { }
-                            }, null);
-                    else
-                        handler(packet);
+                    handler(packet);
                 }
                 else
                 {

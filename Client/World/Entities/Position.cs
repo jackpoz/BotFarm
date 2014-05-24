@@ -53,5 +53,14 @@ namespace Client.World.Entities
         {
             return new Position(X, Y, Z, O, MapID);
         }
+
+        public void ResetPosition()
+        {
+            X = 0.0f;
+            Y = 0.0f;
+            Z = 0.0f;
+            O = 0.0f;
+            MapID = INVALID_MAP_ID;
+        }
     }
 }

@@ -301,12 +301,16 @@ namespace Client
             Player.Y = packet.ReadSingle();
             Player.Z = packet.ReadSingle();
             Player.O = packet.ReadSingle();
+
+            OutPacket result = new OutPacket(WorldCommand.MSG_MOVE_WORLDPORT_ACK);
+            SendPacket(result);
         }
 
         [PacketHandler(WorldCommand.SMSG_TRANSFER_PENDING)]
         void HandleTransferPending(InPacket packet)
         {
-            throw new NotImplementedException();
+            Player.ResetPosition();
+            var newMap = packet.ReadUInt32();
         }
 
         [PacketHandler(WorldCommand.MSG_MOVE_TELEPORT_ACK)]

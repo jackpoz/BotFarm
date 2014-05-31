@@ -321,6 +321,10 @@ namespace Client.World.Network
             {
                 Game.UI.LogException(ex);
             }
+            catch (SocketException ex)
+            {
+                Game.UI.LogException(ex);
+            }
         }
 
         /// <summary>

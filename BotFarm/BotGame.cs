@@ -48,14 +48,14 @@ namespace BotFarm
 
         #region Handlers
         [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
-        void HandlePartyInvite(InPacket packet)
+        protected void HandlePartyInvite(InPacket packet)
         {
             if(Settings.Default.Behavior.AutoAcceptGroupInvites)
                 SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
         }
 
         [PacketHandler(WorldCommand.SMSG_GROUP_LIST)]
-        void HandlePartyList(InPacket packet)
+        protected void HandlePartyList(InPacket packet)
         {
             GroupType groupType = (GroupType)packet.ReadByte();
             packet.ReadByte();
@@ -84,14 +84,14 @@ namespace BotFarm
         }
 
         [PacketHandler(WorldCommand.SMSG_GROUP_DESTROYED)]
-        void HandlePartyDisband(InPacket packet)
+        protected void HandlePartyDisband(InPacket packet)
         {
             GroupLeaderGuid = 0;
             GroupMembersGuids.Clear();
         }
 
         [PacketHandler(WorldCommand.SMSG_RESURRECT_REQUEST)]
-        void HandlerResurrectRequest(InPacket packet)
+        protected void HandlerResurrectRequest(InPacket packet)
         {
             var resurrectorGuid = packet.ReadUInt64();
             OutPacket response = new OutPacket(WorldCommand.CMSG_RESURRECT_RESPONSE);

@@ -8,7 +8,7 @@ namespace Client.World.Network
     public partial class WorldSocket
     {
         [PacketHandler(WorldCommand.ServerAuthChallenge)]
-        void HandleServerAuthChallenge(InPacket packet)
+        protected void HandleServerAuthChallenge(InPacket packet)
         {
             uint one = packet.ReadUInt32();
             uint seed = packet.ReadUInt32();
@@ -54,7 +54,7 @@ namespace Client.World.Network
         }
 
         [PacketHandler(WorldCommand.ServerAuthResponse)]
-        void HandleServerAuthResponse(InPacket packet)
+        protected void HandleServerAuthResponse(InPacket packet)
         {
             CommandDetail detail = (CommandDetail)packet.ReadByte();
 
@@ -76,7 +76,7 @@ namespace Client.World.Network
         }
 
         [PacketHandler(WorldCommand.ServerCharacterEnumeration)]
-        void HandleCharEnum(InPacket packet)
+        protected void HandleCharEnum(InPacket packet)
         {
             byte count = packet.ReadByte();
 

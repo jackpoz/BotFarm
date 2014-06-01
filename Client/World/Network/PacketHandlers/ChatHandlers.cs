@@ -10,7 +10,7 @@ namespace Client.World.Network
     public partial class WorldSocket
     {
         [PacketHandler(WorldCommand.SMSG_MESSAGECHAT)]
-        void HandleMessageChat(InPacket packet)
+        protected void HandleMessageChat(InPacket packet)
         {
             var type = (ChatMessageType)packet.ReadByte();
             var lang = (Language)packet.ReadInt32();
@@ -96,7 +96,7 @@ namespace Client.World.Network
         }
 
         [PacketHandler(WorldCommand.SMSG_CHAT_PLAYER_NOT_FOUND)]
-        void HandleChatPlayerNotFound(InPacket packet)
+        protected void HandleChatPlayerNotFound(InPacket packet)
         {
             Game.UI.LogLine(String.Format("Player {0} not found!", packet.ReadCString()));
         }

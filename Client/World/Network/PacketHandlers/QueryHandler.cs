@@ -7,7 +7,7 @@ namespace Client.World.Network
     public partial class WorldSocket
     {
         [PacketHandler(WorldCommand.SMSG_NAME_QUERY_RESPONSE)]
-        void HandleNameQueryResponse(InPacket packet)
+        protected void HandleNameQueryResponse(InPacket packet)
         {
             var pguid = packet.ReadPackedGuid();
             var end = packet.ReadBoolean();

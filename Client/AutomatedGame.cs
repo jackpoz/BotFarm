@@ -113,7 +113,7 @@ namespace Client
                     {
                         // main loop here
                         Update();
-                        await Task.Delay(500);
+                        await Task.Delay(100);
                     }
                 });
         }
@@ -292,11 +292,29 @@ namespace Client
             packet.Write((ulong)0);
             SendPacket(packet);
         }
+
+        public void SetFacing(float orientation)
+        {
+            if (!Player.GetPosition().IsValid)
+                return;
+            var packet = new OutPacket(WorldCommand.MSG_MOVE_SET_FACING);
+            packet.WritePacketGuid(Player.GUID);
+            packet.Write((UInt32)0); //flags
+            packet.Write((UInt16)0); //flags2
+            packet.Write((UInt32)0); //time
+            Player.O = orientation;
+            packet.Write(Player.X);
+            packet.Write(Player.Y);
+            packet.Write(Player.Z);
+            packet.Write(Player.O);
+            packet.Write((UInt32)0); //fall time
+            SendPacket(packet);
+        }
         #endregion
 
         #region Packet Handlers
         [PacketHandler(WorldCommand.SMSG_LOGIN_VERIFY_WORLD)]
-        void HandleLoginVerifyWorld(InPacket packet)
+        protected void HandleLoginVerifyWorld(InPacket packet)
         {
             Player.MapID = (int)packet.ReadUInt32();
             Player.X = packet.ReadSingle();
@@ -306,7 +324,7 @@ namespace Client
         }
 
         [PacketHandler(WorldCommand.SMSG_NEW_WORLD)]
-        void HandleNewWorld(InPacket packet)
+        protected void HandleNewWorld(InPacket packet)
         {
             Player.MapID = (int)packet.ReadUInt32();
             Player.X = packet.ReadSingle();
@@ -319,14 +337,14 @@ namespace Client
         }
 
         [PacketHandler(WorldCommand.SMSG_TRANSFER_PENDING)]
-        void HandleTransferPending(InPacket packet)
+        protected void HandleTransferPending(InPacket packet)
         {
             Player.ResetPosition();
             var newMap = packet.ReadUInt32();
         }
 
         [PacketHandler(WorldCommand.MSG_MOVE_TELEPORT_ACK)]
-        void HandleMoveTeleportAck(InPacket packet)
+        protected void HandleMoveTeleportAck(InPacket packet)
         {
             var packGuid = packet.ReadPackedGuid();
             packet.ReadUInt32();

@@ -33,7 +33,7 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
-        SortedList<DateTime, RepeatingAction> scheduledActions;
+        ScheduledActions scheduledActions;
         public GameWorld World
         {
             get;
@@ -70,7 +70,7 @@ namespace Client
         {
             this.RealmID = realmId;
             this.Character = character;
-            scheduledActions = new SortedList<DateTime, RepeatingAction>();
+            scheduledActions = new ScheduledActions();
             World = new GameWorld();
 
             this.Hostname = hostname;
@@ -123,18 +123,18 @@ namespace Client
             if (World.SelectedCharacter == null)
                 return;
 
-            if (scheduledActions.Count == 0)
-                return;
-
-            // execute only 1 scheduled action at time in each Update().
-            // actions are sorted by time so it's enough to check the first in the list
-            var scheduledAction = scheduledActions.First();
-            if (scheduledAction.Key <= DateTime.Now)
+            while (scheduledActions.Count != 0)
             {
-                scheduledActions.RemoveAt(0);
-                scheduledAction.Value.action();
-                if (scheduledAction.Value.interval > TimeSpan.Zero)
-                    ScheduleAction(scheduledAction.Value.action, DateTime.Now + scheduledAction.Value.interval, scheduledAction.Value.interval);
+                var scheduledAction = scheduledActions.First();
+                if (scheduledAction.scheduledTime <= DateTime.Now)
+                {
+                    scheduledActions.RemoveAt(0);
+                    scheduledAction.action();
+                    if (scheduledAction.interval > TimeSpan.Zero)
+                        ScheduleAction(scheduledAction.action, DateTime.Now + scheduledAction.interval, scheduledAction.interval);
+                }
+                else
+                    break;
             }
         }
 
@@ -208,7 +208,7 @@ namespace Client
 
         public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan))
         {
-            scheduledActions.Add(time, new RepeatingAction(action, interval));
+            scheduledActions.Add(new RepeatingAction(action, time, interval));
         }
 
         public void CreateCharacter()
@@ -412,16 +412,119 @@ namespace Client
             set;
         }
 
+        public DateTime scheduledTime
+        {
+            get;
+            set;
+        }
+
         public TimeSpan interval
         {
             get;
             set;
         }
 
-        public RepeatingAction(Action action, TimeSpan interval)
+        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval)
         {
             this.action = action;
+            this.scheduledTime = scheduledTime;
             this.interval = interval;
+        }
+    }
+
+    public class ScheduledActions : IList<RepeatingAction>
+    {
+        List<RepeatingAction> actions;
+
+        public ScheduledActions()
+        {
+            actions = new List<RepeatingAction>();
+        }
+
+        public int IndexOf(RepeatingAction item)
+        {
+            return actions.IndexOf(item);
+        }
+
+        void IList<RepeatingAction>.Insert(int index, RepeatingAction item)
+        {
+            Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            actions.RemoveAt(index);
+        }
+
+        public RepeatingAction this[int index]
+        {
+            get
+            {
+                return actions[index];
+            }
+            set
+            {
+                actions[index] = value;
+                Sort();
+
+            }
+        }
+
+        public void Add(RepeatingAction item)
+        {
+            actions.Add(item);
+            Sort();
+        }
+
+        public void Clear()
+        {
+            actions.Clear();
+        }
+
+        public bool Contains(RepeatingAction item)
+        {
+            return actions.Contains(item);
+        }
+
+        public void CopyTo(RepeatingAction[] array, int arrayIndex)
+        {
+            actions.CopyTo(array, arrayIndex);
+        }
+
+        public int Count
+        {
+            get 
+            {
+                return actions.Count;
+            }
+        }
+
+        public bool IsReadOnly
+        {
+            get 
+            {
+                return false;
+            }
+        }
+
+        public bool Remove(RepeatingAction item)
+        {
+            return actions.Remove(item);
+        }
+
+        public IEnumerator<RepeatingAction> GetEnumerator()
+        {
+            return actions.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return actions.GetEnumerator();
+        }
+
+        void Sort()
+        {
+            actions.Sort((a, b) => (int)(a.scheduledTime - b.scheduledTime).TotalMilliseconds);
         }
     }
 }

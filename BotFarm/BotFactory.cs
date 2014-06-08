@@ -102,7 +102,7 @@ namespace BotFarm
 
             game.CreateCharacter();
             Thread.Sleep(1000);
-            game.SendPacket(new OutPacket(WorldCommand.ClientEnumerateCharacters));
+            game.SendPacket(new OutPacket(WorldCommand.CMSG_CHAR_ENUM));
             Thread.Sleep(1000);
             game.SettingUp = false;
             return game;

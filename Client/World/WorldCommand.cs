@@ -65,7 +65,7 @@ namespace Client.World
         CMSG_AUTH_SRP6_PROOF = 52,
         CMSG_AUTH_SRP6_RECODE = 53,
         CMSG_CHAR_CREATE = 54,
-        ClientEnumerateCharacters = 55,
+        CMSG_CHAR_ENUM = 55,
         CMSG_CHAR_DELETE = 56,
         SMSG_AUTH_SRP6_RESPONSE = 57,
         SMSG_CHAR_CREATE = 58,
@@ -334,7 +334,7 @@ namespace Client.World
         CMSG_CANCEL_CHANNELLING = 315,
         SMSG_AI_REACTION = 316,
         CMSG_SET_SELECTION = 317,
-        //CMSG_SET_TARGET_OBSOLETE = 318,
+        CMSG_DELETEEQUIPMENT_SET = 318,
         /// <summary>
         /// pguid
         /// </summary>
@@ -1930,7 +1930,7 @@ namespace Client.World
         /// Activates a service? called from the same method that sends out other NPCFlag related "hello" opcodes
         /// guid
         /// </summary>
-        CMSG_1192 = 1192,
+        CMSG_PLAYER_VEHICLE_ENTER = 1192,
         /// <summary>
         /// guid passengerId
         /// </summary>
@@ -2053,7 +2053,7 @@ namespace Client.World
         ///     pguid itemGuid (corresponds to inventoryslot)
         /// } 
         /// </summary>
-        CMSG_SET_EQUIPMENT_SET = 1213,
+        CMSG_EQUIPMENT_SET_SAVE = 1213,
         /// <summary>
         /// called from CMissile::CalcPosition
         /// int64 guid
@@ -2116,7 +2116,7 @@ namespace Client.World
         ///     int rank
         /// }
         /// </summary>
-        CMSG_LEARN_PREVIEWED_TALENTS = 1217,
+        CMSG_LEARN_PREVIEW_TALENTS = 1217,
         /// <summary>
         /// lua_LearnPreviewTalents
         /// int64 petGuid
@@ -2128,7 +2128,7 @@ namespace Client.World
         /// }
         /// </summary>
         CMSG_PET_LEARN_PREVIEWED_TALENTS = 1218,
-        UMSG_UNKNOWN_1219 = 1219, // not found
+        CMSG_LEARN_PREVIEW_TALENTS_PET = 1219,
         UMSG_UNKNOWN_1220 = 1220, // not found
         UMSG_UNKNOWN_1221 = 1221, // not found
         UMSG_UNKNOWN_1222 = 1222, // not found
@@ -2175,7 +2175,7 @@ namespace Client.World
         // manu unks...
         UMSG_UNKNOWN_1239 = 1239,
         SMSG_UNKNOWN_1240 = 1240,
-        CMSG_UNKNOWN_1241 = 1241,
+        CMSG_CHAR_FACTION_CHANGE = 1241,
         SMSG_UNKNOWN_1242 = 1242,
         UMSG_UNKNOWN_1243 = 1243,
         UMSG_UNKNOWN_1244 = 1244,
@@ -2198,7 +2198,7 @@ namespace Client.World
         SMSG_TOGGLE_XP_GAIN = 1261, // bg xp gain
         SMSG_UNKNOWN_1262 = 1262,
         SMSG_UNKNOWN_1263 = 1263,
-        CMSG_UNKNOWN_1264 = 1264,
+        CMSG_GMRESPONSE_RESOLVE = 1264,
         SMSG_UNKNOWN_1265 = 1265,
         UMSG_UNKNOWN_1266 = 1266,
         UMSG_UNKNOWN_1267 = 1267,
@@ -2206,7 +2206,7 @@ namespace Client.World
         UMSG_UNKNOWN_1269 = 1269,
         CMSG_WORLD_STATE_UI_TIMER_UPDATE = 1270, // empty, just reply
         SMSG_WORLD_STATE_UI_TIMER_UPDATE = 1271, // ack ^
-        CMSG_UNKNOWN_1272 = 1272,
+        CMSG_CHAR_RACE_CHANGE = 1272,
         CMSG_READY_FOR_ACCOUNT_DATA_TIMES = 1279,
         CMSG_QUERY_QUESTS_COMPLETED = 1280,
         SMSG_QUERY_QUESTS_COMPLETED_RESPONSE = 1281,

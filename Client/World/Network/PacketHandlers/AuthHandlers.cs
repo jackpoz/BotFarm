@@ -65,7 +65,7 @@ namespace Client.World.Network
 
             if (detail == CommandDetail.AuthSuccess)
             {
-                OutPacket request = new OutPacket(WorldCommand.ClientEnumerateCharacters);
+                OutPacket request = new OutPacket(WorldCommand.CMSG_CHAR_ENUM);
                 Send(request);
             }
             else

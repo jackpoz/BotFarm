@@ -16,8 +16,7 @@ namespace Client.Authentication.Network
         public BigInteger Key { get; private set; }
         byte[] m2;
 
-        BinaryWriter output;
-        BinaryReader input;
+        NetworkStream stream;
 
         private string Username;
         private byte[] PasswordHash;
@@ -57,7 +56,7 @@ namespace Client.Authentication.Network
                 IP = BitConverter.ToUInt32((connection.Client.LocalEndPoint as IPEndPoint).Address.GetAddressBytes(), 0)
             };
 
-            challenge.Send(output);
+            challenge.Send(stream);
             ReadCommand();
         }
 
@@ -224,7 +223,7 @@ namespace Client.Authentication.Network
                     };
 
                     Game.UI.LogLine("Sending logon proof", LogLevel.Debug);
-                    proof.Send(output);
+                    proof.Send(stream);
 
                     #endregion
 
@@ -292,8 +291,8 @@ namespace Client.Authentication.Network
             {
                 Game.UI.LogLine("Authentication succeeded!");
                 Game.UI.LogLine("Requesting realm list", LogLevel.Detail);
-                output.Write((byte)AuthCommand.REALM_LIST);
-                output.Write((uint)0);
+                var buffer = new byte[] { (byte)AuthCommand.REALM_LIST, 0x0, 0x0, 0x0, 0x0 };
+                stream.Write(buffer, 0, buffer.Length);
             }
 
             // get next command
@@ -381,8 +380,7 @@ namespace Client.Authentication.Network
                 Game.UI.Log("Connecting to realmlist... ");
 
                 connection = new TcpClient(this.Hostname, this.Port);
-                output = new BinaryWriter(connection.GetStream());
-                input = new BinaryReader(connection.GetStream());
+                stream = connection.GetStream();
 
                 Game.UI.LogLine("done!", LogLevel.Debug);
 

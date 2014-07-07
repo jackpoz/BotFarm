@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.Net.Sockets;
 
 namespace Client.Authentication.Network
 {
     interface ISendable
     {
-        void Send(BinaryWriter writer);
+        void Send(NetworkStream writer);
     }
 }

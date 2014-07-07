@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Client.Authentication.Network;
+using System.Net.Sockets;
 
 namespace Client.Authentication
 {
@@ -15,14 +16,21 @@ namespace Client.Authentication
 
         #region ISendable Members
 
-        public void Send(BinaryWriter writer)
+        public void Send(NetworkStream writer)
         {
-            writer.Write((byte)AuthCommand.LOGON_PROOF);
-            writer.Write(A);
-            writer.Write(M1);
-            writer.Write(crc);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
+            using(var stream = new MemoryStream(1 + A.Length + M1.Length + crc.Length + 2))
+            {
+                var binaryStream = new BinaryWriter(stream);
+                binaryStream.Write((byte)AuthCommand.LOGON_PROOF);
+                binaryStream.Write(A);
+                binaryStream.Write(M1);
+                binaryStream.Write(crc);
+                binaryStream.Write((byte)0);
+                binaryStream.Write((byte)0);
+                stream.Seek(0, SeekOrigin.Begin);
+                var buffer = stream.ToArray();
+                writer.Write(buffer, 0, buffer.Length);
+            }
         }
 
         #endregion

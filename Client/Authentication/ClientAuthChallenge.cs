@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Client.Authentication.Network;
+using System.Net.Sockets;
 
 namespace Client.Authentication
 {
@@ -17,22 +18,29 @@ namespace Client.Authentication
 
         #region ISendable Members
 
-        public void Send(BinaryWriter writer)
+        public void Send(NetworkStream writer)
         {
-            writer.Write((byte)AuthCommand.LOGON_CHALLENGE);
-            writer.Write((byte)6);
-            writer.Write((byte)(username.Length + 30));
-            writer.Write((byte)0);
-            writer.Write("WoW".ToCString());
-            writer.Write(version);
-            writer.Write(build);
-            writer.Write("68x".ToCString());
-            writer.Write("niW".ToCString());
-            writer.Write(Encoding.ASCII.GetBytes("SUne"));
-            writer.Write((uint)0x3c);
-            writer.Write(IP);
-            writer.Write((byte)username.Length);
-            writer.Write(Encoding.ASCII.GetBytes(username));
+            using (var stream = new MemoryStream(128))
+            {
+                var binaryStream = new BinaryWriter(stream);
+                binaryStream.Write((byte)AuthCommand.LOGON_CHALLENGE);
+                binaryStream.Write((byte)6);
+                binaryStream.Write((byte)(username.Length + 30));
+                binaryStream.Write((byte)0);
+                binaryStream.Write("WoW".ToCString());
+                binaryStream.Write(version);
+                binaryStream.Write(build);
+                binaryStream.Write("68x".ToCString());
+                binaryStream.Write("niW".ToCString());
+                binaryStream.Write(Encoding.ASCII.GetBytes("SUne"));
+                binaryStream.Write((uint)0x3c);
+                binaryStream.Write(IP);
+                binaryStream.Write((byte)username.Length);
+                binaryStream.Write(Encoding.ASCII.GetBytes(username));
+                stream.Seek(0, SeekOrigin.Begin);
+                var buffer = stream.ToArray();
+                writer.Write(buffer, 0, buffer.Length);
+            }
         }
 
         #endregion

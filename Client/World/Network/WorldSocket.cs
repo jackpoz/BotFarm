@@ -174,7 +174,7 @@ namespace Client.World.Network
 
                 foreach (var attribute in attributes)
                 {
-                    Game.UI.LogLine(string.Format("Registered '{0}.{1}' to '{2}'", obj.GetType().Name, method.Name, attribute.Command), LogLevel.Debug);
+                    Game.UI.LogDebug(string.Format("Registered '{0}.{1}' to '{2}'", obj.GetType().Name, method.Name, attribute.Command));
                     PacketHandlers[attribute.Command] = handler;
                 }
             }
@@ -285,7 +285,7 @@ namespace Client.World.Network
                     authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
                     ServerHeader header = new ServerHeader(ReceiveData);
 
-                    Game.UI.LogLine(header.ToString(), LogLevel.Debug);
+                    Game.UI.LogDebug(header.ToString());
                     if (header.InputDataLength > 5 || header.InputDataLength < 4)
                         Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
 
@@ -386,13 +386,13 @@ namespace Client.World.Network
                 PacketHandler handler;
                 if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
                 {
-                    Game.UI.LogLine(string.Format("Received {0}", packet.Header.Command), LogLevel.Debug);
+                    Game.UI.LogDebug(string.Format("Received {0}", packet.Header.Command));
                     handler(packet);
                 }
                 else
                 {
                     if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
-                        Game.UI.LogLine(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command), LogLevel.Debug);
+                        Game.UI.LogDebug(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command));
                 }
             }
             catch(Exception ex)
@@ -421,7 +421,7 @@ namespace Client.World.Network
                     connection.Close();
                 connection = new TcpClient(ServerInfo.Address, ServerInfo.Port);
 
-                Game.UI.LogLine("done!", LogLevel.Debug);
+                Game.UI.LogDebug("done!");
             }
             catch (SocketException ex)
             {

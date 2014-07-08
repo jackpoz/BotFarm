@@ -19,7 +19,7 @@ using Client.World.Entities;
 
 namespace Client
 {
-    public class AutomatedGame : IGame, IGameUI, IDisposable
+    public class AutomatedGame : IGameUI, IGame, IDisposable
     {
         #region Properties
         public bool Running { get; private set; }
@@ -44,7 +44,7 @@ namespace Client
             get;
             protected set;
         }
-        public LogLevel LogLevel
+        public override LogLevel LogLevel
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Client
             {
             }
         }
-        public IGame Game
+        public override IGame Game
         {
             get
             {
@@ -118,7 +118,7 @@ namespace Client
                 });
         }
 
-        public void Update()
+        public override void Update()
         {
             if (World.SelectedCharacter == null)
                 return;
@@ -157,7 +157,7 @@ namespace Client
             }
         }
 
-        public void Exit()
+        public override void Exit()
         {
             Connected = false;
             LoggedIn = false;
@@ -170,12 +170,12 @@ namespace Client
                 ((WorldSocket)socket).Send(packet);
         }
 
-        public void PresentRealmList(WorldServerList realmList)
+        public override void PresentRealmList(WorldServerList realmList)
         {
             ConnectTo(realmList[RealmID]);
         }
 
-        public void PresentCharacterList(Character[] characterList)
+        public override void PresentCharacterList(Character[] characterList)
         {
             World.SelectedCharacter = characterList[Character];
             OutPacket packet = new OutPacket(WorldCommand.CMSG_PLAYER_LOGIN);
@@ -186,17 +186,17 @@ namespace Client
             Player.GUID = World.SelectedCharacter.GUID;
         }
 
-        public string ReadLine()
+        public override string ReadLine()
         {
             throw new NotImplementedException();
         }
 
-        public int Read()
+        public override int Read()
         {
             throw new NotImplementedException();
         }
 
-        public ConsoleKeyInfo ReadKey()
+        public override ConsoleKeyInfo ReadKey()
         {
             throw new NotImplementedException();
         }
@@ -261,7 +261,6 @@ namespace Client
             response.Write((uint)language);
             response.Write(message.ToCString());
             SendPacket(response);
-            Thread.Sleep(500);
         }
 
         public void Tele(string teleport)
@@ -365,14 +364,14 @@ namespace Client
         #endregion
 
         #region Unused Methods
-        public virtual void Log(string message, LogLevel level = LogLevel.Info)
+        public override void Log(string message, LogLevel level = LogLevel.Info)
         {
 #if DEBUG_LOG
             Console.WriteLine(message);
 #endif
         }
 
-        public virtual void LogLine(string message, LogLevel level = LogLevel.Info)
+        public override void LogLine(string message, LogLevel level = LogLevel.Info)
         {
 #if !DEBUG_LOG
             if (level > LogLevel.Debug)
@@ -380,12 +379,17 @@ namespace Client
             Console.WriteLine(Username + " - " + message);
         }
 
-        public virtual void LogException(string message)
+        public override void LogDebug(string message)
+        {
+            LogLine(message, LogLevel.Debug);
+        }
+
+        public override void LogException(string message)
         {
             Console.WriteLine(Username + " - " + message);
         }
 
-        public virtual void LogException(Exception ex)
+        public override void LogException(Exception ex)
         {
             Console.WriteLine(string.Format(Username + " - {0} {1}", ex.Message, ex.StackTrace));
         }
@@ -398,7 +402,7 @@ namespace Client
             }
         }
 
-        public void PresentChatMessage(ChatMessage message)
+        public override void PresentChatMessage(ChatMessage message)
         {
         }
         #endregion

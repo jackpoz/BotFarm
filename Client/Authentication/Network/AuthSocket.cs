@@ -48,7 +48,7 @@ namespace Client.Authentication.Network
 
         void SendLogonChallenge()
         {
-            Game.UI.LogLine("Sending logon challenge", LogLevel.Debug);
+            Game.UI.LogDebug("Sending logon challenge");
 
             ClientAuthChallenge challenge = new ClientAuthChallenge()
             {
@@ -79,7 +79,7 @@ namespace Client.Authentication.Network
             {
                 case AuthResult.SUCCESS:
                 {
-                    Game.UI.LogLine("Received logon challenge", LogLevel.Debug);
+                    Game.UI.LogDebug("Received logon challenge");
 
                     BigInteger N, A, B, a, u, x, S, salt, unk1, g, k;
                     k = new BigInteger(3);
@@ -92,10 +92,10 @@ namespace Client.Authentication.Network
                     salt = challenge.salt.ToBigInteger();
                     unk1 = challenge.unk3.ToBigInteger();
 
-                    Game.UI.LogLine("---====== Received from server: ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("B={0}", B.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("N={0}", N.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("salt={0}", challenge.salt.ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== Received from server: ======---");
+                    Game.UI.LogDebug(string.Format("B={0}", B.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("N={0}", N.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("salt={0}", challenge.salt.ToHexString()));
 
                     #endregion
 
@@ -103,10 +103,10 @@ namespace Client.Authentication.Network
 
                     x = HashAlgorithm.SHA1.Hash(challenge.salt, PasswordHash).ToBigInteger();
 
-                    Game.UI.LogLine("---====== shared password hash ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("g={0}", g.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("x={0}", x.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("N={0}", N.ToCleanByteArray().ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== shared password hash ======---");
+                    Game.UI.LogDebug(string.Format("g={0}", g.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("x={0}", x.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("N={0}", N.ToCleanByteArray().ToHexString()));
 
                     #endregion
 
@@ -123,8 +123,8 @@ namespace Client.Authentication.Network
                         A = g.ModPow(a, N);
                     } while (A.ModPow(1, N) == 0);
 
-                    Game.UI.LogLine("---====== Send data to server: ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("A={0}", A.ToCleanByteArray().ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== Send data to server: ======---");
+                    Game.UI.LogDebug(string.Format("A={0}", A.ToCleanByteArray().ToHexString()));
 
                     #endregion
 
@@ -161,10 +161,10 @@ namespace Client.Authentication.Network
 
                     Key = keyData.ToBigInteger();
 
-                    Game.UI.LogLine("---====== Compute session key ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("u={0}", u.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("S={0}", S.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("K={0}", Key.ToCleanByteArray().ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== Compute session key ======---");
+                    Game.UI.LogDebug(string.Format("u={0}", u.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("S={0}", S.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("K={0}", Key.ToCleanByteArray().ToHexString()));
 
                     #endregion
 
@@ -176,12 +176,12 @@ namespace Client.Authentication.Network
                     byte[] nHash = HashAlgorithm.SHA1.Hash(N.ToCleanByteArray());
                     for (int i = 0; i < 20; ++i)
                         gNHash[i] = nHash[i];
-                    Game.UI.LogLine(string.Format("nHash={0}", nHash.ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug(string.Format("nHash={0}", nHash.ToHexString()));
 
                     byte[] gHash = HashAlgorithm.SHA1.Hash(g.ToCleanByteArray());
                     for (int i = 0; i < 20; ++i)
                         gNHash[i] ^= gHash[i];
-                    Game.UI.LogLine(string.Format("gHash={0}", gHash.ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug(string.Format("gHash={0}", gHash.ToHexString()));
 
                     // hash username
                     byte[] userHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(Username));
@@ -197,16 +197,16 @@ namespace Client.Authentication.Network
                         Key.ToCleanByteArray()
                     );
 
-                    Game.UI.LogLine("---====== Client proof: ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("gNHash={0}", gNHash.ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("userHash={0}", userHash.ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("salt={0}", challenge.salt.ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("A={0}", A.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("B={0}", B.ToCleanByteArray().ToHexString()), LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("key={0}", Key.ToCleanByteArray().ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== Client proof: ======---");
+                    Game.UI.LogDebug(string.Format("gNHash={0}", gNHash.ToHexString()));
+                    Game.UI.LogDebug(string.Format("userHash={0}", userHash.ToHexString()));
+                    Game.UI.LogDebug(string.Format("salt={0}", challenge.salt.ToHexString()));
+                    Game.UI.LogDebug(string.Format("A={0}", A.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("B={0}", B.ToCleanByteArray().ToHexString()));
+                    Game.UI.LogDebug(string.Format("key={0}", Key.ToCleanByteArray().ToHexString()));
 
-                    Game.UI.LogLine("---====== Send proof to server: ======---", LogLevel.Debug);
-                    Game.UI.LogLine(string.Format("M={0}", m1Hash.ToHexString()), LogLevel.Debug);
+                    Game.UI.LogDebug("---====== Send proof to server: ======---");
+                    Game.UI.LogDebug(string.Format("M={0}", m1Hash.ToHexString()));
 
                     // expected proof for server
                     m2 = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), m1Hash, keyData);
@@ -222,7 +222,7 @@ namespace Client.Authentication.Network
                         crc = new byte[20],
                     };
 
-                    Game.UI.LogLine("Sending logon proof", LogLevel.Debug);
+                    Game.UI.LogDebug("Sending logon proof");
                     proof.Send(stream);
 
                     #endregion
@@ -273,7 +273,7 @@ namespace Client.Authentication.Network
                 return;
             }
 
-            Game.UI.LogLine("Received logon proof", LogLevel.Debug);
+            Game.UI.LogDebug("Received logon proof");
 
             bool equal = true;
             equal = m2 != null && m2.Length == 20;
@@ -283,7 +283,7 @@ namespace Client.Authentication.Network
 
             if (!equal)
             {
-                Game.UI.LogLine("Server auth failed!", LogLevel.Error);
+                Game.UI.LogDebug("Server auth failed!");
                 SendLogonChallenge();
                 return;
             }
@@ -305,7 +305,7 @@ namespace Client.Authentication.Network
 
             uint size = reader.ReadUInt16();
             WorldServerList realmList = new WorldServerList(reader);
-            Game.UI.LogLine("Received realm list", LogLevel.Debug);
+            Game.UI.LogDebug("Received realm list");
 
             Game.UI.PresentRealmList(realmList);
         }
@@ -382,7 +382,7 @@ namespace Client.Authentication.Network
                 connection = new TcpClient(this.Hostname, this.Port);
                 stream = connection.GetStream();
 
-                Game.UI.LogLine("done!", LogLevel.Debug);
+                Game.UI.LogDebug("done!");
 
                 SendLogonChallenge();
             }

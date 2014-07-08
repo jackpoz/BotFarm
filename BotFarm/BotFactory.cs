@@ -181,7 +181,8 @@ namespace BotFarm
             logger = null;
         }
 
-        public void Log(string message)
+        [Conditional("DEBUG")]
+        public void LogDebug(string message)
         {
             Log(message, LogLevel.Debug);
         }

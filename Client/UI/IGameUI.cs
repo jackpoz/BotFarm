@@ -2,42 +2,45 @@
 using Client.Authentication;
 using Client.World;
 using Client.Chat;
+using System.Diagnostics;
 
 namespace Client.UI
 {
-    public interface IGameUI
+    public abstract class IGameUI
     {
-        IGame Game { get; set; }
+        public abstract IGame Game { get; set; }
 
-        LogLevel LogLevel { get; set; }
+        public abstract LogLevel LogLevel { get; set; }
 
-        void Update();
-        void Exit();
+        public abstract void Update();
+        public abstract void Exit();
 
         #region Packet handler presenters
 
-        void PresentRealmList(WorldServerList realmList);
-        void PresentCharacterList(Character[] characterList);
+        public abstract void PresentRealmList(WorldServerList realmList);
+        public abstract void PresentCharacterList(Character[] characterList);
 
-        void PresentChatMessage(ChatMessage message);
+        public abstract void PresentChatMessage(ChatMessage message);
 
         #endregion
 
         #region UI Output
 
-        void Log(string message, LogLevel level = LogLevel.Info);
-        void LogLine(string message, LogLevel level = LogLevel.Info);
-        void LogException(string message);
+        public abstract void Log(string message, LogLevel level = LogLevel.Info);
+        public abstract void LogLine(string message, LogLevel level = LogLevel.Info);
+        [Conditional("DEBUG")]
+        public abstract void LogDebug(string message);
+        public abstract void LogException(string message);
 
-        void LogException(Exception ex);
+        public abstract void LogException(Exception ex);
 
         #endregion
 
         #region UI Input
 
-        string ReadLine();
-        int Read();
-        ConsoleKeyInfo ReadKey();
+        public abstract string ReadLine();
+        public abstract int Read();
+        public abstract ConsoleKeyInfo ReadKey();
 
         #endregion
     }

@@ -232,7 +232,7 @@ namespace Client.World.Network
                     Remaining = 3;
 
                 Index = 1;
-                BeginRead(new AsyncCallback(ReadHeaderCallback));
+                BeginRead(ReadHeaderCallback);
             }
             // these exceptions can happen as race condition on shutdown
             catch(ObjectDisposedException ex)
@@ -287,7 +287,7 @@ namespace Client.World.Network
 
                     Game.UI.LogDebug(header.ToString());
                     if (header.InputDataLength > 5 || header.InputDataLength < 4)
-                        Game.UI.LogException(String.Format("Header.InputataLength invalid: {0}", header.InputDataLength));
+                        Game.UI.LogException(String.Format("Header.InputDataLength invalid: {0}", header.InputDataLength));
 
                     if (header.Size > 0)
                     {
@@ -295,7 +295,7 @@ namespace Client.World.Network
                         Index = 0;
                         Remaining = header.Size;
                         ReceiveData = new byte[header.Size];
-                        BeginRead(new AsyncCallback(ReadPayloadCallback), header);
+                        BeginRead(ReadPayloadCallback, header);
                     }
                     else
                     {
@@ -309,7 +309,7 @@ namespace Client.World.Network
                     // more header to read
                     Index += bytesRead;
                     Remaining -= bytesRead;
-                    BeginRead(new AsyncCallback(ReadHeaderCallback));
+                    BeginRead(ReadHeaderCallback);
                 }
             }
             // these exceptions can happen as race condition on shutdown
@@ -350,8 +350,7 @@ namespace Client.World.Network
                 {
                     // get header and packet, handle it
                     ServerHeader header = (ServerHeader)result.AsyncState;
-                    InPacket packet = new InPacket(header, ReceiveData);
-                    HandlePacket(packet);
+                    HandlePacket(new InPacket(header, ReceiveData));
 
                     // start new asynchronous read
                     Start();
@@ -361,7 +360,7 @@ namespace Client.World.Network
                     // more payload to read
                     Index += bytesRead;
                     Remaining -= bytesRead;
-                    BeginRead(new AsyncCallback(ReadPayloadCallback), result.AsyncState);
+                    BeginRead(ReadPayloadCallback, result.AsyncState);
                 }
             }
             catch(NullReferenceException ex)
@@ -399,6 +398,10 @@ namespace Client.World.Network
             {
                 Game.UI.LogException(ex);
             }
+            finally
+            {
+                packet.Dispose();
+            }
         }
 
         #region GameSocket Members
@@ -408,7 +411,7 @@ namespace Client.World.Network
             ReceiveData = new byte[4];
             Index = 0;
             Remaining = 1;
-            BeginRead(new AsyncCallback(ReadSizeCallback));
+            BeginRead(ReadSizeCallback);
         }
 
         public override bool Connect()

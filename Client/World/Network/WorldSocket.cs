@@ -187,7 +187,7 @@ namespace Client.World.Network
         int Index;
         int Remaining;
         
-        private void BeginRead(EventHandler<SocketAsyncEventArgs> callback, object state = null)
+        private void ReadAsync(EventHandler<SocketAsyncEventArgs> callback, object state = null)
         {
             SocketAsyncState = state;
             SocketArgs.SetBuffer(ReceiveData, Index, Remaining);
@@ -229,7 +229,7 @@ namespace Client.World.Network
                     Remaining = 3;
 
                 Index = 1;
-                BeginRead(ReadHeaderCallback);
+                ReadAsync(ReadHeaderCallback);
             }
             // these exceptions can happen as race condition on shutdown
             catch(ObjectDisposedException ex)
@@ -289,7 +289,7 @@ namespace Client.World.Network
                         Index = 0;
                         Remaining = header.Size;
                         ReceiveData = new byte[header.Size];
-                        BeginRead(ReadPayloadCallback, header);
+                        ReadAsync(ReadPayloadCallback, header);
                     }
                     else
                     {
@@ -303,7 +303,7 @@ namespace Client.World.Network
                     // more header to read
                     Index += bytesRead;
                     Remaining -= bytesRead;
-                    BeginRead(ReadHeaderCallback);
+                    ReadAsync(ReadHeaderCallback);
                 }
             }
             // these exceptions can happen as race condition on shutdown
@@ -354,7 +354,7 @@ namespace Client.World.Network
                     // more payload to read
                     Index += bytesRead;
                     Remaining -= bytesRead;
-                    BeginRead(ReadPayloadCallback, SocketAsyncState);
+                    ReadAsync(ReadPayloadCallback, SocketAsyncState);
                 }
             }
             catch(NullReferenceException ex)
@@ -405,7 +405,7 @@ namespace Client.World.Network
             ReceiveData = new byte[4];
             Index = 0;
             Remaining = 1;
-            BeginRead(ReadSizeCallback);
+            ReadAsync(ReadSizeCallback);
         }
 
         public override bool Connect()
@@ -438,7 +438,7 @@ namespace Client.World.Network
 
             try
             {
-                connection.Client.BeginSend(data, 0, data.Length, SocketFlags.None, null, null);
+                connection.Client.Send(data, 0, data.Length, SocketFlags.None);
             }
             catch(ObjectDisposedException ex)
             {

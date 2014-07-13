@@ -11,7 +11,7 @@ namespace Client.World.Network
 {
     public partial class WorldSocket : GameSocket
     {
-        static List<WorldCommand> IgnoredOpcodes = new List<WorldCommand>()
+        static HashSet<WorldCommand> IgnoredOpcodes = new HashSet<WorldCommand>()
         {
             WorldCommand.SMSG_ADDON_INFO,
             WorldCommand.SMSG_CLIENTCACHE_VERSION,
@@ -76,7 +76,7 @@ namespace Client.World.Network
             WorldCommand.CMSG_MOVE_FALL_RESET,
         };
 
-        static List<WorldCommand> NotYetImplementedOpcodes = new List<WorldCommand>()
+        static HashSet<WorldCommand> NotYetImplementedOpcodes = new HashSet<WorldCommand>()
         {
             WorldCommand.SMSG_SET_PROFICIENCY,
             WorldCommand.SMSG_POWER_UPDATE,
@@ -187,27 +187,24 @@ namespace Client.World.Network
         int Index;
         int Remaining;
         
-        private void BeginRead(AsyncCallback callback, object state = null)
+        private void BeginRead(EventHandler<SocketAsyncEventArgs> callback, object state = null)
         {
-            this.connection.Client.BeginReceive
-            (
-                ReceiveData, Index, Remaining,
-                SocketFlags.None,
-                callback,
-                state
-            );
+            SocketAsyncState = state;
+            SocketArgs.SetBuffer(ReceiveData, Index, Remaining);
+            SocketCallback = callback;
+            connection.Client.ReceiveAsync(SocketArgs);
         }
 
         /// <summary>
         /// Determines how large the incoming header will be by
         /// inspecting the first byte, then initiates reading the header.
         /// </summary>
-        private void ReadSizeCallback(IAsyncResult result)
+        private void ReadSizeCallback(object sender, SocketAsyncEventArgs e)
         {
             try
             {
-                int bytesRead = this.connection.Client.EndReceive(result);
-                if (bytesRead == 0 && result.IsCompleted)
+                int bytesRead = e.BytesTransferred;
+                if (bytesRead == 0)
                 {
                     // TODO: world server disconnect
                     Game.UI.LogLine("Server has closed the connection");
@@ -259,15 +256,12 @@ namespace Client.World.Network
         /// <summary>
         /// Reads the rest of the incoming header.
         /// </summary>
-        private void ReadHeaderCallback(IAsyncResult result)
+        private void ReadHeaderCallback(object sender, SocketAsyncEventArgs e)
         {
             try
             {
-                //if (ReceiveData.Length != 4 && ReceiveData.Length != 5)
-                //  throw new Exception("ReceiveData.Length not in order");
-
-                int bytesRead = this.connection.Client.EndReceive(result);
-                if (bytesRead == 0 && result.IsCompleted)
+                int bytesRead = e.BytesTransferred;
+                if (bytesRead == 0)
                 {
                     // TODO: world server disconnect
                     Game.UI.LogLine("Server has closed the connection");
@@ -330,12 +324,12 @@ namespace Client.World.Network
         /// <summary>
         /// Reads the payload data.
         /// </summary>
-        private void ReadPayloadCallback(IAsyncResult result)
+        private void ReadPayloadCallback(object sender, SocketAsyncEventArgs e)
         {
             try
             {
-                int bytesRead = this.connection.Client.EndReceive(result);
-                if (bytesRead == 0 && result.IsCompleted)
+                int bytesRead = e.BytesTransferred;
+                if (bytesRead == 0)
                 {
                     // TODO: world server disconnect
                     Game.UI.LogLine("Server has closed the connection");
@@ -349,7 +343,7 @@ namespace Client.World.Network
                 if (bytesRead == Remaining)
                 {
                     // get header and packet, handle it
-                    ServerHeader header = (ServerHeader)result.AsyncState;
+                    ServerHeader header = (ServerHeader)SocketAsyncState;
                     HandlePacket(new InPacket(header, ReceiveData));
 
                     // start new asynchronous read
@@ -360,7 +354,7 @@ namespace Client.World.Network
                     // more payload to read
                     Index += bytesRead;
                     Remaining -= bytesRead;
-                    BeginRead(ReadPayloadCallback, result.AsyncState);
+                    BeginRead(ReadPayloadCallback, SocketAsyncState);
                 }
             }
             catch(NullReferenceException ex)

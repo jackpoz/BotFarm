@@ -9,6 +9,12 @@ namespace Client
 {
     public abstract class GameSocket : IDisposable
     {
+        public GameSocket()
+        {
+            SocketArgs = new SocketAsyncEventArgs();
+            SocketArgs.Completed += CallSocketCallback;
+        }
+
         public IGame Game { get; protected set; }
 
         protected TcpClient connection { get; set; }
@@ -22,7 +28,17 @@ namespace Client
 
         #region Asynchronous Reading
 
+        //ToDo: find a way to avoid creating new buffers every time
         protected byte[] ReceiveData;
+
+        protected SocketAsyncEventArgs SocketArgs;
+        protected object SocketAsyncState;
+        protected EventHandler<SocketAsyncEventArgs> SocketCallback;
+        private void CallSocketCallback(object sender, SocketAsyncEventArgs e)
+        {
+            if (SocketCallback != null)
+                SocketCallback(sender, e);
+        }
 
         public abstract void Start();
 

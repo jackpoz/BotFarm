@@ -38,7 +38,7 @@ namespace Client.Authentication.Network
 
             PasswordHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(authstring.ToUpper()));
 
-            ReceiveData = new byte[1];
+            ReserveData(1);
         }
 
         ~AuthSocket()

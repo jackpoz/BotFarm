@@ -7,13 +7,13 @@ namespace Client.World.Network
         public Header Header { get; private set; }
 
         internal InPacket(ServerHeader header)
-            : this(header, new byte[] { })
+            : this(header, new byte[] { }, 0)
         {
 
         }
 
-        internal InPacket(ServerHeader header, byte[] buffer)
-            : base(new MemoryStream(buffer))
+        internal InPacket(ServerHeader header, byte[] buffer, int bufferLength)
+            : base(new MemoryStream(buffer, 0, bufferLength, false, false))
         {
             Header = header;
         }

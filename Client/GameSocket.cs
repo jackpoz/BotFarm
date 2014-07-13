@@ -9,10 +9,14 @@ namespace Client
 {
     public abstract class GameSocket : IDisposable
     {
+        const int DefaultBufferSize = 128;
         public GameSocket()
         {
             SocketArgs = new SocketAsyncEventArgs();
             SocketArgs.Completed += CallSocketCallback;
+            _receiveData = new byte[DefaultBufferSize];
+            ReceiveDataLength = DefaultBufferSize;
+
         }
 
         public IGame Game { get; protected set; }
@@ -29,7 +33,22 @@ namespace Client
         #region Asynchronous Reading
 
         //ToDo: find a way to avoid creating new buffers every time
-        protected byte[] ReceiveData;
+        protected byte[] ReceiveData
+        {
+            get
+            {
+                return _receiveData;
+            }
+        }
+        private byte[] _receiveData;
+        protected int ReceiveDataLength;
+        protected void ReserveData(int size)
+        {
+            if (_receiveData.Length < size)
+                Array.Resize(ref _receiveData, size);
+            ReceiveDataLength = size;
+        }
+
 
         protected SocketAsyncEventArgs SocketArgs;
         protected object SocketAsyncState;

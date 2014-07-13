@@ -11,9 +11,9 @@ namespace Client.World.Network
         public int Size { get; private set; }
         public int InputDataLength { get; private set; }
 
-        internal ServerHeader(byte[] data)
+        internal ServerHeader(byte[] data, int dataLength)
         {
-            InputDataLength = data.Length;
+            InputDataLength = dataLength;
             if (InputDataLength == 4)
             {
                 Size = (int)(((uint)data[0]) << 8 | data[1]);

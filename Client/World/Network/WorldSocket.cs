@@ -220,7 +220,7 @@ namespace Client.World.Network
                 {
                     // need to resize the buffer
                     byte temp = ReceiveData[0];
-                    ReceiveData = new byte[5];
+                    ReserveData(5);
                     ReceiveData[0] = (byte)((0x7f & temp));
 
                     Remaining = 4;
@@ -276,8 +276,8 @@ namespace Client.World.Network
                 {
                     // finished reading header
                     // the first byte was decrypted already, so skip it
-                    authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveData.Length - 1);
-                    ServerHeader header = new ServerHeader(ReceiveData);
+                    authenticationCrypto.Decrypt(ReceiveData, 1, ReceiveDataLength - 1);
+                    ServerHeader header = new ServerHeader(ReceiveData, ReceiveDataLength);
 
                     Game.UI.LogDebug(header.ToString());
                     if (header.InputDataLength > 5 || header.InputDataLength < 4)
@@ -288,7 +288,7 @@ namespace Client.World.Network
                         // read the packet payload
                         Index = 0;
                         Remaining = header.Size;
-                        ReceiveData = new byte[header.Size];
+                        ReserveData(header.Size);
                         ReadAsync(ReadPayloadCallback, header);
                     }
                     else
@@ -344,7 +344,7 @@ namespace Client.World.Network
                 {
                     // get header and packet, handle it
                     ServerHeader header = (ServerHeader)SocketAsyncState;
-                    HandlePacket(new InPacket(header, ReceiveData));
+                    HandlePacket(new InPacket(header, ReceiveData, ReceiveDataLength));
 
                     // start new asynchronous read
                     Start();
@@ -402,7 +402,7 @@ namespace Client.World.Network
 
         public override void Start()
         {
-            ReceiveData = new byte[4];
+            ReserveData(4);
             Index = 0;
             Remaining = 1;
             ReadAsync(ReadSizeCallback);

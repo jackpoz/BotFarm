@@ -131,8 +131,10 @@ namespace BotFarm
                 infos = botInfos.Take(botCount).ToList();
             Parallel.ForEach<BotInfo>(infos, info =>
             {
-                bots.Add(LoadBot(info));
-                createdBots++;
+                var bot = LoadBot(info);
+                lock(bots)
+                    bots.Add(bot);
+                Interlocked.Increment(ref createdBots);
             });
 
             for (; createdBots < botCount; createdBots++)

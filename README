@@ -3,7 +3,7 @@ Console application to spawn WoW automated players.
 Credit for the authentication process and the base implementation goes to mangos, WCell, PseuWoW and TrinityCore.
 
 The application configuration is setup by editing the *.config file in the output folder:
-- fill the Username and Password fields with an account with ".account create" permissions to allow the BotFarm to automatically create new accounts when required
+- fill the Username and Password fields with an account with ".account create" permissions to allow the BotFarm to automatically create new accounts when required. Make sure this account has already a character.
 - fill the Min/MaxBotsCount with the amount of bots you want to connect at same time. This will automatically create new accounts when required
 
 Write "stats" in the console to view some statistics about the current status of bots.

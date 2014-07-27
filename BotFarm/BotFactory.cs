@@ -122,6 +122,12 @@ namespace BotFarm
 
         public void SetupFactory(int botCount)
         {
+            while(!factoryGame.LoggedIn)
+            {
+                 Log("Waiting for BotFactor account to login");
+                 Thread.Sleep(1000);
+            }
+
             Log("Setting up bot factory with " + botCount + " bots");
             int createdBots = 0;
             List<BotInfo> infos;

@@ -213,13 +213,23 @@ namespace Client
 
         public void CreateCharacter()
         {
+            Log("Creating new character");
             OutPacket createCharacterPacket = new OutPacket(WorldCommand.CMSG_CHAR_CREATE);
             StringBuilder charName = new StringBuilder("Bot");
-            foreach (char c in Username.Substring(3))
+            foreach (char c in Username.Substring(3).Take(9))
 	        {
                 charName.Append((char)(97 + int.Parse(c.ToString())));
 	        }
-            charName.Length = 12;
+
+            // Ensure Name rules are applied
+            char previousChar = '\0';
+            for (int i = 0; i < charName.Length; i++ )
+            {
+                if (charName[i] == previousChar)
+                    charName[i]++;
+                previousChar = charName[i];
+            }
+
             createCharacterPacket.Write(charName.ToString().ToCString());
             byte race = 1; createCharacterPacket.Write(race);
             byte _class = 5; createCharacterPacket.Write(_class);
@@ -247,6 +257,9 @@ namespace Client
         }
 
         public virtual void NoCharactersFound()
+        { }
+
+        public virtual void InvalidCredentials()
         { }
         #endregion
 
@@ -360,6 +373,16 @@ namespace Client
             result.Write((UInt32)0);
             result.Write(time);
             SendPacket(result);
+        }
+
+        [PacketHandler(WorldCommand.SMSG_CHAR_CREATE)]
+        protected void HandleCharCreate(InPacket packet)
+        {
+            var response = (CommandDetail)packet.ReadByte();
+            if (response == CommandDetail.CHAR_CREATE_SUCCESS)
+                SendPacket(new OutPacket(WorldCommand.CMSG_CHAR_ENUM));
+            else
+                NoCharactersFound();
         }
         #endregion
 

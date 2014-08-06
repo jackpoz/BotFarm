@@ -26,6 +26,8 @@ namespace Client
 
         void NoCharactersFound();
 
+        void InvalidCredentials();
+
         void Exit();
 
         void SendPacket(OutPacket packet);
@@ -113,6 +115,9 @@ namespace Client
         }
 
         public void NoCharactersFound()
+        { }
+
+        public void InvalidCredentials()
         { }
     }
 }

@@ -23,6 +23,8 @@ namespace Client.Authentication.Network
 
         private string Hostname;
         private int Port;
+        int failedAuthentications;
+        const int MAX_FAILED_AUTENTICATIONS = 10;
 
         Dictionary<AuthCommand, CommandHandler> Handlers;
 
@@ -256,6 +258,12 @@ namespace Client.Authentication.Network
                 case AuthResult.NO_MATCH:
                 case AuthResult.UNKNOWN2:
                     Game.UI.LogLine("Wrong password or invalid account or authentication error", LogLevel.Error);
+                    failedAuthentications++;
+                    if (failedAuthentications >= MAX_FAILED_AUTENTICATIONS)
+                    {
+                        Game.InvalidCredentials();
+                        return;
+                    }
                     Thread.Sleep(1000);
                     break;
                 case AuthResult.WRONG_BUILD_NUMBER:
@@ -290,6 +298,7 @@ namespace Client.Authentication.Network
             else
             {
                 Game.UI.LogLine("Authentication succeeded!");
+                failedAuthentications = 0;
                 Game.UI.LogLine("Requesting realm list", LogLevel.Detail);
                 var buffer = new byte[] { (byte)AuthCommand.REALM_LIST, 0x0, 0x0, 0x0, 0x0 };
                 stream.Write(buffer, 0, buffer.Length);

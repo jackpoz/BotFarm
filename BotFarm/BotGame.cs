@@ -44,6 +44,13 @@ namespace BotFarm
                 Log("Removing current bot because there are no characters");
                 BotFactory.Instance.RemoveBot(this);
             }
+            else
+                CreateCharacter();
+        }
+
+        public override void InvalidCredentials()
+        {
+            BotFactory.Instance.RemoveBot(this);
         }
 
         #region Handlers

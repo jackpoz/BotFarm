@@ -63,7 +63,7 @@ namespace Client.World.Network
             uint billingTimeRested = packet.ReadUInt32();
             byte expansion = packet.ReadByte();
 
-            if (detail == CommandDetail.AuthSuccess)
+            if (detail == CommandDetail.AUTH_OK)
             {
                 OutPacket request = new OutPacket(WorldCommand.CMSG_CHAR_ENUM);
                 Send(request);

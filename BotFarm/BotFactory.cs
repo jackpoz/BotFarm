@@ -29,6 +29,7 @@ namespace BotFarm
         const string botsInfosPath = "botsinfos.xml";
         const string logPath = "botfactory.log";
         StreamWriter logger;
+        Random randomGenerator = new Random();
 
         public BotFactory()
         {
@@ -64,47 +65,22 @@ namespace BotFarm
         public BotGame CreateBot()
         {
             Log("Creating new bot");
-            Random random = new Random();
-            BotGame game = null;
 
-            do
-            {
-                string username = "BOT" + random.Next();
-                string password = random.Next().ToString();
+            string username = "BOT" + randomGenerator.Next();
+            string password = randomGenerator.Next().ToString();
+            lock(factoryGame)
                 factoryGame.DoSayChat(".account create " + username + " " + password);
-                Thread.Sleep(1000);
 
-                for (int loginTries = 0; loginTries < 5; loginTries++)
-                {
-                    game = new BotGame(Settings.Default.Hostname,
-                                                       Settings.Default.Port,
-                                                       username,
-                                                       password,
-                                                       Settings.Default.RealmID,
-                                                       0);
-                    game.SettingUp = true;
-                    game.Start();
-                    for (int tries = 0; !game.Connected && tries < 10; tries++)
-                        Thread.Sleep(1000);
-                    if (!game.Connected)
-                    {
-                        game.Dispose();
-                        game = null;
-                    }
-                    else
-                    {
-                        botInfos.Add(new BotInfo(username, password));
-                        break;
-                    }
-                }
-            } while (game == null);
+            BotGame game = new BotGame(Settings.Default.Hostname,
+                                                Settings.Default.Port,
+                                                username,
+                                                password,
+                                                Settings.Default.RealmID,
+                                                0);
+            game.SettingUp = true;
+            game.Start();
+            botInfos.Add(new BotInfo(username, password));
 
-
-            game.CreateCharacter();
-            Thread.Sleep(1000);
-            game.SendPacket(new OutPacket(WorldCommand.CMSG_CHAR_ENUM));
-            Thread.Sleep(1000);
-            game.SettingUp = false;
             return game;
         }
 
@@ -143,8 +119,19 @@ namespace BotFarm
                 Interlocked.Increment(ref createdBots);
             });
 
-            for (; createdBots < botCount; createdBots++)
-                bots.Add(CreateBot());
+            Parallel.For(createdBots, botCount, index =>
+            {
+                try
+                {
+                    var bot = CreateBot();
+                    lock (bots)
+                        bots.Add(bot);
+                }
+                catch(Exception ex)
+                {
+                    Log("Error creating new bot: " + ex.Message + "\n" + ex.StackTrace, LogLevel.Error);
+                }
+            });
 
             Log("Finished setting up bot factory with " + botCount + " bots");
 

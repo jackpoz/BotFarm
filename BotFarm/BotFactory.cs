@@ -100,7 +100,7 @@ namespace BotFarm
         {
             while(!factoryGame.LoggedIn)
             {
-                 Log("Waiting for BotFactor account to login");
+                 Log("Waiting for BotFactory account to login");
                  Thread.Sleep(1000);
             }
 

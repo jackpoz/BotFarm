@@ -75,7 +75,7 @@ namespace Client.World.Network
             }
         }
 
-        [PacketHandler(WorldCommand.ServerCharacterEnumeration)]
+        [PacketHandler(WorldCommand.SMSG_CHAR_ENUM)]
         protected void HandleCharEnum(InPacket packet)
         {
             byte count = packet.ReadByte();

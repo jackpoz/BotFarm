@@ -69,7 +69,7 @@ namespace Client.World
         CMSG_CHAR_DELETE = 56,
         SMSG_AUTH_SRP6_RESPONSE = 57,
         SMSG_CHAR_CREATE = 58,
-        ServerCharacterEnumeration = 59,
+        SMSG_CHAR_ENUM = 59,
         SMSG_CHAR_DELETE = 60,
         CMSG_PLAYER_LOGIN = 61,
         SMSG_NEW_WORLD = 62,

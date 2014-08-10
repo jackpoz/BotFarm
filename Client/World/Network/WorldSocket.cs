@@ -45,7 +45,6 @@ namespace Client.World.Network
             WorldCommand.SMSG_SPLINE_MOVE_SET_RUN_MODE,
             WorldCommand.SMSG_SPLINE_MOVE_START_SWIM,
             WorldCommand.MSG_MOVE_SET_FACING,
-            WorldCommand.SMSG_CHAR_CREATE,
             WorldCommand.SMSG_TRIGGER_CINEMATIC,
             WorldCommand.SMSG_UPDATE_INSTANCE_OWNERSHIP,
             WorldCommand.SMSG_EMOTE,

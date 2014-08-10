@@ -130,9 +130,9 @@ namespace Client
                 if (scheduledAction.scheduledTime <= DateTime.Now)
                 {
                     scheduledActions.RemoveAt(0);
-                    scheduledAction.action();
                     if (scheduledAction.interval > TimeSpan.Zero)
-                        ScheduleAction(scheduledAction.action, DateTime.Now + scheduledAction.interval, scheduledAction.interval);
+                        ScheduleAction(scheduledAction.action, DateTime.Now + scheduledAction.interval, scheduledAction.interval, scheduledAction.flags);
+                    scheduledAction.action();
                 }
                 else
                     break;
@@ -211,14 +211,19 @@ namespace Client
             throw new NotImplementedException();
         }
 
-        public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan))
+        public void ScheduleAction(Action action, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
         {
-            ScheduleAction(action, DateTime.Now, interval);
+            ScheduleAction(action, DateTime.Now, interval, flags);
         }
 
-        public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan))
+        public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
         {
-            scheduledActions.Add(new RepeatingAction(action, time, interval));
+            scheduledActions.Add(new RepeatingAction(action, time, interval, flags));
+        }
+
+        public void CancelActionsByFlag(ActionFlag flag)
+        {
+            scheduledActions.RemoveByFlag(flag);
         }
 
         public void CreateCharacter()
@@ -301,7 +306,85 @@ namespace Client
         #region Actions
         public void MoveTo(Position destination)
         {
-            throw new NotImplementedException();
+            const float MovementEpsilon = 1.0f;
+
+            if (destination.MapID != Player.MapID)
+            {
+                Log("Trying to move to another map", Client.UI.LogLevel.Warning);
+                return;
+            }
+
+            var remaining = destination - Player.GetPosition();
+            // check if we even need to move
+            if (remaining.Length < MovementEpsilon)
+                return;
+
+            var direction = remaining.Direction;
+
+            var facing = new MovementPacket(WorldCommand.MSG_MOVE_SET_FACING)
+            {
+                GUID = Player.GUID,
+                flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                X = Player.X,
+                Y = Player.Y,
+                Z = Player.Z,
+                O = direction.O
+            };
+
+            SendPacket(facing);
+            Player.SetPosition(facing.GetPosition());
+
+            var startMoving = new MovementPacket(WorldCommand.MSG_MOVE_START_FORWARD)
+            {
+                GUID = Player.GUID,
+                flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                X = Player.X,
+                Y = Player.Y,
+                Z = Player.Z,
+                O = Player.O
+            };
+            SendPacket(startMoving);
+
+            var previousMovingTime = DateTime.Now;
+
+            var oldRemaining = remaining;
+            ScheduleAction(() =>
+            {
+                Player.SetPosition(Player.GetPosition() + direction * 7 * (DateTime.Now - previousMovingTime).TotalSeconds);
+                previousMovingTime = DateTime.Now;
+                
+                remaining = destination - Player.GetPosition();
+                if (remaining.Length > MovementEpsilon && oldRemaining.Length > remaining.Length)
+                {
+                    oldRemaining = remaining;
+
+                    var heartbeat = new MovementPacket(WorldCommand.MSG_MOVE_HEARTBEAT)
+                    {
+                        GUID = Player.GUID,
+                        flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                        X = Player.X,
+                        Y = Player.Y,
+                        Z = Player.Z,
+                        O = Player.O
+                    };
+                    SendPacket(heartbeat);
+                }
+                else
+                {
+                    var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
+                    {
+                        GUID = Player.GUID,
+                        X = destination.X,
+                        Y = destination.Y,
+                        Z = destination.Z,
+                        O = Player.O
+                    };
+                    SendPacket(stopMoving);
+                    Player.SetPosition(stopMoving.GetPosition());
+
+                    CancelActionsByFlag(ActionFlag.Movement);
+                }
+            }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
         }
 
         public void DoTextEmote(TextEmote emote)
@@ -462,6 +545,13 @@ namespace Client
         #endregion
     }
 
+    [Flags]
+    public enum ActionFlag
+    {
+        None = 0x0,
+        Movement = 0x1
+    }
+
     public class RepeatingAction
     {
         public Action action
@@ -482,11 +572,18 @@ namespace Client
             set;
         }
 
-        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval)
+        public ActionFlag flags
+        {
+            get;
+            set;
+        }
+
+        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags)
         {
             this.action = action;
             this.scheduledTime = scheduledTime;
             this.interval = interval;
+            this.flags = flags;
         }
     }
 
@@ -568,6 +665,11 @@ namespace Client
         public bool Remove(RepeatingAction item)
         {
             return actions.Remove(item);
+        }
+
+        public int RemoveByFlag(ActionFlag flag)
+        {
+            return actions.RemoveAll(action => action.flags.HasFlag(flag));
         }
 
         public IEnumerator<RepeatingAction> GetEnumerator()

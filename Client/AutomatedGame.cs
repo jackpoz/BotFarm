@@ -33,6 +33,7 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
+        ManualResetEvent loggedOutEvent = new ManualResetEvent(false);
         ScheduledActions scheduledActions;
         public GameWorld World
         {
@@ -159,9 +160,18 @@ namespace Client
 
         public override void Exit()
         {
-            Connected = false;
-            LoggedIn = false;
-            Running = false;
+            if (LoggedIn)
+            {
+                OutPacket logout = new OutPacket(WorldCommand.CMSG_LOGOUT_REQUEST);
+                SendPacket(logout);
+                loggedOutEvent.WaitOne();
+            }
+            else
+            {
+                Connected = false;
+                LoggedIn = false;
+                Running = false;
+            }
         }
 
         public void SendPacket(OutPacket packet)
@@ -249,8 +259,6 @@ namespace Client
             scheduledActions.Clear();
 
             Exit();
-
-            Thread.Sleep(1000);
 
             if (socket != null)
                 socket.Dispose();
@@ -383,6 +391,29 @@ namespace Client
                 SendPacket(new OutPacket(WorldCommand.CMSG_CHAR_ENUM));
             else
                 NoCharactersFound();
+        }
+
+        [PacketHandler(WorldCommand.SMSG_LOGOUT_RESPONSE)]
+        protected void HandleLogoutResponse(InPacket packet)
+        {
+            bool logoutOk = packet.ReadUInt32() == 0;
+            bool instant = packet.ReadByte() != 0;
+
+            if(instant || !logoutOk)
+            {
+                Connected = false;
+                LoggedIn = false;
+                Running = false;
+            }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_LOGOUT_COMPLETE)]
+        protected void HandleLogoutComplete(InPacket packet)
+        {
+            Connected = false;
+            LoggedIn = false;
+            Running = false;
+            loggedOutEvent.Set();
         }
         #endregion
 

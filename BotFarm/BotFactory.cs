@@ -159,6 +159,9 @@ namespace BotFarm
 
         public void Dispose()
         {
+            Log("Shutting down BotFactory");
+            Log("This might at least 20 seconds to allow all bots to properly logout");
+
             Parallel.ForEach<BotGame>(bots, 
                 bot => bot.Dispose());
 
@@ -170,8 +173,6 @@ namespace BotFarm
                 serializer.Serialize(sw, botInfos);
             }
 
-            logger.WriteLine("Shutting down BotFactory");
-            logger.WriteLine("");
             logger.Dispose();
             logger = null;
         }

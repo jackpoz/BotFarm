@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.World.Definitions;
+using Client.World.Entities;
 
 namespace BotFarm
 {
@@ -35,6 +36,7 @@ namespace BotFarm
             base.Start();
 
             ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
+            ScheduleAction(() => MoveTo(Player.GetPosition() + new Position(50, 50, 0, 0, Position.INVALID_MAP_ID)), DateTime.Now.AddSeconds(5));
         }
 
         public override void NoCharactersFound()
@@ -119,6 +121,99 @@ namespace BotFarm
                 response.Write((byte)0);
                 SendPacket(response);
             }
+        }
+        #endregion
+
+        #region Actions
+        public void MoveTo(Position destination)
+        {
+            const float MovementEpsilon = 1.0f;
+
+            if (destination.MapID != Player.MapID)
+            {
+                Log("Trying to move to another map", Client.UI.LogLevel.Warning);
+                return;
+            }
+
+            List<DetourCLI.Point> resultPath;
+            using(var detour = new DetourCLI.Detour())
+            {
+                var successful = detour.FindPath(Player.X, Player.Y, Player.Z,
+                                        destination.X, destination.Y, destination.Z,
+                                        Player.MapID, out resultPath);
+            }
+
+            var remaining = destination - Player.GetPosition();
+            // check if we even need to move
+            if (remaining.Length < MovementEpsilon)
+                return;
+
+            var direction = remaining.Direction;
+
+            var facing = new MovementPacket(WorldCommand.MSG_MOVE_SET_FACING)
+            {
+                GUID = Player.GUID,
+                flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                X = Player.X,
+                Y = Player.Y,
+                Z = Player.Z,
+                O = direction.O
+            };
+
+            SendPacket(facing);
+            Player.SetPosition(facing.GetPosition());
+
+            var startMoving = new MovementPacket(WorldCommand.MSG_MOVE_START_FORWARD)
+            {
+                GUID = Player.GUID,
+                flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                X = Player.X,
+                Y = Player.Y,
+                Z = Player.Z,
+                O = Player.O
+            };
+            SendPacket(startMoving);
+
+            var previousMovingTime = DateTime.Now;
+
+            var oldRemaining = remaining;
+            ScheduleAction(() =>
+            {
+                Player.SetPosition(Player.GetPosition() + direction * 7 * (DateTime.Now - previousMovingTime).TotalSeconds);
+                previousMovingTime = DateTime.Now;
+
+                remaining = destination - Player.GetPosition();
+                if (remaining.Length > MovementEpsilon && oldRemaining.Length > remaining.Length)
+                {
+                    oldRemaining = remaining;
+
+                    var heartbeat = new MovementPacket(WorldCommand.MSG_MOVE_HEARTBEAT)
+                    {
+                        GUID = Player.GUID,
+                        flags = MovementFlags.MOVEMENTFLAG_FORWARD,
+                        X = Player.X,
+                        Y = Player.Y,
+                        Z = Player.Z,
+                        O = Player.O
+                    };
+                    SendPacket(heartbeat);
+                }
+                else
+                {
+                    var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
+                    {
+                        GUID = Player.GUID,
+                        X = destination.X,
+                        Y = destination.Y,
+                        Z = destination.Z,
+                        O = Player.O
+                    };
+                    SendPacket(stopMoving);
+                    Player.SetPosition(stopMoving.GetPosition());
+
+                    CancelActionsByFlag(ActionFlag.Movement);
+                }
+            }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
         }
         #endregion
 

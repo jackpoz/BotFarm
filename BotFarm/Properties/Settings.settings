@@ -34,5 +34,8 @@
                     &lt;/BotBehaviorSettings&gt;
                 </Value>
     </Setting>
+    <Setting Name="MMAPsFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

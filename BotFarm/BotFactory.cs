@@ -53,6 +53,8 @@ namespace BotFarm
                 }
             }
 
+            DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);
+
             factoryGame = new AutomatedGame(Settings.Default.Hostname,
                                             Settings.Default.Port,
                                             Settings.Default.Username,

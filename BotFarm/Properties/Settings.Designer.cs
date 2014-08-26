@@ -135,5 +135,17 @@ namespace BotFarm.Properties {
                 this["Behavior"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string MMAPsFolderPath {
+            get {
+                return ((string)(this["MMAPsFolderPath"]));
+            }
+            set {
+                this["MMAPsFolderPath"] = value;
+            }
+        }
     }
 }

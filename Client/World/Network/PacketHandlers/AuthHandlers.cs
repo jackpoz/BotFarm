@@ -40,7 +40,7 @@ namespace Client.World.Network
             response.Write((uint)ourSeed);
             response.Write(zero);
             response.Write(zero);
-            response.Write(zero);
+            response.Write(ServerInfo.ID);
             response.Write((ulong)zero);
             response.Write(authResponse);
             response.Write(zero);            // length of addon data

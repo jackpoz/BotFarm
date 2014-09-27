@@ -70,6 +70,13 @@ namespace Client.World.Entities
             O = pos.O;
         }
 
+        public void SetPosition(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
         public void ResetPosition()
         {
             X = 0.0f;

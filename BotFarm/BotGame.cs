@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Client.World.Definitions;
 using Client.World.Entities;
+using DetourCLI;
 
 namespace BotFarm
 {
@@ -135,12 +136,17 @@ namespace BotFarm
                 return;
             }
 
-            List<DetourCLI.Point> resultPath;
+            Path path = null;
             using(var detour = new DetourCLI.Detour())
             {
-                var successful = detour.FindPath(Player.X, Player.Y, Player.Z,
+                List<DetourCLI.Point> resultPath;
+                bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
                                         destination.X, destination.Y, destination.Z,
                                         Player.MapID, out resultPath);
+                if (!successful)
+                    return;
+
+                path = new Path(resultPath, Player.Speed);
             }
 
             var remaining = destination - Player.GetPosition();
@@ -179,7 +185,8 @@ namespace BotFarm
             var oldRemaining = remaining;
             ScheduleAction(() =>
             {
-                Player.SetPosition(Player.GetPosition() + direction * 7 * (DateTime.Now - previousMovingTime).TotalSeconds);
+                Point progressPosition = path.MoveAlongPath((float)(DateTime.Now - previousMovingTime).TotalSeconds);
+                Player.SetPosition(progressPosition.X, progressPosition.Y, progressPosition.Z);
                 previousMovingTime = DateTime.Now;
 
                 remaining = destination - Player.GetPosition();

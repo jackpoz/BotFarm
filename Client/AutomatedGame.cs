@@ -182,6 +182,7 @@ namespace Client
 
         public override void PresentRealmList(WorldServerList realmList)
         {
+            LogLine("Connecting to realm " + realmList[RealmID].Name);
             ConnectTo(realmList[RealmID]);
         }
 

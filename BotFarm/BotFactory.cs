@@ -54,6 +54,8 @@ namespace BotFarm
             }
 
             DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);
+            VMapCLI.VMap.Initialize(Settings.Default.VMAPsFolderPath);
+            MapCLI.Map.Initialize(Settings.Default.MAPsFolderPath);
 
             factoryGame = new AutomatedGame(Settings.Default.Hostname,
                                             Settings.Default.Port,

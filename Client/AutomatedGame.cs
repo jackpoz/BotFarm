@@ -289,6 +289,43 @@ namespace Client
             SendPacket(response);
         }
 
+        public void DoPartyChat(string message)
+        {
+            var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+            response.Write((uint)ChatMessageType.Party);
+            var race = World.SelectedCharacter.Race;
+            var language = race.IsHorde() ? Language.Orcish : Language.Common;
+            response.Write((uint)language);
+            response.Write(message.ToCString());
+            SendPacket(response);
+        }
+
+        public void DoGuildChat(string message)
+        {
+            var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+            response.Write((uint)ChatMessageType.Guild);
+            var race = World.SelectedCharacter.Race;
+            var language = race.IsHorde() ? Language.Orcish : Language.Common;
+            response.Write((uint)language);
+            response.Write(message.ToCString());
+            SendPacket(response);
+        }
+
+        public void DoWhisperChat(string message, string player)
+        {
+            var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+            response.Write((uint)ChatMessageType.Whisper);
+            var race = World.SelectedCharacter.Race;
+            var language = race.IsHorde() ? Language.Orcish : Language.Common;
+            response.Write((uint)language);
+            response.Write(player.ToCString());
+            response.Write(message.ToCString());
+            SendPacket(response);
+        }
+
         public void Tele(string teleport)
         {
             DoSayChat(".tele " + teleport);

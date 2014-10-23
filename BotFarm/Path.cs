@@ -24,6 +24,14 @@ namespace BotFarm
             set;
         }
 
+        public Point Destination
+        {
+            get
+            {
+                return points.Last();
+            }
+        }
+
         public Path(List<Point> points, float speed)
         {
             if (points == null || points.Count < 2)

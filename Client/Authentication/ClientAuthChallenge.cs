@@ -25,8 +25,7 @@ namespace Client.Authentication
                 var binaryStream = new BinaryWriter(stream);
                 binaryStream.Write((byte)AuthCommand.LOGON_CHALLENGE);
                 binaryStream.Write((byte)6);
-                binaryStream.Write((byte)(username.Length + 30));
-                binaryStream.Write((byte)0);
+                binaryStream.Write((UInt16)(username.Length + 30));
                 binaryStream.Write("WoW".ToCString());
                 binaryStream.Write(version);
                 binaryStream.Write(build);

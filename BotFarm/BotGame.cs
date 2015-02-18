@@ -37,13 +37,6 @@ namespace BotFarm
             base.Start();
 
             ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
-
-            ScheduleAction(() => MoveTo(new Position(-8896.072266f, -82.352325f, 86.421661f, 0, 0)),
-                           DateTime.Now.AddSeconds(5));
-            ScheduleAction(() => MoveTo(new Position(-8915.272461f, -111.634041f, 82.275642f, 0.981165f, 0)),
-                           DateTime.Now.AddSeconds(15));
-            ScheduleAction(() => MoveTo(new Position(-8865.272461f, -61.634041f, 85.841881f, 0, 0)),
-                           DateTime.Now.AddSeconds(25));
         }
 
         public override void NoCharactersFound()

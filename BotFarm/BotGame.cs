@@ -36,7 +36,7 @@ namespace BotFarm
         {
             base.Start();
 
-            ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
+            ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 0, 0, 1000));
         }
 
         public override void NoCharactersFound()

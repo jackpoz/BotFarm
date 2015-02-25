@@ -123,13 +123,18 @@ namespace BotFarm
                 Interlocked.Increment(ref createdBots);
             });
 
+
             Parallel.For(createdBots, botCount, index =>
             {
                 try
                 {
                     var bot = CreateBot();
                     lock (bots)
+                    {
                         bots.Add(bot);
+                        if (bots.Count % 100 == 0)
+                            SaveBotInfos();
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -138,6 +143,8 @@ namespace BotFarm
             });
 
             Log("Finished setting up bot factory with " + botCount + " bots");
+
+            SaveBotInfos();
 
             for (; ; )
             {
@@ -171,14 +178,19 @@ namespace BotFarm
 
             factoryGame.Dispose();
 
+            SaveBotInfos();
+
+            logger.Dispose();
+            logger = null;
+        }
+
+        private void SaveBotInfos()
+        {
             using (StreamWriter sw = new StreamWriter(botsInfosPath))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(List<BotInfo>));
                 serializer.Serialize(sw, botInfos);
             }
-
-            logger.Dispose();
-            logger = null;
         }
 
         [Conditional("DEBUG")]

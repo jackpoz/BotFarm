@@ -212,8 +212,12 @@ namespace BotFarm
 
         public void RemoveBot(BotGame bot)
         {
-            botInfos.Remove(botInfos.Single(info => info.Username == bot.Username && info.Password == bot.Password));
-            bots.Remove(bot);
+            lock (bots)
+            {
+                botInfos.Remove(botInfos.Single(info => info.Username == bot.Username && info.Password == bot.Password));
+                bots.Remove(bot);
+            }
+
             bot.Dispose();
         }
     }

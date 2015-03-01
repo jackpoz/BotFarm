@@ -22,7 +22,7 @@ namespace Client
     public class AutomatedGame : IGameUI, IGame, IDisposable
     {
         #region Properties
-        public bool Running { get; private set; }
+        public bool Running { get; set; }
         GameSocket socket;
         public BigInteger Key { get; private set; }
         public string Hostname { get; private set; }
@@ -219,7 +219,8 @@ namespace Client
 
         public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
         {
-            scheduledActions.Add(new RepeatingAction(action, time, interval, flags));
+            if (Running)
+                scheduledActions.Add(new RepeatingAction(action, time, interval, flags));
         }
 
         public void CancelActionsByFlag(ActionFlag flag)
@@ -262,6 +263,7 @@ namespace Client
 
         public void Dispose()
         {
+            Running = false;
             scheduledActions.Clear();
 
             Exit();

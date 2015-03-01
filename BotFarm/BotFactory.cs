@@ -172,7 +172,10 @@ namespace BotFarm
             Log("Shutting down BotFactory");
             Log("This might at least 20 seconds to allow all bots to properly logout");
 
-            Parallel.ForEach<BotGame>(bots, 
+            foreach (var bot in bots)
+                bot.Running = false;
+
+            Parallel.ForEach<BotGame>(bots, new ParallelOptions(){ MaxDegreeOfParallelism = -1},
                 bot => bot.Dispose());
 
             factoryGame.Dispose();

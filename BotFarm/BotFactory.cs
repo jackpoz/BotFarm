@@ -28,14 +28,14 @@ namespace BotFarm
         List<BotInfo> botInfos;
         const string botsInfosPath = "botsinfos.xml";
         const string logPath = "botfactory.log";
-        StreamWriter logger;
+        TextWriter logger;
         Random randomGenerator = new Random();
 
         public BotFactory()
         {
             Instance = this;
 
-            logger = new StreamWriter(logPath);
+            logger = TextWriter.Synchronized(new StreamWriter(logPath));
             logger.WriteLine("Starting BotFactory");
 
             if (!File.Exists(botsInfosPath))

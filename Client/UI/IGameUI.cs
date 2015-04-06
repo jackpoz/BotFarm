@@ -3,6 +3,7 @@ using Client.Authentication;
 using Client.World;
 using Client.Chat;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Client.UI
 {
@@ -13,7 +14,7 @@ namespace Client.UI
         public abstract LogLevel LogLevel { get; set; }
 
         public abstract void Update();
-        public abstract void Exit();
+        public abstract Task Exit();
 
         #region Packet handler presenters
 

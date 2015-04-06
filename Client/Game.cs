@@ -6,6 +6,7 @@ using Client.UI;
 using Client.World.Network;
 using Client.Chat;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Client
 {
@@ -28,7 +29,7 @@ namespace Client
 
         void InvalidCredentials();
 
-        void Exit();
+        Task Exit();
 
         void SendPacket(OutPacket packet);
     }
@@ -80,7 +81,7 @@ namespace Client
             if (socket.Connect())
                 socket.Start();
             else
-                Exit();
+                Exit().Wait();
         }
 
         public void Start()
@@ -100,12 +101,13 @@ namespace Client
 
         public void Reconnect()
         {
-            Exit();
+            Exit().Wait();
         }
 
-        public void Exit()
+        public async Task Exit()
         {
             Running = false;
+            await Task.FromResult(false);
         }
 
         public void SendPacket(OutPacket packet)

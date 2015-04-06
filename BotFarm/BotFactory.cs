@@ -175,10 +175,13 @@ namespace BotFarm
             foreach (var bot in bots)
                 bot.Running = false;
 
-            Parallel.ForEach<BotGame>(bots, new ParallelOptions(){ MaxDegreeOfParallelism = -1},
-                bot => bot.Dispose());
+            List<Task> botsDisposing = new List<Task>(bots.Count);
+            foreach (var bot in bots)
+                botsDisposing.Add(bot.Dispose());
 
-            factoryGame.Dispose();
+            Task.WaitAll(botsDisposing.ToArray());
+
+            factoryGame.Dispose().Wait();
 
             SaveBotInfos();
 

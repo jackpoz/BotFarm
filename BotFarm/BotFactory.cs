@@ -109,6 +109,9 @@ namespace BotFarm
             }
 
             Log("Setting up bot factory with " + botCount + " bots");
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             int createdBots = 0;
             List<BotInfo> infos;
             if (Settings.Default.RandomBots)
@@ -141,7 +144,8 @@ namespace BotFarm
                 }
             });
 
-            Log("Finished setting up bot factory with " + botCount + " bots");
+            watch.Stop();
+            Log("Finished setting up bot factory with " + botCount + " bots in " + watch.Elapsed);
 
             SaveBotInfos();
 
@@ -223,7 +227,7 @@ namespace BotFarm
                 bots.Remove(bot);
             }
 
-            bot.Dispose();
+            bot.Dispose().Wait();
         }
     }
 }

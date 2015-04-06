@@ -19,7 +19,7 @@ using Client.World.Entities;
 
 namespace Client
 {
-    public class AutomatedGame : IGameUI, IGame, IDisposable
+    public class AutomatedGame : IGameUI, IGame
     {
         #region Properties
         public bool Running { get; set; }
@@ -33,7 +33,7 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
-        ManualResetEvent loggedOutEvent = new ManualResetEvent(false);
+        TaskCompletionSource<bool> loggedOutEvent = new TaskCompletionSource<bool>();
         ScheduledActions scheduledActions;
         public GameWorld World
         {
@@ -158,13 +158,13 @@ namespace Client
             }
         }
 
-        public override void Exit()
+        public override async Task Exit()
         {
             if (LoggedIn)
             {
                 OutPacket logout = new OutPacket(WorldCommand.CMSG_LOGOUT_REQUEST);
                 SendPacket(logout);
-                loggedOutEvent.WaitOne();
+                await loggedOutEvent.Task;
             }
             else
             {
@@ -261,12 +261,12 @@ namespace Client
             SendPacket(createCharacterPacket);
         }
 
-        public void Dispose()
+        public async Task Dispose()
         {
             Running = false;
             scheduledActions.Clear();
 
-            Exit();
+            await Exit();
 
             if (socket != null)
                 socket.Dispose();
@@ -453,7 +453,7 @@ namespace Client
             Connected = false;
             LoggedIn = false;
             Running = false;
-            loggedOutEvent.Set();
+            loggedOutEvent.SetResult(true);
         }
         #endregion
 

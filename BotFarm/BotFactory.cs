@@ -109,6 +109,9 @@ namespace BotFarm
             }
 
             Log("Setting up bot factory with " + botCount + " bots");
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             int createdBots = 0;
             List<BotInfo> infos;
             if (Settings.Default.RandomBots)
@@ -142,7 +145,8 @@ namespace BotFarm
                 }
             });
 
-            Log("Finished setting up bot factory with " + botCount + " bots");
+            watch.Stop();
+            Log("Finished setting up bot factory with " + botCount + " bots in " + watch.Elapsed);
 
             SaveBotInfos();
 
@@ -176,10 +180,13 @@ namespace BotFarm
             foreach (var bot in bots)
                 bot.Running = false;
 
-            Parallel.ForEach<BotGame>(bots, new ParallelOptions(){ MaxDegreeOfParallelism = -1},
-                bot => bot.Dispose());
+            List<Task> botsDisposing = new List<Task>(bots.Count);
+            foreach (var bot in bots)
+                botsDisposing.Add(bot.Dispose());
 
-            factoryGame.Dispose();
+            Task.WaitAll(botsDisposing.ToArray());
+
+            factoryGame.Dispose().Wait();
 
             SaveBotInfos();
 
@@ -221,7 +228,7 @@ namespace BotFarm
                 bots.Remove(bot);
             }
 
-            bot.Dispose();
+            bot.Dispose().Wait();
         }
     }
 }

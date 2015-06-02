@@ -174,7 +174,7 @@ namespace BotFarm
         public void Dispose()
         {
             Log("Shutting down BotFactory");
-            Log("This might at least 20 seconds to allow all bots to properly logout");
+            Log("This might take at least 20 seconds to allow all bots to properly logout");
 
             foreach (var bot in bots)
                 bot.Running = false;

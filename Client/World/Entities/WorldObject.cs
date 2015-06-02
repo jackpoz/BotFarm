@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Client.World.Definitions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,18 @@ namespace Client.World.Entities
             }
         }
         ulong _guid;
+
+        public uint this[PlayerField index]
+        {
+            get
+            {
+                return this[(int)index];
+            }
+            set
+            {
+                this[(int)index] = value;
+            }
+        }
 
         public uint this[int index]
         {

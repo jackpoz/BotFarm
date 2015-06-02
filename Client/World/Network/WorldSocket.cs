@@ -410,7 +410,7 @@ namespace Client.World.Network
         {
             try
             {
-                Game.UI.Log(string.Format("Connecting to realm {0}... ", ServerInfo.Name));
+                Game.UI.LogDebug(string.Format("Connecting to realm {0}... ", ServerInfo.Name));
 
                 if (connection != null)
                     connection.Close();

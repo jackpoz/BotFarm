@@ -26,11 +26,14 @@ namespace BotFarm
         #region Player members
         public UInt64 GroupLeaderGuid { get; private set; }
         public List<UInt64> GroupMembersGuids = new List<UInt64>();
+        DateTime CorpseReclaim;
         #endregion
 
         public BotGame(string hostname, int port, string username, string password, int realmId, int character)
             : base(hostname, port, username, password, realmId, character)
-        { }
+        {
+            Player.OnFieldUpdated += OnFieldUpdate;
+        }
 
         public override void Start()
         {
@@ -100,7 +103,7 @@ namespace BotFarm
         }
 
         [PacketHandler(WorldCommand.SMSG_RESURRECT_REQUEST)]
-        protected void HandlerResurrectRequest(InPacket packet)
+        protected void HandleResurrectRequest(InPacket packet)
         {
             var resurrectorGuid = packet.ReadUInt64();
             OutPacket response = new OutPacket(WorldCommand.CMSG_RESURRECT_RESPONSE);
@@ -122,6 +125,67 @@ namespace BotFarm
                 SendPacket(response);
             }
         }
+
+        [PacketHandler(WorldCommand.MSG_CORPSE_QUERY)]
+        protected void HandleCorpseQuery(InPacket packet)
+        {
+            bool found = packet.ReadByte() != 0;
+            if (found)
+            {
+                var mapId = packet.ReadInt32();
+
+                var corpsePosition = new Position(packet.ReadSingle(),
+                                                  packet.ReadSingle(),
+                                                  packet.ReadSingle(),
+                                                  0.0f,
+                                                  packet.ReadInt32());
+                Player.CorpsePosition = corpsePosition.GetPosition();
+
+                if (mapId == corpsePosition.MapID)
+                    MoveTo(corpsePosition);
+            }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_CORPSE_RECLAIM_DELAY)]
+        protected void HandleCorpseReclaimDelay(InPacket packet)
+        {
+            CorpseReclaim = DateTime.Now.AddMilliseconds(packet.ReadUInt32());
+        }
+
+        protected void OnFieldUpdate(object s, UpdateFieldEventArg e)
+        {
+            switch (e.Index)
+            {
+                case (int)UnitField.UNIT_FIELD_HEALTH:
+                    if (e.NewValue == 0 && Settings.Default.Behavior.AutoResurrect)
+                        Resurrect();
+                    break;
+                case (int)PlayerField.PLAYER_FLAGS:
+                    if (e.NewValue == (uint)PlayerFlags.PLAYER_FLAGS_GHOST)
+                    {
+                        OutPacket corpseQuery = new OutPacket(WorldCommand.MSG_CORPSE_QUERY);
+                        SendPacket(corpseQuery);
+                    }
+                    break;
+            }
+        }
+
+        protected void OnDestinationReached(bool reached)
+        {
+            if (Player.IsGhost && (Player.CorpsePosition - Player).Length <= 39f)
+            {
+                if (DateTime.Now > CorpseReclaim)
+                {
+                    OutPacket reclaimCorpse = new OutPacket(WorldCommand.CMSG_RECLAIM_CORPSE);
+                    reclaimCorpse.Write(Player.GUID);
+                    SendPacket(reclaimCorpse);
+                }
+                else
+                {
+                    ScheduleAction(() => OnDestinationReached(reached), CorpseReclaim.AddSeconds(1));
+                }
+            }
+        }
         #endregion
 
         #region Actions
@@ -132,6 +196,7 @@ namespace BotFarm
             if (destination.MapID != Player.MapID)
             {
                 Log("Trying to move to another map", Client.UI.LogLevel.Warning);
+                OnDestinationReached(false);
                 return;
             }
 
@@ -143,7 +208,10 @@ namespace BotFarm
                                         destination.X, destination.Y, destination.Z,
                                         Player.MapID, out resultPath);
                 if (!successful)
+                {
+                    OnDestinationReached(false);
                     return;
+                }
 
                 path = new Path(resultPath, Player.Speed);
                 var destinationPoint = path.Destination;
@@ -153,7 +221,10 @@ namespace BotFarm
             var remaining = destination - Player.GetPosition();
             // check if we even need to move
             if (remaining.Length < MovementEpsilon)
+            {
+                OnDestinationReached(true);
                 return;
+            }
 
             var direction = remaining.Direction;
 
@@ -220,8 +291,17 @@ namespace BotFarm
                     Player.SetPosition(stopMoving.GetPosition());
 
                     CancelActionsByFlag(ActionFlag.Movement);
+
+                    OnDestinationReached(true);
                 }
             }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
+        }
+
+        public void Resurrect()
+        {
+            OutPacket repop = new OutPacket(WorldCommand.CMSG_REPOP_REQUEST);
+            repop.Write((byte)0);
+            SendPacket(repop);
         }
         #endregion
 

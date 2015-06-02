@@ -18,7 +18,7 @@ namespace Client.Authentication
         private byte version_bugfix;
         private ushort build;
         public uint ID { get; private set; }
-        private ushort unk2;
+        //private ushort unk2;
 
         public WorldServerInfo(BinaryReader reader)
         {

@@ -85,7 +85,6 @@ namespace Client.World.Network
             WorldCommand.SMSG_INITIALIZE_FACTIONS,
             WorldCommand.SMSG_SET_FORCED_REACTIONS,
             WorldCommand.SMSG_COMPRESSED_UPDATE_OBJECT,
-            WorldCommand.SMSG_UPDATE_OBJECT,
             WorldCommand.SMSG_AURA_UPDATE,
             WorldCommand.SMSG_DESTROY_OBJECT,
             WorldCommand.SMSG_MONSTER_MOVE,

@@ -1,4 +1,5 @@
-﻿using Client.World.Entities;
+﻿using Client.World.Definitions;
+using Client.World.Entities;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -82,7 +83,7 @@ namespace Client.World.Network
             set;
         }
 
-        public ushort flags2
+        public MovementFlags2 flags2
         {
             get;
             set;
@@ -136,7 +137,7 @@ namespace Client.World.Network
             {
                 WritePacketGuid(GUID);
                 Write((uint)flags);
-                Write(flags2);
+                Write((ushort)flags2);
                 Write(time);
                 Write(X);
                 Write(Y);
@@ -153,41 +154,4 @@ namespace Client.World.Network
             return new Position(X, Y, Z, O, Position.INVALID_MAP_ID);
         }
     }
-
-    [Flags]
-    public enum MovementFlags
-    {
-        MOVEMENTFLAG_NONE = 0x00000000,
-        MOVEMENTFLAG_FORWARD = 0x00000001,
-        MOVEMENTFLAG_BACKWARD = 0x00000002,
-        MOVEMENTFLAG_STRAFE_LEFT = 0x00000004,
-        MOVEMENTFLAG_STRAFE_RIGHT = 0x00000008,
-        MOVEMENTFLAG_LEFT = 0x00000010,
-        MOVEMENTFLAG_RIGHT = 0x00000020,
-        MOVEMENTFLAG_PITCH_UP = 0x00000040,
-        MOVEMENTFLAG_PITCH_DOWN = 0x00000080,
-        MOVEMENTFLAG_WALKING = 0x00000100,
-        MOVEMENTFLAG_ONTRANSPORT = 0x00000200,
-        MOVEMENTFLAG_DISABLE_GRAVITY = 0x00000400,
-        MOVEMENTFLAG_ROOT = 0x00000800,
-        MOVEMENTFLAG_FALLING = 0x00001000,
-        MOVEMENTFLAG_FALLING_FAR = 0x00002000,
-        MOVEMENTFLAG_PENDING_STOP = 0x00004000,
-        MOVEMENTFLAG_PENDING_STRAFE_STOP = 0x00008000,
-        MOVEMENTFLAG_PENDING_FORWARD = 0x00010000,
-        MOVEMENTFLAG_PENDING_BACKWARD = 0x00020000,
-        MOVEMENTFLAG_PENDING_STRAFE_LEFT = 0x00040000,
-        MOVEMENTFLAG_PENDING_STRAFE_RIGHT = 0x00080000,
-        MOVEMENTFLAG_PENDING_ROOT = 0x00100000,
-        MOVEMENTFLAG_SWIMMING = 0x00200000,
-        MOVEMENTFLAG_ASCENDING = 0x00400000,
-        MOVEMENTFLAG_DESCENDING = 0x00800000,
-        MOVEMENTFLAG_CAN_FLY = 0x01000000,
-        MOVEMENTFLAG_FLYING = 0x02000000,
-        MOVEMENTFLAG_SPLINE_ELEVATION = 0x04000000,
-        MOVEMENTFLAG_SPLINE_ENABLED = 0x08000000,
-        MOVEMENTFLAG_WATERWALKING = 0x10000000,
-        MOVEMENTFLAG_FALLING_SLOW = 0x20000000,
-        MOVEMENTFLAG_HOVER = 0x40000000,
-    };
 }

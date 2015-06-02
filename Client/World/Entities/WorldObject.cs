@@ -8,10 +8,70 @@ namespace Client.World.Entities
 {
     public class WorldObject : Position
     {
-        public UInt64 GUID
+        public ulong GUID
+        {
+            get
+            {
+                return _guid;
+            }
+            set
+            {
+                Reset();
+                _guid = value;
+            }
+        }
+        ulong _guid;
+
+        public uint this[int index]
+        {
+            get
+            {
+                uint value;
+                objectFields.TryGetValue(index, out value);
+                return value;
+            }
+            set
+            {
+                objectFields[index] = value;
+                if (OnFieldUpdated != null)
+                    OnFieldUpdated(this, new UpdateFieldEventArg(index, value, this));
+            }
+        }
+        Dictionary<int, uint> objectFields = new Dictionary<int, uint>();
+
+        public event EventHandler<UpdateFieldEventArg> OnFieldUpdated;
+
+        protected virtual void Reset()
+        {
+            objectFields.Clear();
+        }
+    }
+
+    public class UpdateFieldEventArg : EventArgs
+    {
+        public int Index
         {
             get;
-            set;
+            private set;
+        }
+
+        public uint NewValue
+        {
+            get;
+            private set;
+        }
+
+        public WorldObject Object
+        {
+            get;
+            private set;
+        }
+
+        public UpdateFieldEventArg(int Index, uint NewValue, WorldObject Object)
+        {
+            this.Index = Index;
+            this.NewValue = NewValue;
+            this.Object = Object;
         }
     }
 }

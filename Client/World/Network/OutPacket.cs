@@ -63,6 +63,12 @@ namespace Client.World.Network
             Write(packGUID.Take(size).ToArray());
         }
 
+        public void WritePackedTime(DateTime date)
+        {
+            var packedDate = ((date.Year - 100) << 24 | date.Month << 20 | (date.Day - 1) << 14 | date.Hour << 6 | date.Minute);
+            Write(packedDate);
+        }
+
         public override string ToString()
         {
             return Header.Command.ToString();

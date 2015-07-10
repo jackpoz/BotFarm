@@ -75,6 +75,7 @@ namespace Client
             this.Character = character;
             scheduledActions = new ScheduledActions();
             updateObjectHandler = new UpdateObjectHandler(this);
+            Triggers = new List<Trigger>();
             World = new GameWorld();
             Player = new Player();
 
@@ -151,6 +152,7 @@ namespace Client
             {
                 socket.Disconnect();
                 scheduledActions.Clear();
+                ResetTriggers();
                 socket = new AuthSocket(this, Hostname, Port, Username, Password);
                 socket.InitHandlers();
                 // exit from loop if the socket connected successfully
@@ -164,6 +166,7 @@ namespace Client
 
         public override async Task Exit()
         {
+            ClearTriggers();
             if (LoggedIn)
             {
                 OutPacket logout = new OutPacket(WorldCommand.CMSG_LOGOUT_REQUEST);
@@ -181,7 +184,10 @@ namespace Client
         public void SendPacket(OutPacket packet)
         {
             if (socket is WorldSocket)
+            {
                 ((WorldSocket)socket).Send(packet);
+                HandleTriggerInput(TriggerActionType.Opcode, packet.Header.Command);
+            }
         }
 
         public override void PresentRealmList(WorldServerList realmList)
@@ -723,6 +729,35 @@ namespace Client
         {
         }
         #endregion
+
+        #region Triggers Handling
+        List<Trigger> Triggers;
+
+        public void AddTrigger(Trigger trigger)
+        {
+            Triggers.Add(trigger);
+        }
+
+        public void AddTriggers(IEnumerable<Trigger> triggers)
+        {
+            Triggers.AddRange(triggers);
+        }
+
+        public void ClearTriggers()
+        {
+            Triggers.Clear();
+        }
+
+        public void ResetTriggers()
+        {
+            Triggers.ForEach(trigger => trigger.Reset());
+        }
+
+        public void HandleTriggerInput(TriggerActionType type, params object[] inputs)
+        {
+            Triggers.ForEach(trigger => trigger.HandleInput(type, inputs));
+        }
+        #endregion
     }
 
     class MovementInfo
@@ -786,149 +821,6 @@ namespace Client
 
             if (Flags.HasFlag(MovementFlags.MOVEMENTFLAG_SPLINE_ELEVATION))
                 SplineElevation = packet.ReadSingle();
-        }
-    }
-
-    [Flags]
-    public enum ActionFlag
-    {
-        None = 0x0,
-        Movement = 0x1
-    }
-
-    public class RepeatingAction
-    {
-        public Action action
-        {
-            get;
-            set;
-        }
-
-        public DateTime scheduledTime
-        {
-            get;
-            set;
-        }
-
-        public TimeSpan interval
-        {
-            get;
-            set;
-        }
-
-        public ActionFlag flags
-        {
-            get;
-            set;
-        }
-
-        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags)
-        {
-            this.action = action;
-            this.scheduledTime = scheduledTime;
-            this.interval = interval;
-            this.flags = flags;
-        }
-    }
-
-    public class ScheduledActions : IList<RepeatingAction>
-    {
-        List<RepeatingAction> actions;
-
-        public ScheduledActions()
-        {
-            actions = new List<RepeatingAction>();
-        }
-
-        public int IndexOf(RepeatingAction item)
-        {
-            return actions.IndexOf(item);
-        }
-
-        void IList<RepeatingAction>.Insert(int index, RepeatingAction item)
-        {
-            Add(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            actions.RemoveAt(index);
-        }
-
-        public RepeatingAction this[int index]
-        {
-            get
-            {
-                return actions[index];
-            }
-            set
-            {
-                actions[index] = value;
-                Sort();
-
-            }
-        }
-
-        public void Add(RepeatingAction item)
-        {
-            actions.Add(item);
-            Sort();
-        }
-
-        public void Clear()
-        {
-            actions.Clear();
-        }
-
-        public bool Contains(RepeatingAction item)
-        {
-            return actions.Contains(item);
-        }
-
-        public void CopyTo(RepeatingAction[] array, int arrayIndex)
-        {
-            actions.CopyTo(array, arrayIndex);
-        }
-
-        public int Count
-        {
-            get 
-            {
-                return actions.Count;
-            }
-        }
-
-        public bool IsReadOnly
-        {
-            get 
-            {
-                return false;
-            }
-        }
-
-        public bool Remove(RepeatingAction item)
-        {
-            return actions.Remove(item);
-        }
-
-        public int RemoveByFlag(ActionFlag flag)
-        {
-            return actions.RemoveAll(action => action.flags.HasFlag(flag));
-        }
-
-        public IEnumerator<RepeatingAction> GetEnumerator()
-        {
-            return actions.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return actions.GetEnumerator();
-        }
-
-        void Sort()
-        {
-            actions.Sort((a, b) => (int)(a.scheduledTime - b.scheduledTime).TotalMilliseconds);
         }
     }
 }

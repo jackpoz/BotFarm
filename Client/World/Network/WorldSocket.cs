@@ -385,6 +385,7 @@ namespace Client.World.Network
                     if (!IgnoredOpcodes.Contains(packet.Header.Command) && !NotYetImplementedOpcodes.Contains(packet.Header.Command))
                         Game.UI.LogDebug(string.Format("Unknown or unhandled command '{0}'", packet.Header.Command));
                 }
+                Game.HandleTriggerInput(TriggerActionType.Opcode, packet.Header.Command);
             }
             catch(Exception ex)
             {

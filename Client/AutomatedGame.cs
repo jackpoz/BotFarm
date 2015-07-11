@@ -78,6 +78,7 @@ namespace Client
             Triggers = new List<Trigger>();
             World = new GameWorld();
             Player = new Player();
+            Player.OnFieldUpdated += OnFieldUpdate;
 
             this.Hostname = hostname;
             this.Port = port;
@@ -186,7 +187,7 @@ namespace Client
             if (socket is WorldSocket)
             {
                 ((WorldSocket)socket).Send(packet);
-                HandleTriggerInput(TriggerActionType.Opcode, packet.Header.Command);
+                HandleTriggerInput(TriggerActionType.Opcode, packet);
             }
         }
 
@@ -756,6 +757,11 @@ namespace Client
         public void HandleTriggerInput(TriggerActionType type, params object[] inputs)
         {
             Triggers.ForEach(trigger => trigger.HandleInput(type, inputs));
+        }
+
+        void OnFieldUpdate(object s, UpdateFieldEventArg e)
+        {
+            HandleTriggerInput(TriggerActionType.UpdateField, e);
         }
         #endregion
     }

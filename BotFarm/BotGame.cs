@@ -32,7 +32,68 @@ namespace BotFarm
         public BotGame(string hostname, int port, string username, string password, int realmId, int character)
             : base(hostname, port, username, password, realmId, character)
         {
-            Player.OnFieldUpdated += OnFieldUpdate;
+            if (Settings.Default.Behavior.AutoResurrect)
+            {
+                // Resurrect if bot reaches 0 hp
+                AddTrigger(new Trigger(new[] 
+                { 
+                    new UpdateFieldTriggerAction((int)UnitField.UNIT_FIELD_HEALTH, 0)
+                }, () => Resurrect()));
+
+                // Resurrect sequence
+                AddTrigger(new Trigger(new TriggerAction[] 
+                { 
+                    new UpdateFieldTriggerAction((int)PlayerField.PLAYER_FLAGS, (uint)PlayerFlags.PLAYER_FLAGS_GHOST, () =>
+                        {
+                            OutPacket corpseQuery = new OutPacket(WorldCommand.MSG_CORPSE_QUERY);
+                            SendPacket(corpseQuery);
+                        }),
+                    new OpcodeTriggerAction(WorldCommand.MSG_CORPSE_QUERY, packet =>
+                    {
+                        var inPacket = packet as InPacket;
+                        if (inPacket == null)
+                            return false;
+
+                        bool found = inPacket.ReadByte() != 0;
+                        if (found)
+                        {
+                            var mapId = inPacket.ReadInt32();
+
+                            var corpsePosition = new Position(inPacket.ReadSingle(),
+                                                              inPacket.ReadSingle(),
+                                                              inPacket.ReadSingle(),
+                                                              0.0f,
+                                                              inPacket.ReadInt32());
+                            Player.CorpsePosition = corpsePosition.GetPosition();
+
+                            if (mapId == corpsePosition.MapID)
+                            {
+                                MoveTo(corpsePosition);
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }),
+                    new CustomTriggerAction(TriggerActionType.DestinationReached, (inputs) =>
+                    {
+                        if (Player.IsGhost && (Player.CorpsePosition - Player).Length <= 39f)
+                        {
+                            if (DateTime.Now > CorpseReclaim)
+                                return true;
+                            else
+                                ScheduleAction(() => HandleTriggerInput(TriggerActionType.DestinationReached, inputs), CorpseReclaim.AddSeconds(1));
+                        }
+
+                        return false;
+                    },() => 
+                      {
+                          OutPacket reclaimCorpse = new OutPacket(WorldCommand.CMSG_RECLAIM_CORPSE);
+                          reclaimCorpse.Write(Player.GUID);
+                          SendPacket(reclaimCorpse);
+                      })
+                }, null));
+            }
         }
 
         public override void Start()
@@ -126,65 +187,10 @@ namespace BotFarm
             }
         }
 
-        [PacketHandler(WorldCommand.MSG_CORPSE_QUERY)]
-        protected void HandleCorpseQuery(InPacket packet)
-        {
-            bool found = packet.ReadByte() != 0;
-            if (found)
-            {
-                var mapId = packet.ReadInt32();
-
-                var corpsePosition = new Position(packet.ReadSingle(),
-                                                  packet.ReadSingle(),
-                                                  packet.ReadSingle(),
-                                                  0.0f,
-                                                  packet.ReadInt32());
-                Player.CorpsePosition = corpsePosition.GetPosition();
-
-                if (mapId == corpsePosition.MapID)
-                    MoveTo(corpsePosition);
-            }
-        }
-
         [PacketHandler(WorldCommand.SMSG_CORPSE_RECLAIM_DELAY)]
         protected void HandleCorpseReclaimDelay(InPacket packet)
         {
             CorpseReclaim = DateTime.Now.AddMilliseconds(packet.ReadUInt32());
-        }
-
-        protected void OnFieldUpdate(object s, UpdateFieldEventArg e)
-        {
-            switch (e.Index)
-            {
-                case (int)UnitField.UNIT_FIELD_HEALTH:
-                    if (e.NewValue == 0 && Settings.Default.Behavior.AutoResurrect)
-                        Resurrect();
-                    break;
-                case (int)PlayerField.PLAYER_FLAGS:
-                    if (e.NewValue == (uint)PlayerFlags.PLAYER_FLAGS_GHOST)
-                    {
-                        OutPacket corpseQuery = new OutPacket(WorldCommand.MSG_CORPSE_QUERY);
-                        SendPacket(corpseQuery);
-                    }
-                    break;
-            }
-        }
-
-        protected void OnDestinationReached(bool reached)
-        {
-            if (Player.IsGhost && (Player.CorpsePosition - Player).Length <= 39f)
-            {
-                if (DateTime.Now > CorpseReclaim)
-                {
-                    OutPacket reclaimCorpse = new OutPacket(WorldCommand.CMSG_RECLAIM_CORPSE);
-                    reclaimCorpse.Write(Player.GUID);
-                    SendPacket(reclaimCorpse);
-                }
-                else
-                {
-                    ScheduleAction(() => OnDestinationReached(reached), CorpseReclaim.AddSeconds(1));
-                }
-            }
         }
         #endregion
 
@@ -196,7 +202,7 @@ namespace BotFarm
             if (destination.MapID != Player.MapID)
             {
                 Log("Trying to move to another map", Client.UI.LogLevel.Warning);
-                OnDestinationReached(false);
+                HandleTriggerInput(TriggerActionType.DestinationReached, false);
                 return;
             }
 
@@ -209,7 +215,7 @@ namespace BotFarm
                                         Player.MapID, out resultPath);
                 if (!successful)
                 {
-                    OnDestinationReached(false);
+                    HandleTriggerInput(TriggerActionType.DestinationReached, false);
                     return;
                 }
 
@@ -222,7 +228,7 @@ namespace BotFarm
             // check if we even need to move
             if (remaining.Length < MovementEpsilon)
             {
-                OnDestinationReached(true);
+                HandleTriggerInput(TriggerActionType.DestinationReached, true);
                 return;
             }
 
@@ -292,7 +298,7 @@ namespace BotFarm
 
                     CancelActionsByFlag(ActionFlag.Movement);
 
-                    OnDestinationReached(true);
+                    HandleTriggerInput(TriggerActionType.DestinationReached, true);
                 }
             }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
         }

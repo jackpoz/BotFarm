@@ -39,8 +39,8 @@ namespace Client
                 if (trigger.Triggered)
                     continue;
 
-                if (trigger.IsTriggered(type, inputs))
-                    break;
+                trigger.IsTriggered(type, inputs);
+                break;
             }
 
             if (TriggerActions.Last().Triggered)

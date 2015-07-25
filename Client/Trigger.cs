@@ -39,7 +39,7 @@ namespace Client
                 if (trigger.Triggered)
                     continue;
 
-                trigger.IsTriggered(type, inputs);
+                trigger.HandleInput(type, inputs);
                 break;
             }
 
@@ -194,20 +194,17 @@ namespace Client
             Triggered = false;
         }
 
-        public bool IsTriggered(TriggerActionType type, params object[] inputs)
+        public void HandleInput(TriggerActionType type, params object[] inputs)
         {
             if (type != Type)
-                return false;
+                return;
 
             if (CheckIfTriggered(type, inputs))
             {
                 Triggered = true;
                 if (IntermediateAction != null)
                     IntermediateAction();
-                return true;
             }
-            else
-                return false;
         }
 
         protected abstract bool CheckIfTriggered(TriggerActionType type, params object[] inputs);

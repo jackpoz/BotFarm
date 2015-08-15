@@ -1,4 +1,6 @@
-Console application to spawn WoW automated players.
+<image src="https://ci.appveyor.com/api/projects/status/7tdp1nrwatndex5r/branch/master?svg=true">
+
+Console application used to spawn multiple WoW automated players.
 
 Credit for the authentication process and the base implementation goes to mangos, WCell, PseuWoW and TrinityCore.
 
@@ -10,3 +12,5 @@ The application configuration is setup by editing the *.config file in the outpu
 
 Write "stats" in the console to view some statistics about the current status of bots.
 Write "quit" to cleanly shut down the application and persist the new connection infos to botsinfos.xml file.
+
+Windows x64 binaries built with Visual Studio 2013 can be downloaded at [https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts](https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts)

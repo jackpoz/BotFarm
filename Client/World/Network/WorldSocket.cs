@@ -187,6 +187,9 @@ namespace Client.World.Network
         
         private void ReadAsync(EventHandler<SocketAsyncEventArgs> callback, object state = null)
         {
+            if (Disposing)
+                return;
+
             SocketAsyncState = state;
             SocketArgs.SetBuffer(ReceiveData, Index, Remaining);
             SocketCallback = callback;

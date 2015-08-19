@@ -16,7 +16,6 @@ namespace Client
             SocketArgs.Completed += CallSocketCallback;
             _receiveData = new byte[DefaultBufferSize];
             ReceiveDataLength = DefaultBufferSize;
-
         }
 
         public IGame Game { get; protected set; }
@@ -30,9 +29,20 @@ namespace Client
             get { return connection.Connected; }
         }
 
+        public bool Disposed
+        {
+            get;
+            private set;
+        }
+
+        protected bool Disposing
+        {
+            get;
+            private set;
+        }
+
         #region Asynchronous Reading
 
-        //ToDo: find a way to avoid creating new buffers every time
         protected byte[] ReceiveData
         {
             get
@@ -67,13 +77,38 @@ namespace Client
 
         public void Dispose()
         {
-            Disconnect();
+            Disposing = true;
+            if (!Disposed)
+                Disconnect();
         }
 
         public void Disconnect()
         {
             if (connection != null)
+            {
+                if (connection.Connected)
+                {
+                    connection.Client.Shutdown(SocketShutdown.Send);
+                    connection.Client.BeginReceive(_receiveData, 0, _receiveData.Length, SocketFlags.None, SocketShutdownCallback, null);
+                }
+                else
+                {
+                    Disposed = true;
+                    connection.Close();
+                }
+            }
+        }
+
+        void SocketShutdownCallback(IAsyncResult result)
+        {
+            int size = connection.Client.EndReceive(result);
+            if (size > 0)
+                connection.Client.BeginReceive(_receiveData, 0, _receiveData.Length, SocketFlags.None, SocketShutdownCallback, null);
+            else
+            {
+                Disposed = true;
                 connection.Close();
+            }
         }
 
         public abstract void InitHandlers();

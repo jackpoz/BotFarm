@@ -238,7 +238,7 @@ namespace Client
             scheduledActions.RemoveByFlag(flag);
         }
 
-        public void CreateCharacter()
+        public void CreateCharacter(Race race, Class classWow)
         {
             Log("Creating new character");
             OutPacket createCharacterPacket = new OutPacket(WorldCommand.CMSG_CHAR_CREATE);
@@ -258,9 +258,9 @@ namespace Client
             }
 
             createCharacterPacket.Write(charName.ToString().ToCString());
-            byte race = 1; createCharacterPacket.Write(race);
-            byte _class = 5; createCharacterPacket.Write(_class);
-            byte gender = 0; createCharacterPacket.Write(gender);
+            createCharacterPacket.Write((byte)race);
+            createCharacterPacket.Write((byte)classWow);
+            createCharacterPacket.Write((byte)Gender.Male);
             byte skin = 6; createCharacterPacket.Write(skin);
             byte face = 5; createCharacterPacket.Write(face);
             byte hairStyle = 0; createCharacterPacket.Write(hairStyle);

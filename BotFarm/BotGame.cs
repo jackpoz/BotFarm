@@ -111,7 +111,7 @@ namespace BotFarm
                 BotFactory.Instance.RemoveBot(this);
             }
             else
-                CreateCharacter();
+                CreateCharacter(Race.Human, Class.Priest);
         }
 
         public override void InvalidCredentials()

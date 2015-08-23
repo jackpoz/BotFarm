@@ -200,6 +200,36 @@ namespace BotFarm
         {
             CorpseReclaim = DateTime.Now.AddMilliseconds(packet.ReadUInt32());
         }
+
+        [PacketHandler(WorldCommand.SMSG_TRADE_STATUS)]
+        protected void HandleTradeStatus(InPacket packet)
+        {
+            if (Behavior.Begger)
+            {
+                TradeStatus status = (TradeStatus)packet.ReadUInt32();
+                switch (status)
+                {
+                    case TradeStatus.BeginTrade:
+                        // Stop moving
+                        CancelActionsByFlag(ActionFlag.Movement);
+                        // Accept trade
+                        OutPacket beginTrade = new OutPacket(WorldCommand.CMSG_BEGIN_TRADE);
+                        SendPacket(beginTrade);
+                        break;
+                    case TradeStatus.Canceled:
+                        EnableActionsByFlag(ActionFlag.Movement);
+                        break;
+                    case TradeStatus.Accept:
+                        OutPacket acceptTrade = new OutPacket(WorldCommand.CMSG_ACCEPT_TRADE);
+                        SendPacket(acceptTrade);
+                        break;
+                    case TradeStatus.Tradecomplete:
+                        DoSayChat("Thank you!");
+                        EnableActionsByFlag(ActionFlag.Movement);
+                        break;
+                }
+            }
+        }
         #endregion
 
         #region Actions

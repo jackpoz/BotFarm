@@ -44,6 +44,15 @@
                             &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
                             &lt;AutoAcceptResurrectRequests&gt;true&lt;/AutoAcceptResurrectRequests&gt;
                             &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
+                            &lt;Begger&gt;false&lt;/Begger&gt;
+                        &lt;/BotBehaviorSettings&gt;
+                        &lt;BotBehaviorSettings&gt;
+                          &lt;Name&gt;Begger&lt;/Name&gt;
+                          &lt;Probability&gt;0&lt;/Probability&gt;
+                          &lt;AutoAcceptGroupInvites&gt;false&lt;/AutoAcceptGroupInvites&gt;
+                          &lt;AutoAcceptResurrectRequests&gt;false&lt;/AutoAcceptResurrectRequests&gt;
+                          &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
+                          &lt;Begger&gt;true&lt;/Begger&gt;
                         &lt;/BotBehaviorSettings&gt;
                     &lt;/ArrayOfBotBehaviorSettings&gt;
                 </Value>

@@ -165,12 +165,21 @@ namespace BotFarm.Properties {
                             <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>
                             <AutoAcceptResurrectRequests>true</AutoAcceptResurrectRequests>
                             <AutoResurrect>true</AutoResurrect>
+                            <Begger>false</Begger>
+                        </BotBehaviorSettings>
+                        <BotBehaviorSettings>
+                          <Name>Begger</Name>
+                          <Probability>0</Probability>
+                          <AutoAcceptGroupInvites>false</AutoAcceptGroupInvites>
+                          <AutoAcceptResurrectRequests>false</AutoAcceptResurrectRequests>
+                          <AutoResurrect>true</AutoResurrect>
+                          <Begger>true</Begger>
                         </BotBehaviorSettings>
                     </ArrayOfBotBehaviorSettings>
                 ")]
-        public global::BotFarm.BotBehaviorSettings[] Behaviors {
+        public BotFarm.BotBehaviorSettings[] Behaviors {
             get {
-                return ((global::BotFarm.BotBehaviorSettings[])(this["Behaviors"]));
+                return ((BotFarm.BotBehaviorSettings[])(this["Behaviors"]));
             }
             set {
                 this["Behaviors"] = value;

@@ -36,6 +36,7 @@ namespace Client
         public bool Connected { get; private set; }
         TaskCompletionSource<bool> loggedOutEvent = new TaskCompletionSource<bool>();
         ScheduledActions scheduledActions;
+        ActionFlag disabledActions;
         public GameWorld World
         {
             get;
@@ -229,13 +230,24 @@ namespace Client
 
         public void ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
         {
-            if (Running)
+            if (Running && (flags == ActionFlag.None || !disabledActions.HasFlag(flags)))
                 scheduledActions.Add(new RepeatingAction(action, time, interval, flags));
         }
 
         public void CancelActionsByFlag(ActionFlag flag)
         {
             scheduledActions.RemoveByFlag(flag);
+        }
+
+        public void DisableActionsByFlag(ActionFlag flag)
+        {
+            disabledActions |= flag;
+            CancelActionsByFlag(flag);
+        }
+
+        public void EnableActionsByFlag(ActionFlag flag)
+        {
+            disabledActions &= ~flag;
         }
 
         public void CreateCharacter(Race race, Class classWow)

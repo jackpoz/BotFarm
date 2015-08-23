@@ -122,7 +122,9 @@ namespace Client.World.Network
             WorldCommand.SMSG_MONSTER_MOVE_TRANSPORT,
             WorldCommand.SMSG_MOVE_WATER_WALK,
             WorldCommand.SMSG_BREAK_TARGET,
-            WorldCommand.SMSG_DEATH_RELEASE_LOC
+            WorldCommand.SMSG_DEATH_RELEASE_LOC,
+            WorldCommand.SMSG_SET_PHASE_SHIFT,
+            WorldCommand.SMSG_PARTY_MEMBER_STATS
         };
 
         WorldServerInfo ServerInfo;

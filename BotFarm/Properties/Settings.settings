@@ -26,15 +26,6 @@
     <Setting Name="MinBotsCount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="Behavior" Type="BotFarm.BotBehaviorSettings" Scope="User">
-      <Value Profile="(Default)">
-                    &lt;BotBehaviorSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-                        &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
-                        &lt;AutoAcceptResurrectRequests&gt;true&lt;/AutoAcceptResurrectRequests&gt;
-                        &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
-                    &lt;/BotBehaviorSettings&gt;
-                </Value>
-    </Setting>
     <Setting Name="MMAPsFolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\</Value>
     </Setting>
@@ -43,6 +34,19 @@
     </Setting>
     <Setting Name="MAPsFolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\</Value>
+    </Setting>
+    <Setting Name="Behaviors" Type="BotFarm.BotBehaviorSettings[]" Scope="User">
+      <Value Profile="(Default)">
+                    &lt;ArrayOfBotBehaviorSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+                        &lt;BotBehaviorSettings&gt;
+                            &lt;Name&gt;Default&lt;/Name&gt;
+                            &lt;Probability&gt;100&lt;/Probability&gt;
+                            &lt;AutoAcceptGroupInvites&gt;true&lt;/AutoAcceptGroupInvites&gt;
+                            &lt;AutoAcceptResurrectRequests&gt;true&lt;/AutoAcceptResurrectRequests&gt;
+                            &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
+                        &lt;/BotBehaviorSettings&gt;
+                    &lt;/ArrayOfBotBehaviorSettings&gt;
+                </Value>
     </Setting>
   </Settings>
 </SettingsFile>

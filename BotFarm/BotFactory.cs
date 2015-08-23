@@ -28,8 +28,10 @@ namespace BotFarm
         List<BotInfo> botInfos;
         const string botsInfosPath = "botsinfos.xml";
         const string logPath = "botfactory.log";
+        const string defaultBehaviorName = "Default";
         TextWriter logger;
         Random randomGenerator = new Random();
+        Dictionary<string, BotBehaviorSettings> botBehaviors = new Dictionary<string, BotBehaviorSettings>();
 
         public BotFactory()
         {
@@ -50,6 +52,44 @@ namespace BotFarm
                 catch(InvalidOperationException)
                 {
                     botInfos = new List<BotInfo>();
+                }
+            }
+
+            foreach (BotBehaviorSettings behavior in Settings.Default.Behaviors)
+                botBehaviors[behavior.Name] = behavior;
+
+            if (botBehaviors.Count == 0)
+            {
+                Log("Behaviors not found in the configuration file, exiting");
+                Environment.Exit(0);
+            }
+
+            if (!botBehaviors.ContainsKey(defaultBehaviorName))
+            {
+                Log("'" + defaultBehaviorName + "' behavior not found in the configuration file, exiting");
+                Environment.Exit(0);
+            }
+
+            if (botBehaviors.Sum(behavior => behavior.Value.Probability) != 100)
+            {
+                Log("Behaviors total Probability != 100 (" + botBehaviors.Sum(behavior => behavior.Value.Probability) + "), exiting");
+                Environment.Exit(0);
+            }
+
+            foreach (BotInfo botInfo in botInfos)
+            {
+                if (string.IsNullOrEmpty(botInfo.BehaviorName))
+                {
+                    Log(botInfo.Username + " has missing behavior, setting to default one");
+                    botInfo.BehaviorName = defaultBehaviorName;
+                    continue;
+                }
+
+                if (!botBehaviors.ContainsKey(botInfo.BehaviorName))
+                {
+                    Log(botInfo.Username + " has inexistent behavior '" + botInfo.BehaviorName + "', setting to default one");
+                    botInfo.BehaviorName = defaultBehaviorName;
+                    continue;
                 }
             }
 
@@ -75,15 +115,30 @@ namespace BotFarm
             lock(factoryGame)
                 factoryGame.DoSayChat(".account create " + username + " " + password);
 
+            uint behaviorRandomIndex = (uint)randomGenerator.Next(100);
+            uint behaviorCurrentIndex = 0;
+            BotBehaviorSettings botBehavior = botBehaviors.Values.First();
+            foreach (var behavior in botBehaviors.Values)
+            {
+                if (behaviorRandomIndex < behaviorCurrentIndex + behavior.Probability)
+                {
+                    botBehavior = behavior;
+                    break;
+                }
+
+                behaviorCurrentIndex += behavior.Probability;
+            }
+
             BotGame game = new BotGame(Settings.Default.Hostname,
                                                 Settings.Default.Port,
                                                 username,
                                                 password,
                                                 Settings.Default.RealmID,
-                                                0);
+                                                0,
+                                                botBehavior);
             game.SettingUp = true;
             game.Start();
-            botInfos.Add(new BotInfo(username, password));
+            botInfos.Add(new BotInfo(username, password, botBehavior.Name));
 
             return game;
         }
@@ -95,7 +150,8 @@ namespace BotFarm
                                                    info.Username,
                                                    info.Password,
                                                    Settings.Default.RealmID,
-                                                   0);
+                                                   0,
+                                                   botBehaviors[info.BehaviorName]);
             game.Start();
             return game;
         }

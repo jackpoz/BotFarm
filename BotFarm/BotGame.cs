@@ -23,16 +23,24 @@ namespace BotFarm
             set;
         }
 
+        public BotBehaviorSettings Behavior
+        {
+            get;
+            private set;
+        }
+
         #region Player members
         public UInt64 GroupLeaderGuid { get; private set; }
         public List<UInt64> GroupMembersGuids = new List<UInt64>();
         DateTime CorpseReclaim;
         #endregion
 
-        public BotGame(string hostname, int port, string username, string password, int realmId, int character)
+        public BotGame(string hostname, int port, string username, string password, int realmId, int character, BotBehaviorSettings behavior)
             : base(hostname, port, username, password, realmId, character)
         {
-            if (Settings.Default.Behavior.AutoResurrect)
+            this.Behavior = behavior;
+
+            if (Behavior.AutoResurrect)
             {
                 // Resurrect if bot reaches 0 hp
                 AddTrigger(new Trigger(new[] 
@@ -123,7 +131,7 @@ namespace BotFarm
         [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
         protected void HandlePartyInvite(InPacket packet)
         {
-            if(Settings.Default.Behavior.AutoAcceptGroupInvites)
+            if(Behavior.AutoAcceptGroupInvites)
                 SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
         }
 
@@ -169,7 +177,7 @@ namespace BotFarm
             var resurrectorGuid = packet.ReadUInt64();
             OutPacket response = new OutPacket(WorldCommand.CMSG_RESURRECT_RESPONSE);
             response.Write(resurrectorGuid);
-            if (Settings.Default.Behavior.AutoAcceptResurrectRequests)
+            if (Behavior.AutoAcceptResurrectRequests)
             {
                 response.Write((byte)1);
                 SendPacket(response);

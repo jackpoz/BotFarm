@@ -10,6 +10,8 @@ namespace BotFarm
     [Serializable]
     public struct BotBehaviorSettings
     {
+        public string Name;
+        public uint Probability;
         public bool AutoAcceptGroupInvites;
         public bool AutoAcceptResurrectRequests;
         public bool AutoResurrect;

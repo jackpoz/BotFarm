@@ -38,6 +38,13 @@ namespace Client.World.Definitions
             Z = z;
         }
 
+        public void Set(Vector3 v)
+        {
+            X = v.X;
+            Y = v.Y;
+            Z = v.Z;
+        }
+
         public float Length
         {
             get

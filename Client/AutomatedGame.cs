@@ -68,6 +68,12 @@ namespace Client
             }
         }
         UpdateObjectHandler updateObjectHandler;
+
+        protected Dictionary<ulong, WorldObject> Objects
+        {
+            get;
+            private set;
+        }
         #endregion
 
         public AutomatedGame(string hostname, int port, string username, string password, int realmId, int character)
@@ -80,6 +86,7 @@ namespace Client
             World = new GameWorld();
             Player = new Player();
             Player.OnFieldUpdated += OnFieldUpdate;
+            Objects = new Dictionary<ulong, WorldObject>();
 
             this.Hostname = hostname;
             this.Port = port;
@@ -490,6 +497,41 @@ namespace Client
             updateObjectHandler.HandleUpdatePacket(packet.Inflate());
         }
 
+        [PacketHandler(WorldCommand.SMSG_MONSTER_MOVE)]
+        protected void HandleMonsterMove(InPacket packet)
+        {
+            updateObjectHandler.HandleMonsterMovementPacket(packet);
+        }
+
+        [PacketHandler(WorldCommand.MSG_MOVE_START_FORWARD)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_BACKWARD)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_STRAFE_LEFT)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_STRAFE_RIGHT)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP_STRAFE)]
+        [PacketHandler(WorldCommand.MSG_MOVE_JUMP)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_TURN_LEFT)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_TURN_RIGHT)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP_TURN)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_PITCH_UP)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_PITCH_DOWN)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP_PITCH)]
+        [PacketHandler(WorldCommand.MSG_MOVE_SET_RUN_MODE)]
+        [PacketHandler(WorldCommand.MSG_MOVE_SET_WALK_MODE)]
+        [PacketHandler(WorldCommand.MSG_MOVE_FALL_LAND)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_SWIM)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP_SWIM)]
+        [PacketHandler(WorldCommand.MSG_MOVE_SET_FACING)]
+        [PacketHandler(WorldCommand.MSG_MOVE_SET_PITCH)]
+        [PacketHandler(WorldCommand.MSG_MOVE_HEARTBEAT)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_ASCEND)]
+        [PacketHandler(WorldCommand.MSG_MOVE_STOP_ASCEND)]
+        [PacketHandler(WorldCommand.MSG_MOVE_START_DESCEND)]
+        protected void HandleMove(InPacket packet)
+        {
+            updateObjectHandler.HandleMovementPacket(packet);
+        }
+
         class UpdateObjectHandler
         {
             AutomatedGame game;
@@ -579,12 +621,35 @@ namespace Client
                 }
             }
 
+            public void HandleMovementPacket(InPacket packet)
+            {
+                ResetData();
+                updateType = ObjectUpdateType.UPDATETYPE_MOVEMENT;
+                guid = packet.ReadPackedGuid();
+                ReadMovementInfo(packet);
+                HandleUpdateData();
+            }
+
+            public void HandleMonsterMovementPacket(InPacket packet)
+            {
+                ResetData();
+                updateType = ObjectUpdateType.UPDATETYPE_MOVEMENT;
+                guid = packet.ReadPackedGuid();
+                byte unk = packet.ReadByte();
+                WorldObject worldObject = game.Objects[guid];
+                worldObject.Set(packet.ReadVector3());
+            }
+
             void ResetData()
             {
+                updateType = ObjectUpdateType.UPDATETYPE_VALUES;
+                guid = 0;
+                lowGuid = 0;
                 movementSpeeds.Clear();
                 splinePoints.Clear();
                 updateFields.Clear();
                 outOfRangeGuids.Clear();
+                movementInfo = null;
             }
 
             void ReadMovementUpdateData(InPacket packet)
@@ -694,9 +759,71 @@ namespace Client
                     foreach (var pair in updateFields)
                         game.Player[pair.Key] = pair.Value;
                 }
+                else
+                {
+                    switch (updateType)
+                    {
+                        case ObjectUpdateType.UPDATETYPE_VALUES:
+                            {
+                                WorldObject worldObject = game.Objects[guid];
+                                foreach (var pair in updateFields)
+                                    worldObject[pair.Key] = pair.Value;
+                                break;
+                            }
+                        case ObjectUpdateType.UPDATETYPE_MOVEMENT:
+                            {
+                                if (movementInfo != null)
+                                {
+                                    WorldObject worldObject = game.Objects[guid];
+                                    worldObject.Set(movementInfo.Position);
+                                    worldObject.O = movementInfo.O;
+                                }
+                                break;
+                            }
+                        case ObjectUpdateType.UPDATETYPE_CREATE_OBJECT:
+                        case ObjectUpdateType.UPDATETYPE_CREATE_OBJECT2:
+                            {
+                                WorldObject worldObject = new WorldObject();
+                                worldObject.GUID = guid;
+                                if (movementInfo != null)
+                                {
+                                    worldObject.Set(movementInfo.Position);
+                                    worldObject.O = movementInfo.O;
+                                }
+                                worldObject.MapID = game.Player.MapID;
+                                foreach (var pair in updateFields)
+                                    worldObject[pair.Key] = pair.Value;
+                                game.Objects.Add(guid, worldObject);
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+                }
+
+                foreach (var guid in outOfRangeGuids)
+                {
+                    WorldObject worldObject;
+                    if (game.Objects.TryGetValue(guid, out worldObject))
+                    {
+                        worldObject.ResetPosition();
+                        game.Objects.Remove(guid);
+                    }
+                }
             }
         }
 
+        [PacketHandler(WorldCommand.SMSG_DESTROY_OBJECT)]
+        protected void HandleDestroyObject(InPacket packet)
+        {
+            ulong guid = packet.ReadUInt64();
+            WorldObject worldObject;
+            if (Objects.TryGetValue(guid, out worldObject))
+            {
+                worldObject.ResetPosition();
+                Objects.Remove(guid);
+            }
+        }
         #endregion
 
         #region Unused Methods

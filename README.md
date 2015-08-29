@@ -1,4 +1,4 @@
-<image src="https://ci.appveyor.com/api/projects/status/7tdp1nrwatndex5r/branch/master?svg=true">
+[<image src="https://ci.appveyor.com/api/projects/status/7tdp1nrwatndex5r/branch/master?svg=true">](https://ci.appveyor.com/project/jackpoz/botfarm)
 
 Console application used to spawn multiple WoW automated players.
 

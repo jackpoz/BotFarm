@@ -801,13 +801,13 @@ namespace Client
                     }
                 }
 
-                foreach (var guid in outOfRangeGuids)
+                foreach (var outOfRangeGuid in outOfRangeGuids)
                 {
                     WorldObject worldObject;
-                    if (game.Objects.TryGetValue(guid, out worldObject))
+                    if (game.Objects.TryGetValue(outOfRangeGuid, out worldObject))
                     {
                         worldObject.ResetPosition();
-                        game.Objects.Remove(guid);
+                        game.Objects.Remove(outOfRangeGuid);
                     }
                 }
             }

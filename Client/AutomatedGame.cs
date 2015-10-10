@@ -807,7 +807,12 @@ namespace Client
                                 worldObject.MapID = game.Player.MapID;
                                 foreach (var pair in updateFields)
                                     worldObject[pair.Key] = pair.Value;
-                                game.Objects.Add(guid, worldObject);
+
+#if DEBUG
+                                if (game.Objects.ContainsKey(guid))
+                                    game.Log(updateType + " called with guid " + guid + " already added", LogLevel.Error);
+#endif
+                                game.Objects[guid] = worldObject;
 
                                 if (worldObject.IsType(HighGuid.Player))
                                 {

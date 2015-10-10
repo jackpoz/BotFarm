@@ -163,6 +163,18 @@ namespace Client
         }
     }
 
+    public class AlwaysTrueTriggerAction : TriggerAction
+    {
+        public AlwaysTrueTriggerAction(TriggerActionType Type, Action IntermediateAction = null)
+            : base(Type, IntermediateAction)
+        { }
+
+        protected override bool CheckIfTriggered(TriggerActionType type, params object[] inputs)
+        {
+            return true;
+        }
+    }
+
     public abstract class TriggerAction
     {
         public TriggerActionType Type

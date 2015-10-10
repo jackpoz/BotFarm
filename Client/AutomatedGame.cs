@@ -306,6 +306,20 @@ namespace Client
 
         public virtual void InvalidCredentials()
         { }
+
+        protected string GetPlayerName(WorldObject obj)
+        {
+            return GetPlayerName(obj.GUID);
+        }
+
+        protected string GetPlayerName(ulong guid)
+        {
+            string name;
+            if (Game.World.PlayerNameLookup.TryGetValue(guid, out name))
+                return name;
+            else
+                return "";
+        }
         #endregion
 
         #region Commands
@@ -794,6 +808,13 @@ namespace Client
                                 foreach (var pair in updateFields)
                                     worldObject[pair.Key] = pair.Value;
                                 game.Objects.Add(guid, worldObject);
+
+                                if (worldObject.IsType(HighGuid.Player))
+                                {
+                                    OutPacket nameQuery = new OutPacket(WorldCommand.CMSG_NAME_QUERY);
+                                    nameQuery.Write(guid);
+                                    game.SendPacket(nameQuery);
+                                }
                                 break;
                             }
                         default:

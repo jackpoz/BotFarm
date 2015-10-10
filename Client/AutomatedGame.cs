@@ -307,6 +307,33 @@ namespace Client
         public virtual void InvalidCredentials()
         { }
 
+        protected WorldObject FindClosestObject(HighGuid highGuidType, Func<WorldObject, bool> additionalCheck = null)
+        {
+            float closestDistance = float.MaxValue;
+            WorldObject closestObject = null;
+
+            foreach (var obj in Objects.Values.ToList())
+            {
+                if (!obj.IsType(highGuidType))
+                    continue;
+
+                if (additionalCheck != null && !additionalCheck(obj))
+                    continue;
+
+                if (obj.MapID != Player.MapID)
+                    continue;
+
+                float distance = (obj - Player).Length;
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestObject = obj;
+                }
+            }
+
+            return closestObject;
+        }
+
         protected string GetPlayerName(WorldObject obj)
         {
             return GetPlayerName(obj.GUID);

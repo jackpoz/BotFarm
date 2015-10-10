@@ -127,6 +127,18 @@ namespace BotFarm
             BotFactory.Instance.RemoveBot(this);
         }
 
+        WorldObject FindClosestNonBotPlayer(Func<WorldObject, bool> additionalCheck = null)
+        {
+            return FindClosestObject(HighGuid.Player, obj =>
+            {
+                if (BotFactory.Instance.IsBot(obj))
+                    return false;
+                if (additionalCheck != null && !additionalCheck(obj))
+                    return false;
+                return true;
+            });
+        }
+
         #region Handlers
         [PacketHandler(WorldCommand.SMSG_GROUP_INVITE)]
         protected void HandlePartyInvite(InPacket packet)

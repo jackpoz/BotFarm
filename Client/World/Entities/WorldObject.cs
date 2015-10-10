@@ -58,6 +58,11 @@ namespace Client.World.Entities
         {
             objectFields.Clear();
         }
+
+        public bool IsType(HighGuid highGuidType)
+        {
+            return ((GUID & 0xF0F0000000000000) >> 52) == (ulong)highGuidType;
+        }
     }
 
     public class UpdateFieldEventArg : EventArgs
@@ -86,5 +91,23 @@ namespace Client.World.Entities
             this.NewValue = NewValue;
             this.Object = Object;
         }
+    }
+
+    public enum HighGuid
+    {
+        Player = 0x000,
+        BattleGround1 = 0x101,
+        InstanceSave = 0x104,
+        Group = 0x105,
+        BattleGround2 = 0x109,
+        MOTransport = 0x10C,
+        Guild = 0x10F,
+        Item = 0x400,
+        DynObject = 0xF00,
+        GameObject = 0xF01,
+        Transport = 0xF02,
+        Unit = 0xF03,
+        Pet = 0xF04,
+        Vehicle = 0xF05
     }
 }

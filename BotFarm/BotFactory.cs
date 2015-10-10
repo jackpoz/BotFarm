@@ -2,6 +2,7 @@
 using Client;
 using Client.UI;
 using Client.World;
+using Client.World.Entities;
 using Client.World.Network;
 using System;
 using System.Collections.Generic;
@@ -154,6 +155,13 @@ namespace BotFarm
                                                    botBehaviors[info.BehaviorName]);
             game.Start();
             return game;
+        }
+
+        public bool IsBot(WorldObject obj)
+        {
+            if (factoryGame.Player.GUID == obj.GUID)
+                return true;
+            return bots.FirstOrDefault(bot => bot.Player.GUID == obj.GUID) != null;
         }
 
         public void SetupFactory(int botCount)

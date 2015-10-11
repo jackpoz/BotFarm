@@ -36,6 +36,12 @@ namespace BotFarm
         public UInt64 GroupLeaderGuid { get; private set; }
         public List<UInt64> GroupMembersGuids = new List<UInt64>();
         DateTime CorpseReclaim;
+        ulong TraderGUID
+        {
+            get;
+            set;
+        }
+        HashSet<ulong> TradedGUIDs = new HashSet<ulong>();
         #endregion
 
         public BotGame(string hostname, int port, string username, string password, int realmId, int character, BotBehaviorSettings behavior)
@@ -104,6 +110,15 @@ namespace BotFarm
                           SendPacket(reclaimCorpse);
                       })
                 }, null));
+
+                if (Behavior.Begger)
+                {
+                    // Beg a player only once
+                    AddTrigger(new Trigger(new[]
+                    {
+                        new AlwaysTrueTriggerAction(TriggerActionType.TradeCompleted)
+                    }, () => TradedGUIDs.Add(TraderGUID)));
+                }
             }
         }
 
@@ -112,6 +127,25 @@ namespace BotFarm
             base.Start();
 
             ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
+
+            if (Behavior.Begger)
+            {
+                // Follow player trigger
+                //  - find closest player and follow him begging for money with chat messages (unless its a bot)
+                ScheduleAction(() =>
+                {
+                    if (TraderGUID != 0)
+                        return;
+
+                    CancelActionsByFlag(ActionFlag.Movement);
+                    var target = FindClosestNonBotPlayer(obj => !TradedGUIDs.Contains(obj.GUID));
+                    if (target != null)
+                    {
+                        DoSayChat("Please " + GetPlayerName(target) + ", give me some money");
+                        Follow(target);
+                    }
+                }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
+            }
         }
 
         public override void NoCharactersFound()
@@ -225,6 +259,7 @@ namespace BotFarm
                 switch (status)
                 {
                     case TradeStatus.BeginTrade:
+                        TraderGUID = packet.ReadUInt64();
                         // Stop moving
                         CancelActionsByFlag(ActionFlag.Movement);
                         // Accept trade
@@ -233,6 +268,7 @@ namespace BotFarm
                         break;
                     case TradeStatus.Canceled:
                         EnableActionsByFlag(ActionFlag.Movement);
+                        TraderGUID = 0;
                         break;
                     case TradeStatus.Accept:
                         OutPacket acceptTrade = new OutPacket(WorldCommand.CMSG_ACCEPT_TRADE);
@@ -241,6 +277,8 @@ namespace BotFarm
                     case TradeStatus.Tradecomplete:
                         DoSayChat("Thank you!");
                         EnableActionsByFlag(ActionFlag.Movement);
+                        HandleTriggerInput(TriggerActionType.TradeCompleted, TraderGUID);
+                        TraderGUID = 0;
                         break;
                 }
             }

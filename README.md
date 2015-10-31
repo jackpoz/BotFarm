@@ -13,4 +13,4 @@ The application configuration is setup by editing the *.config file in the outpu
 Write "stats" in the console to view some statistics about the current status of bots.
 Write "quit" to cleanly shut down the application and persist the new connection infos to botsinfos.xml file.
 
-Windows x64 binaries built with Visual Studio 2013 can be downloaded at [https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts](https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts)
+Windows x64 binaries built with Visual Studio 2015 can be downloaded at [https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts](https://ci.appveyor.com/project/jackpoz/botfarm/build/artifacts), make sure to install [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-US/download/details.aspx?id=48145) first.

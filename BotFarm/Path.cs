@@ -18,6 +18,17 @@ namespace BotFarm
             private set;
         }
 
+        public float CurrentOrientation
+        {
+            get
+            {
+                if (NextPointIndex < points.Length)
+                    return (points[NextPointIndex] - CurrentPosition).DirectionOrientation;
+                else
+                    return (points[NextPointIndex - 1] - points[NextPointIndex - 2]).DirectionOrientation;
+            }
+        }
+
         public float Speed
         {
             get;

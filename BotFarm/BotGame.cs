@@ -330,7 +330,7 @@ namespace BotFarm
                 X = Player.X,
                 Y = Player.Y,
                 Z = Player.Z,
-                O = direction.O
+                O = path.CurrentOrientation
             };
 
             SendPacket(facing);
@@ -343,7 +343,7 @@ namespace BotFarm
                 X = Player.X,
                 Y = Player.Y,
                 Z = Player.Z,
-                O = Player.O
+                O = path.CurrentOrientation
             };
             SendPacket(startMoving);
 
@@ -368,7 +368,7 @@ namespace BotFarm
                         X = Player.X,
                         Y = Player.Y,
                         Z = Player.Z,
-                        O = Player.O
+                        O = path.CurrentOrientation
                     };
                     SendPacket(heartbeat);
                 }
@@ -380,7 +380,7 @@ namespace BotFarm
                         X = destination.X,
                         Y = destination.Y,
                         Z = destination.Z,
-                        O = Player.O
+                        O = path.CurrentOrientation
                     };
                     SendPacket(stopMoving);
                     Player.SetPosition(stopMoving.GetPosition());
@@ -471,7 +471,7 @@ namespace BotFarm
                         X = Player.X,
                         Y = Player.Y,
                         Z = Player.Z,
-                        O = distance.Direction.O
+                        O = path.CurrentOrientation
                     };
 
                     SendPacket(facing);
@@ -484,7 +484,7 @@ namespace BotFarm
                         X = Player.X,
                         Y = Player.Y,
                         Z = Player.Z,
-                        O = Player.O
+                        O = path.CurrentOrientation
                     };
                     SendPacket(startMoving);
 
@@ -503,7 +503,7 @@ namespace BotFarm
                     X = Player.X,
                     Y = Player.Y,
                     Z = Player.Z,
-                    O = Player.O
+                    O = path.CurrentOrientation
                 };
                 SendPacket(heartbeat);
             }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);

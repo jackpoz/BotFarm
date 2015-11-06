@@ -201,6 +201,12 @@ namespace Client
 
         public override void PresentRealmList(WorldServerList realmList)
         {
+            if (RealmID >= realmList.Count)
+            {
+                LogException("Invalid RealmID '" + RealmID + "' specified in the configs");
+                Environment.Exit(1);
+            }
+
             LogLine("Connecting to realm " + realmList[RealmID].Name);
             ConnectTo(realmList[RealmID]);
         }

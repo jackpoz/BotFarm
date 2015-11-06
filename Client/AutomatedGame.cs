@@ -146,7 +146,14 @@ namespace Client
                     scheduledActions.RemoveAt(0);
                     if (scheduledAction.interval > TimeSpan.Zero)
                         ScheduleAction(scheduledAction.action, DateTime.Now + scheduledAction.interval, scheduledAction.interval, scheduledAction.flags);
-                    scheduledAction.action();
+                    try
+                    {
+                        scheduledAction.action();
+                    }
+                    catch(Exception ex)
+                    {
+                        LogException(ex);
+                    }
                 }
                 else
                     break;

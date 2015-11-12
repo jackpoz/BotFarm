@@ -65,6 +65,7 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchQueue.cs" />
     <Compile Include="Authentication\AuthCommand.cs" />
     <Compile Include="Authentication\AuthResult.cs" />
     <Compile Include="Authentication\CommandHandler.cs" />

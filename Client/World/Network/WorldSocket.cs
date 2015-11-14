@@ -141,6 +141,8 @@ namespace Client.World.Network
         protected OutPacket lastOutPacket;
         protected InPacket lastInPacket;
 
+        BatchQueue<InPacket> packetsQueue = new BatchQueue<InPacket>();
+
         public WorldSocket(IGame program, WorldServerInfo serverInfo)
         {
             Game = program;
@@ -297,7 +299,7 @@ namespace Client.World.Network
                     else
                     {
                         // the packet is just a header, start next packet
-                        HandlePacket(new InPacket(header));
+                        QueuePacket(new InPacket(header));
                         Start();
                     }
                 }
@@ -347,7 +349,7 @@ namespace Client.World.Network
                 {
                     // get header and packet, handle it
                     ServerHeader header = (ServerHeader)SocketAsyncState;
-                    HandlePacket(new InPacket(header, ReceiveData, ReceiveDataLength));
+                    QueuePacket(new InPacket(header, ReceiveData, ReceiveDataLength));
 
                     // start new asynchronous read
                     Start();
@@ -373,6 +375,12 @@ namespace Client.World.Network
         }
 
         #endregion
+
+        public void HandlePackets()
+        {
+            foreach (var packet in packetsQueue.BatchDequeue())
+                HandlePacket(packet);
+        }
 
         private void HandlePacket(InPacket packet)
         {
@@ -402,11 +410,16 @@ namespace Client.World.Network
             }
         }
 
+        private void QueuePacket(InPacket packet)
+        {
+            packetsQueue.Enqueue(packet);
+        }
+
         #region GameSocket Members
 
         public override void Start()
         {
-            ReserveData(4);
+            ReserveData(4, true);
             Index = 0;
             Remaining = 1;
             ReadAsync(ReadSizeCallback);

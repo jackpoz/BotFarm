@@ -52,8 +52,10 @@ namespace Client
         }
         private byte[] _receiveData;
         protected int ReceiveDataLength;
-        protected void ReserveData(int size)
+        protected void ReserveData(int size, bool reset = false)
         {
+            if (reset)
+                _receiveData = new byte[DefaultBufferSize];
             if (_receiveData.Length < size)
                 Array.Resize(ref _receiveData, size);
             ReceiveDataLength = size;

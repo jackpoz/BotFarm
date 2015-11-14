@@ -135,6 +135,8 @@ namespace Client
 
         public override void Update()
         {
+            (socket as WorldSocket)?.HandlePackets();
+
             if (World.SelectedCharacter == null)
                 return;
 

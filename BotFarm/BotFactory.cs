@@ -240,9 +240,6 @@ namespace BotFarm
             Log("Shutting down BotFactory");
             Log("This might take at least 20 seconds to allow all bots to properly logout");
 
-            foreach (var bot in bots)
-                bot.Running = false;
-
             List<Task> botsDisposing = new List<Task>(bots.Count);
             foreach (var bot in bots)
                 botsDisposing.Add(bot.Dispose());

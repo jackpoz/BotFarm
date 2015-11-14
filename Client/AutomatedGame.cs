@@ -307,7 +307,6 @@ namespace Client
 
         public async Task Dispose()
         {
-            Running = false;
             scheduledActions.Clear();
 
             await Exit();

@@ -326,7 +326,7 @@ namespace Client
             float closestDistance = float.MaxValue;
             WorldObject closestObject = null;
 
-            foreach (var obj in Objects.Values.ToList())
+            foreach (var obj in Objects.Values)
             {
                 if (!obj.IsType(highGuidType))
                     continue;

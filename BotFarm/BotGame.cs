@@ -18,6 +18,7 @@ namespace BotFarm
     class BotGame : AutomatedGame
     {
         const float MovementEpsilon = 1.0f;
+        const float FollowMovementEpsilon = 5f;
         const float FollowTargetRecalculatePathEpsilon = 5f;
 
         public bool SettingUp
@@ -413,16 +414,16 @@ namespace BotFarm
 
                 var distance = target - Player.GetPosition();
                 // check if we even need to move
-                if (distance.Length < MovementEpsilon)
+                if (distance.Length < FollowMovementEpsilon)
                 {
                     if (path != null)
                     {
                         var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
                         {
                             GUID = Player.GUID,
-                            X = pathEndPosition.X,
-                            Y = pathEndPosition.Y,
-                            Z = pathEndPosition.Z,
+                            X = Player.X,
+                            Y = Player.Y,
+                            Z = Player.Z,
                             O = Player.O
                         };
                         SendPacket(stopMoving);
@@ -438,7 +439,7 @@ namespace BotFarm
                 float targetMovement = (target - pathEndPosition).Length;
                 if (targetMovement > FollowTargetRecalculatePathEpsilon)
                     path = null;
-                else if (distance.Length >= MovementEpsilon && distance.Length <= FollowTargetRecalculatePathEpsilon)
+                else if (distance.Length >= FollowMovementEpsilon && distance.Length <= FollowTargetRecalculatePathEpsilon)
                     path = null;
 
                 if (path == null)

@@ -50,6 +50,7 @@ namespace BotFarm
         {
             this.Behavior = behavior;
 
+            #region AutoResurrect
             if (Behavior.AutoResurrect)
             {
                 // Resurrect if bot reaches 0 hp
@@ -111,16 +112,19 @@ namespace BotFarm
                           SendPacket(reclaimCorpse);
                       })
                 }, null));
-
-                if (Behavior.Begger)
-                {
-                    // Beg a player only once
-                    AddTrigger(new Trigger(new[]
-                    {
-                        new AlwaysTrueTriggerAction(TriggerActionType.TradeCompleted)
-                    }, () => TradedGUIDs.Add(TraderGUID)));
-                }
             }
+            #endregion
+
+            #region Begger
+            if (Behavior.Begger)
+            {
+                // Beg a player only once
+                AddTrigger(new Trigger(new[]
+                {
+                    new AlwaysTrueTriggerAction(TriggerActionType.TradeCompleted)
+                }, () => TradedGUIDs.Add(TraderGUID)));
+            }
+            #endregion
         }
 
         public override void Start()

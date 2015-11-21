@@ -35,6 +35,18 @@ namespace Client.World.Entities
             }
         }
 
+        public uint this[UnitField index]
+        {
+            get
+            {
+                return this[(int)index];
+            }
+            set
+            {
+                this[(int)index] = value;
+            }
+        }
+
         public uint this[int index]
         {
             get

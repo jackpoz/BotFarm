@@ -45,6 +45,7 @@
                             &lt;AutoAcceptResurrectRequests&gt;true&lt;/AutoAcceptResurrectRequests&gt;
                             &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
                             &lt;Begger&gt;false&lt;/Begger&gt;
+                            &lt;FollowGroupLeader&gt;true&lt;/FollowGroupLeader&gt;
                         &lt;/BotBehaviorSettings&gt;
                         &lt;BotBehaviorSettings&gt;
                           &lt;Name&gt;Begger&lt;/Name&gt;
@@ -53,6 +54,7 @@
                           &lt;AutoAcceptResurrectRequests&gt;false&lt;/AutoAcceptResurrectRequests&gt;
                           &lt;AutoResurrect&gt;true&lt;/AutoResurrect&gt;
                           &lt;Begger&gt;true&lt;/Begger&gt;
+                          &lt;FollowGroupLeader&gt;false&lt;/FollowGroupLeader&gt;
                         &lt;/BotBehaviorSettings&gt;
                     &lt;/ArrayOfBotBehaviorSettings&gt;
                 </Value>

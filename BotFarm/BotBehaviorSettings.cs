@@ -16,5 +16,6 @@ namespace BotFarm
         public bool AutoAcceptResurrectRequests;
         public bool AutoResurrect;
         public bool Begger;
+        public bool FollowGroupLeader;
     }
 }

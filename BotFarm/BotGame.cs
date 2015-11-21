@@ -57,7 +57,11 @@ namespace BotFarm
                 AddTrigger(new Trigger(new[] 
                 { 
                     new UpdateFieldTriggerAction((int)UnitField.UNIT_FIELD_HEALTH, 0)
-                }, () => Resurrect()));
+                }, () =>
+                   {
+                       CancelActionsByFlag(ActionFlag.Movement);
+                       Resurrect();
+                   }));
 
                 // Resurrect sequence
                 AddTrigger(new Trigger(new TriggerAction[] 
@@ -131,8 +135,10 @@ namespace BotFarm
         {
             base.Start();
 
+            // Anti-kick for being afk
             ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
 
+            #region Begger
             if (Behavior.Begger)
             {
                 // Follow player trigger
@@ -151,6 +157,29 @@ namespace BotFarm
                     }
                 }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
             }
+            #endregion
+
+            #region FollowGroupLeader
+            if (Behavior.FollowGroupLeader)
+            {
+                ScheduleAction(() =>
+                {
+                    if (!Player.IsAlive)
+                        return;
+
+                    // Check if we are in a party and follow the party leader
+                    if (GroupLeaderGuid == 0)
+                        return;
+
+                    WorldObject groupLeader;
+                    if (Objects.TryGetValue(GroupLeaderGuid, out groupLeader))
+                    {
+                        CancelActionsByFlag(ActionFlag.Movement);
+                        Follow(groupLeader);
+                    }
+                }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
+            }
+            #endregion
         }
 
         public override void NoCharactersFound()

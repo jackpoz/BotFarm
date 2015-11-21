@@ -166,6 +166,7 @@ namespace BotFarm.Properties {
                             <AutoAcceptResurrectRequests>true</AutoAcceptResurrectRequests>
                             <AutoResurrect>true</AutoResurrect>
                             <Begger>false</Begger>
+                            <FollowGroupLeader>true</FollowGroupLeader>
                         </BotBehaviorSettings>
                         <BotBehaviorSettings>
                           <Name>Begger</Name>
@@ -174,6 +175,7 @@ namespace BotFarm.Properties {
                           <AutoAcceptResurrectRequests>false</AutoAcceptResurrectRequests>
                           <AutoResurrect>true</AutoResurrect>
                           <Begger>true</Begger>
+                          <FollowGroupLeader>false</FollowGroupLeader>
                         </BotBehaviorSettings>
                     </ArrayOfBotBehaviorSettings>
                 ")]

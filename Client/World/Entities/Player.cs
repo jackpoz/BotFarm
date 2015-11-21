@@ -17,6 +17,14 @@ namespace Client.World.Entities
             }
         }
 
+        public bool IsAlive
+        {
+            get
+            {
+                return this[UnitField.UNIT_FIELD_HEALTH] > 0 && !IsGhost;
+            }
+        }
+
         public bool HasFlag(PlayerFlags flag)
         {
             return (this[PlayerField.PLAYER_FLAGS] & (uint)flag) != 0;

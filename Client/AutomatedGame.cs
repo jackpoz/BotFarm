@@ -34,6 +34,25 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
+        public WorldCommand LastSentPacket
+        {
+            get
+            {
+                return (socket as WorldSocket)?.LastOutOpcode ?? WorldCommand.MSG_NULL_ACTION;
+            }
+        }
+        public WorldCommand LastReceivedPacket
+        {
+            get
+            {
+                return (socket as WorldSocket)?.LastInOpcode ?? WorldCommand.MSG_NULL_ACTION;
+            }
+        }
+        public DateTime LastUpdate
+        {
+            get;
+            private set;
+        }
         TaskCompletionSource<bool> loggedOutEvent = new TaskCompletionSource<bool>();
         ScheduledActions scheduledActions;
         ActionFlag disabledActions;
@@ -135,6 +154,8 @@ namespace Client
 
         public override void Update()
         {
+            LastUpdate = DateTime.Now;
+
             (socket as WorldSocket)?.HandlePackets();
 
             if (World.SelectedCharacter == null)

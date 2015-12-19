@@ -132,5 +132,12 @@ namespace Client.World.Entities
 
             return (float)orientation;
         }
+
+        public override string ToString()
+        {
+            if (!IsValid)
+                return "Invalid";
+            return String.Format($"Map: {MapID} | X: {X} | Y: {Y} | Z: {Z} | O: {O.ToString("0.0")}");
+        }
     }
 }

@@ -138,7 +138,21 @@ namespace Client.World.Network
         private long received;
         public long Received { get { return received; } }
 
+        public WorldCommand? LastOutOpcode
+        {
+            get
+            {
+                return lastOutPacket?.Header.Command;
+            }
+        }
         protected OutPacket lastOutPacket;
+        public WorldCommand? LastInOpcode
+        {
+            get
+            {
+                return lastInPacket?.Header.Command;
+            }
+        }
         protected InPacket lastInPacket;
 
         BatchQueue<InPacket> packetsQueue = new BatchQueue<InPacket>();

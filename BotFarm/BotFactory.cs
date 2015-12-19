@@ -216,7 +216,8 @@ namespace BotFarm
             for (; ; )
             {
                 string line = Console.ReadLine();
-                switch(line)
+                string[] lineSplit = line.Split(' ');
+                switch(lineSplit[0])
                 {
                     case "quit":
                     case "exit":
@@ -227,12 +228,51 @@ namespace BotFarm
                     case "infos":
                     case "stats":
                     case "statistics":
-                        Console.WriteLine(bots.Where(bot => bot.Running).Count() + " bots are active");
-                        Console.WriteLine(bots.Where(bot => bot.Connected).Count() + " bots are connected");
-                        Console.WriteLine(bots.Where(bot => bot.LoggedIn).Count() + " bots are ingame");
+                        DisplayStatistics(lineSplit.Length > 1 ? lineSplit[1] : "");
                         break;
                 }
             }
+        }
+
+        void DisplayStatistics(string botname)
+        {
+            if (String.IsNullOrEmpty(botname))
+            {
+                // Display stats about all bots
+                Console.WriteLine(bots.Where(bot => bot.Running).Count() + " bots are active");
+                Console.WriteLine(bots.Where(bot => bot.Connected).Count() + " bots are connected");
+                Console.WriteLine(bots.Where(bot => bot.LoggedIn).Count() + " bots are ingame");
+
+                foreach (var bot in bots)
+                    DisplayStatistics(bot);
+            }
+            else
+            {
+                // Display stats about a single bot
+                var bot = bots.SingleOrDefault(b => b.Username.Equals(botname, StringComparison.InvariantCultureIgnoreCase));
+                if (bot == null)
+                    Console.WriteLine("Bot with username '" + botname + "' not found");
+                else
+                    DisplayStatistics(bot);
+            }
+        }
+
+        void DisplayStatistics(BotGame bot)
+        {
+            Console.WriteLine("Bot username: " + bot.Username);
+            Console.WriteLine("\tRunning: " + bot.Running);
+            Console.WriteLine("\tConnected: " + bot.Connected);
+            Console.WriteLine("\tLogged In: " + bot.LoggedIn);
+            Console.WriteLine("\tPosition: " + bot.Player.GetPosition());
+            if (bot.GroupLeaderGuid == 0)
+                Console.WriteLine("\tGroup Leader: " + "Not in group");
+            else if (!bot.World.PlayerNameLookup.ContainsKey(bot.GroupLeaderGuid))
+                Console.WriteLine("\tGroup Leader: " + "Not found");
+            else
+                Console.WriteLine("\tGroup Leader: " + bot.World.PlayerNameLookup[bot.GroupLeaderGuid]);
+            Console.WriteLine("\tLast Received Packet: " + bot.LastReceivedPacket);
+            Console.WriteLine("\tLast Sent Packet: " + bot.LastSentPacket);
+            Console.WriteLine("\tLast Update() call: " + bot.LastUpdate.ToLongTimeString());
         }
 
         public void Dispose()

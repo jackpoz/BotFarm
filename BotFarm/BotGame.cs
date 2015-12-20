@@ -180,6 +180,13 @@ namespace BotFarm
                 }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
             }
             #endregion
+
+            #region Explorer
+            if (Behavior.Explorer)
+            {
+
+            }
+            #endregion
         }
 
         public override void NoCharactersFound()

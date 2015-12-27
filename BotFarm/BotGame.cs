@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Client.World.Definitions;
 using Client.World.Entities;
 using DetourCLI;
+using MapCLI;
 
 namespace BotFarm
 {
@@ -339,7 +340,7 @@ namespace BotFarm
             Path path = null;
             using(var detour = new DetourCLI.Detour())
             {
-                List<DetourCLI.Point> resultPath;
+                List<MapCLI.Point> resultPath;
                 bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
                                         destination.X, destination.Y, destination.Z,
                                         Player.MapID, out resultPath);
@@ -486,7 +487,7 @@ namespace BotFarm
                 {
                     using (var detour = new DetourCLI.Detour())
                     {
-                        List<DetourCLI.Point> resultPath;
+                        List<MapCLI.Point> resultPath;
                         bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
                                                 target.X, target.Y, target.Z,
                                                 Player.MapID, out resultPath);

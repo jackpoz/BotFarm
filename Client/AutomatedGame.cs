@@ -104,7 +104,7 @@ namespace Client
             get;
             private set;
         }
-        bool HasExploreCriteria(uint criteriaId)
+        protected bool HasExploreCriteria(uint criteriaId)
         {
             ulong counter;
             if (AchievementCriterias.TryGetValue(criteriaId, out counter))

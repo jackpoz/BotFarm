@@ -191,5 +191,17 @@ namespace BotFarm.Properties {
                 this["Behaviors"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string DBCsFolderPath {
+            get {
+                return ((string)(this["DBCsFolderPath"]));
+            }
+            set {
+                this["DBCsFolderPath"] = value;
+            }
+        }
     }
 }

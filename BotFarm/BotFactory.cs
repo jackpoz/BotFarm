@@ -97,6 +97,8 @@ namespace BotFarm
             DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);
             VMapCLI.VMap.Initialize(Settings.Default.VMAPsFolderPath);
             MapCLI.Map.Initialize(Settings.Default.MAPsFolderPath);
+            DBCStoresCLI.DBCStores.Initialize(Settings.Default.DBCsFolderPath);
+            DBCStoresCLI.DBCStores.LoadDBCs();
 
             factoryGame = new AutomatedGame(Settings.Default.Hostname,
                                             Settings.Default.Port,

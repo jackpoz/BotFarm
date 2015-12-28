@@ -69,5 +69,8 @@
                         &lt;/BotBehaviorSettings&gt;
                     &lt;/ArrayOfBotBehaviorSettings&gt;</Value>
     </Setting>
+    <Setting Name="DBCsFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

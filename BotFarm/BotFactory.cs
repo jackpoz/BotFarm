@@ -97,6 +97,8 @@ namespace BotFarm
             DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);
             VMapCLI.VMap.Initialize(Settings.Default.VMAPsFolderPath);
             MapCLI.Map.Initialize(Settings.Default.MAPsFolderPath);
+            DBCStoresCLI.DBCStores.Initialize(Settings.Default.DBCsFolderPath);
+            DBCStoresCLI.DBCStores.LoadDBCs();
 
             factoryGame = new AutomatedGame(Settings.Default.Hostname,
                                             Settings.Default.Port,
@@ -216,6 +218,8 @@ namespace BotFarm
             for (; ; )
             {
                 string line = Console.ReadLine();
+                if (line == null)
+                    return;
                 string[] lineSplit = line.Split(' ');
                 switch(lineSplit[0])
                 {
@@ -260,6 +264,7 @@ namespace BotFarm
         void DisplayStatistics(BotGame bot)
         {
             Console.WriteLine("Bot username: " + bot.Username);
+            Console.WriteLine("\tBehavior: " + bot.Behavior.Name);
             Console.WriteLine("\tRunning: " + bot.Running);
             Console.WriteLine("\tConnected: " + bot.Connected);
             Console.WriteLine("\tLogged In: " + bot.LoggedIn);

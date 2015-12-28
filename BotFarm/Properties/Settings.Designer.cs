@@ -157,34 +157,50 @@ namespace BotFarm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <ArrayOfBotBehaviorSettings xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-                        <BotBehaviorSettings>
-                            <Name>Default</Name>
-                            <Probability>100</Probability>
-                            <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>
-                            <AutoAcceptResurrectRequests>true</AutoAcceptResurrectRequests>
-                            <AutoResurrect>true</AutoResurrect>
-                            <Begger>false</Begger>
-                            <FollowGroupLeader>true</FollowGroupLeader>
-                        </BotBehaviorSettings>
-                        <BotBehaviorSettings>
-                          <Name>Begger</Name>
-                          <Probability>0</Probability>
-                          <AutoAcceptGroupInvites>false</AutoAcceptGroupInvites>
-                          <AutoAcceptResurrectRequests>false</AutoAcceptResurrectRequests>
-                          <AutoResurrect>true</AutoResurrect>
-                          <Begger>true</Begger>
-                          <FollowGroupLeader>false</FollowGroupLeader>
-                        </BotBehaviorSettings>
-                    </ArrayOfBotBehaviorSettings>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("                    <ArrayOfBotBehaviorSettings xmlns:xsd=\"http://www.w3.org/2001" +
+            "/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n            " +
+            "            <BotBehaviorSettings>\r\n                          <Name>Default</Name" +
+            ">\r\n                          <Probability>100</Probability>\r\n                   " +
+            "       <AutoAcceptGroupInvites>true</AutoAcceptGroupInvites>\r\n                  " +
+            "        <AutoAcceptResurrectRequests>true</AutoAcceptResurrectRequests>\r\n       " +
+            "                   <AutoResurrect>true</AutoResurrect>\r\n                        " +
+            "  <Begger>false</Begger>\r\n                          <FollowGroupLeader>true</Fol" +
+            "lowGroupLeader>\r\n                          <Explorer>false</Explorer>\r\n         " +
+            "               </BotBehaviorSettings>\r\n                        <BotBehaviorSetti" +
+            "ngs>\r\n                          <Name>Begger</Name>\r\n                          <" +
+            "Probability>0</Probability>\r\n                          <AutoAcceptGroupInvites>f" +
+            "alse</AutoAcceptGroupInvites>\r\n                          <AutoAcceptResurrectReq" +
+            "uests>false</AutoAcceptResurrectRequests>\r\n                          <AutoResurr" +
+            "ect>true</AutoResurrect>\r\n                          <Begger>true</Begger>\r\n     " +
+            "                     <FollowGroupLeader>false</FollowGroupLeader>\r\n             " +
+            "             <Explorer>false</Explorer>\r\n                        </BotBehaviorSe" +
+            "ttings>\r\n                        <BotBehaviorSettings>\r\n                        " +
+            "  <Name>Explorer</Name>\r\n                          <Probability>0</Probability>\r" +
+            "\n                          <AutoAcceptGroupInvites>false</AutoAcceptGroupInvites" +
+            ">\r\n                          <AutoAcceptResurrectRequests>false</AutoAcceptResur" +
+            "rectRequests>\r\n                          <AutoResurrect>true</AutoResurrect>\r\n  " +
+            "                        <Begger>false</Begger>\r\n                          <Follo" +
+            "wGroupLeader>false</FollowGroupLeader>\r\n                          <Explorer>true" +
+            "</Explorer>\r\n                        </BotBehaviorSettings>\r\n                   " +
+            " </ArrayOfBotBehaviorSettings>")]
         public BotFarm.BotBehaviorSettings[] Behaviors {
             get {
                 return ((BotFarm.BotBehaviorSettings[])(this["Behaviors"]));
             }
             set {
                 this["Behaviors"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string DBCsFolderPath {
+            get {
+                return ((string)(this["DBCsFolderPath"]));
+            }
+            set {
+                this["DBCsFolderPath"] = value;
             }
         }
     }

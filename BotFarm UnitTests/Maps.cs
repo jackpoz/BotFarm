@@ -22,7 +22,7 @@ namespace BotFarm.UnitTests
                 {
                     using (var detour = new DetourCLI.Detour())
                     {
-                        List<DetourCLI.Point> resultPath;
+                        List<MapCLI.Point> resultPath;
                         bool successful = detour.FindPath(-8896.072266f, -82.352325f, 86.421661f,
                                                 -8915.272461f, -111.634041f, 82.275642f,
                                                 0, out resultPath);

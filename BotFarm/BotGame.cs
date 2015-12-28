@@ -12,12 +12,14 @@ using System.Threading.Tasks;
 using Client.World.Definitions;
 using Client.World.Entities;
 using DetourCLI;
+using MapCLI;
+using DBCStoresCLI;
 
 namespace BotFarm
 {
     class BotGame : AutomatedGame
     {
-        const float MovementEpsilon = 1.0f;
+        const float MovementEpsilon = 0.5f;
         const float FollowMovementEpsilon = 5f;
         const float FollowTargetRecalculatePathEpsilon = 5f;
 
@@ -180,6 +182,56 @@ namespace BotFarm
                 }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
             }
             #endregion
+
+            #region Explorer
+            if (Behavior.Explorer)
+            {
+                AchievementExploreLocation targetLocation = null;
+                List<AchievementExploreLocation> missingLocations = null;
+                Position currentPosition = new Position();
+
+                ScheduleAction(() =>
+                {
+                    if (!Player.IsAlive)
+                        return;
+
+                    if (targetLocation != null)
+                    {
+                        if (!HasExploreCriteria(targetLocation.CriteriaID) && (currentPosition - Player).Length > MovementEpsilon)
+                        {
+                            currentPosition = Player.GetPosition();
+                            return;
+                        }
+
+                        targetLocation = null;
+                    }
+
+                    CancelActionsByFlag(ActionFlag.Movement);
+                    currentPosition = Player.GetPosition();
+
+                    if (missingLocations == null)
+                        missingLocations = DBCStores.GetAchievementExploreLocations(Player.X, Player.Y, Player.Z, Player.MapID);
+
+                    missingLocations = missingLocations.Where(loc => !HasExploreCriteria(loc.CriteriaID)).ToList();
+                    if (missingLocations.Count == 0)
+                        return;
+
+                    float closestDistance = float.MaxValue;
+                    var playerPosition = new Point(Player.X, Player.Y, Player.Z);
+                    foreach (var missingLoc in missingLocations)
+                    {
+                        float distance = (missingLoc.Location - playerPosition).Length;
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            targetLocation = missingLoc;
+                        }
+                    }
+
+                    MoveTo(new Position(targetLocation.Location.X, targetLocation.Location.Y, targetLocation.Location.Z, 0f, Player.MapID));
+                }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 5));
+            }
+            #endregion
         }
 
         public override void NoCharactersFound()
@@ -332,7 +384,7 @@ namespace BotFarm
             Path path = null;
             using(var detour = new DetourCLI.Detour())
             {
-                List<DetourCLI.Point> resultPath;
+                List<MapCLI.Point> resultPath;
                 bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
                                         destination.X, destination.Y, destination.Z,
                                         Player.MapID, out resultPath);
@@ -391,7 +443,7 @@ namespace BotFarm
                 previousMovingTime = DateTime.Now;
 
                 remaining = destination - Player.GetPosition();
-                if (remaining.Length > MovementEpsilon && oldRemaining.Length >= remaining.Length)
+                if (remaining.Length > MovementEpsilon)
                 {
                     oldRemaining = remaining;
 
@@ -411,9 +463,9 @@ namespace BotFarm
                     var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
                     {
                         GUID = Player.GUID,
-                        X = destination.X,
-                        Y = destination.Y,
-                        Z = destination.Z,
+                        X = Player.X,
+                        Y = Player.Y,
+                        Z = Player.Z,
                         O = path.CurrentOrientation
                     };
                     SendPacket(stopMoving);
@@ -479,7 +531,7 @@ namespace BotFarm
                 {
                     using (var detour = new DetourCLI.Detour())
                     {
-                        List<DetourCLI.Point> resultPath;
+                        List<MapCLI.Point> resultPath;
                         bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
                                                 target.X, target.Y, target.Z,
                                                 Player.MapID, out resultPath);

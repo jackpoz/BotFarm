@@ -17,5 +17,6 @@ namespace BotFarm
         public bool AutoResurrect;
         public bool Begger;
         public bool FollowGroupLeader;
+        public bool Explorer;
     }
 }

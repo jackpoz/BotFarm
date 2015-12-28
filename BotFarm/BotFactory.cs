@@ -218,6 +218,8 @@ namespace BotFarm
             for (; ; )
             {
                 string line = Console.ReadLine();
+                if (line == null)
+                    return;
                 string[] lineSplit = line.Split(' ');
                 switch(lineSplit[0])
                 {

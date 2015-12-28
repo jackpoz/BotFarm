@@ -264,6 +264,7 @@ namespace BotFarm
         void DisplayStatistics(BotGame bot)
         {
             Console.WriteLine("Bot username: " + bot.Username);
+            Console.WriteLine("\tBehavior: " + bot.Behavior.Name);
             Console.WriteLine("\tRunning: " + bot.Running);
             Console.WriteLine("\tConnected: " + bot.Connected);
             Console.WriteLine("\tLogged In: " + bot.LoggedIn);

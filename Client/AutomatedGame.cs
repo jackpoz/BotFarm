@@ -93,6 +93,24 @@ namespace Client
             get;
             private set;
         }
+
+        protected HashSet<uint> CompletedAchievements
+        {
+            get;
+            private set;
+        }
+        protected Dictionary<uint, ulong> AchievementCriterias
+        {
+            get;
+            private set;
+        }
+        bool HasExploreCriteria(uint criteriaId)
+        {
+            ulong counter;
+            if (AchievementCriterias.TryGetValue(criteriaId, out counter))
+                return counter > 0;
+            return false;
+        }
         #endregion
 
         public AutomatedGame(string hostname, int port, string username, string password, int realmId, int character)
@@ -106,6 +124,8 @@ namespace Client
             Player = new Player();
             Player.OnFieldUpdated += OnFieldUpdate;
             Objects = new Dictionary<ulong, WorldObject>();
+            CompletedAchievements = new HashSet<uint>();
+            AchievementCriterias = new Dictionary<uint, ulong>();
 
             this.Hostname = hostname;
             this.Port = port;
@@ -911,6 +931,48 @@ namespace Client
                 worldObject.ResetPosition();
                 Objects.Remove(guid);
             }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_ALL_ACHIEVEMENT_DATA)]
+        protected void HandleAllAchievementData(InPacket packet)
+        {
+            CompletedAchievements.Clear();
+            AchievementCriterias.Clear();
+
+            for (;;)
+            {
+                uint achievementId = packet.ReadUInt32();
+                if (achievementId == 0xFFFFFFFF)
+                    break;
+
+                packet.ReadPackedTime();
+
+                CompletedAchievements.Add(achievementId);
+            }
+
+            for (;;)
+            {
+                uint criteriaId = packet.ReadUInt32();
+                if (criteriaId == 0xFFFFFFFF)
+                    break;
+                ulong criteriaCounter = packet.ReadPackedGuid();
+                packet.ReadPackedGuid();
+                packet.ReadInt32();
+                packet.ReadPackedTime();
+                packet.ReadInt32();
+                packet.ReadInt32();
+
+                AchievementCriterias[criteriaId] = criteriaCounter;
+            }
+        }
+
+        [PacketHandler(WorldCommand.SMSG_CRITERIA_UPDATE)]
+        protected void HandleCriteriaUpdate(InPacket packet)
+        {
+            uint criteriaId = packet.ReadUInt32();
+            ulong criteriaCounter = packet.ReadPackedGuid();
+
+            AchievementCriterias[criteriaId] = criteriaCounter;
         }
         #endregion
 

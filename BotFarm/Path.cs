@@ -15,9 +15,16 @@ namespace BotFarm
 
         public Point CurrentPosition
         {
-            get;
-            private set;
+            get
+            {
+                return _currentPosition;
+            }
+            private set
+            {
+                _currentPosition = value;
+            }
         }
+        Point _currentPosition;
 
         public float CurrentOrientation
         {
@@ -36,6 +43,12 @@ namespace BotFarm
             set;
         }
 
+        public int MapID
+        {
+            get;
+            private set;
+        }
+
         public Point Destination
         {
             get
@@ -44,7 +57,11 @@ namespace BotFarm
             }
         }
 
-        public Path(List<Point> points, float speed)
+        Point previousPosition;
+        int closePositionCounter;
+        static readonly int MaxClosePositionCounter = 4;
+
+        public Path(List<Point> points, float speed, int mapID)
         {
             if (points == null || points.Count < 2)
                 throw new ArgumentException("Argument cannot be null or a list with just 1 point", "points");
@@ -54,32 +71,57 @@ namespace BotFarm
                 throw new ArgumentException("Argument must be a positive number", "speed");
             this.Speed = speed;
 
-            CurrentPosition = this.points[0];
-            NextPointIndex = 1;
+            this.CurrentPosition = this.points[0];
+            this.NextPointIndex = 1;
+            this.MapID = mapID;
+            this.previousPosition = CurrentPosition;
+            this.closePositionCounter = 0;
         }
 
         public Point MoveAlongPath(float deltaTime)
         {
             float totalDistance = deltaTime * Speed;
-            float distanceToNextPoint = (points[NextPointIndex] - CurrentPosition).Length;
+            float distanceToNextPoint = (points[NextPointIndex] - _currentPosition).Length;
             if(totalDistance < distanceToNextPoint)
             {
-                Point result = CurrentPosition + (points[NextPointIndex] - CurrentPosition).Direction * totalDistance;
-                CurrentPosition = result;
+                Point result = _currentPosition + (points[NextPointIndex] - _currentPosition).Direction * totalDistance;
+                _currentPosition = result;
+                _currentPosition.Z = MapCLI.Map.GetHeight(_currentPosition.X, _currentPosition.Y, _currentPosition.Z, MapID);
             }
             else
             {
-                NextPointIndex++;
-                if (NextPointIndex == points.Length)
-                    CurrentPosition = points.Last();
-                else
-                {
-                    float remainingTime = (totalDistance - distanceToNextPoint) / Speed;
-                    CurrentPosition = MoveAlongPath(remainingTime);
-                }
+                NextPoint(totalDistance, distanceToNextPoint);
             }
 
-            return CurrentPosition;
+            if ((_currentPosition - previousPosition).Length < 1f)
+            {
+                closePositionCounter++;
+                if (closePositionCounter >= MaxClosePositionCounter)
+                {
+                    closePositionCounter = 0;
+                    NextPoint(totalDistance, distanceToNextPoint);
+                }
+            }
+            else
+            {
+                previousPosition = _currentPosition;
+                closePositionCounter = 0;
+            }
+
+            return _currentPosition;
+        }
+
+        private void NextPoint(float totalDistance, float distanceToNextPoint)
+        {
+            NextPointIndex++;
+            if (NextPointIndex >= points.Length)
+                _currentPosition = points.Last();
+            else
+            {
+                float remainingTime = (totalDistance - distanceToNextPoint) / Speed;
+                _currentPosition = MoveAlongPath(remainingTime);
+            }
+            _currentPosition.Z = MapCLI.Map.GetHeight(_currentPosition.X, _currentPosition.Y, _currentPosition.Z, MapID);
         }
 
         public float TimeBeforeNextPoint()

@@ -385,16 +385,17 @@ namespace BotFarm
             using(var detour = new DetourCLI.Detour())
             {
                 List<MapCLI.Point> resultPath;
-                bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
+                var pathResult = detour.FindPath(Player.X, Player.Y, Player.Z,
                                         destination.X, destination.Y, destination.Z,
                                         Player.MapID, out resultPath);
-                if (!successful)
+                if (pathResult != PathType.Complete)
                 {
+                    Log($"Cannot reach destination, FindPath() returned {pathResult} : {destination.ToString()}", Client.UI.LogLevel.Warning);
                     HandleTriggerInput(TriggerActionType.DestinationReached, false);
                     return;
                 }
 
-                path = new Path(resultPath, Player.Speed);
+                path = new Path(resultPath, Player.Speed, Player.MapID);
                 var destinationPoint = path.Destination;
                 destination.SetPosition(destinationPoint.X, destinationPoint.Y, destinationPoint.Z);
             }
@@ -532,17 +533,17 @@ namespace BotFarm
                     using (var detour = new DetourCLI.Detour())
                     {
                         List<MapCLI.Point> resultPath;
-                        bool successful = detour.FindPath(Player.X, Player.Y, Player.Z,
+                        var findPathResult = detour.FindPath(Player.X, Player.Y, Player.Z,
                                                 target.X, target.Y, target.Z,
                                                 Player.MapID, out resultPath);
-                        if (!successful)
+                        if (findPathResult != PathType.Complete)
                         {
                             HandleTriggerInput(TriggerActionType.DestinationReached, false);
                             CancelActionsByFlag(ActionFlag.Movement);
                             return;
                         }
 
-                        path = new Path(resultPath, Player.Speed);
+                        path = new Path(resultPath, Player.Speed, Player.MapID);
                         pathEndPosition = target.GetPosition();
                     }
                 }

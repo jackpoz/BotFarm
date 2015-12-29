@@ -541,6 +541,8 @@ namespace Client
             Player.Z = packet.ReadSingle();
             Player.O = packet.ReadSingle();
 
+            CancelActionsByFlag(ActionFlag.Movement);
+
             OutPacket result = new OutPacket(WorldCommand.MSG_MOVE_TELEPORT_ACK);
             result.WritePacketGuid(Player.GUID);
             result.Write((UInt32)0);

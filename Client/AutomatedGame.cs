@@ -11,7 +11,6 @@ using Client;
 using Client.World.Network;
 using Client.Authentication.Network;
 using System.Threading;
-using System.Numerics;
 using Client.Chat.Definitions;
 using Client.World.Definitions;
 using System.Diagnostics;
@@ -25,7 +24,7 @@ namespace Client
         #region Properties
         public bool Running { get; set; }
         GameSocket socket;
-        public BigInteger Key { get; private set; }
+        public System.Numerics.BigInteger Key { get; private set; }
         public string Hostname { get; private set; }
         public int Port { get; private set; }
         public string Username { get; private set; }

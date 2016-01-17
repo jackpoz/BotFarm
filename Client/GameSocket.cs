@@ -114,5 +114,15 @@ namespace Client
         }
 
         public abstract void InitHandlers();
+
+        public abstract string LastInOpcodeName
+        {
+            get;
+        }
+
+        public abstract string LastOutOpcodeName
+        {
+            get;
+        }
     }
 }

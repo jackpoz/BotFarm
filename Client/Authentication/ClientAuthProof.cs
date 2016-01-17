@@ -16,12 +16,20 @@ namespace Client.Authentication
 
         #region ISendable Members
 
+        public AuthCommand Command
+        {
+            get
+            {
+                return AuthCommand.LOGON_PROOF;
+            }
+        }
+
         public void Send(NetworkStream writer)
         {
             using(var stream = new MemoryStream(1 + A.Length + M1.Length + crc.Length + 2))
             {
                 var binaryStream = new BinaryWriter(stream);
-                binaryStream.Write((byte)AuthCommand.LOGON_PROOF);
+                binaryStream.Write((byte)Command);
                 binaryStream.Write(A);
                 binaryStream.Write(M1);
                 binaryStream.Write(crc);

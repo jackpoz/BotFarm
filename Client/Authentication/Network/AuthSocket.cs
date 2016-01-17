@@ -28,6 +28,31 @@ namespace Client.Authentication.Network
 
         Dictionary<AuthCommand, CommandHandler> Handlers;
 
+        public override string LastOutOpcodeName
+        {
+            get
+            {
+                return LastOutOpcode?.ToString();
+            }
+        }
+        public AuthCommand? LastOutOpcode
+        {
+            get;
+            protected set;
+        }
+        public override string LastInOpcodeName
+        {
+            get
+            {
+                return LastInOpcode?.ToString();
+            }
+        }
+        public AuthCommand? LastInOpcode
+        {
+            get;
+            protected set;
+        }
+
         public AuthSocket(IGame program, string hostname, int port, string username, string password)
         {
             this.Game = program;
@@ -58,8 +83,20 @@ namespace Client.Authentication.Network
                 IP = BitConverter.ToUInt32((connection.Client.LocalEndPoint as IPEndPoint).Address.GetAddressBytes(), 0)
             };
 
-            challenge.Send(stream);
+            Send(challenge);
             ReadCommand();
+        }
+
+        void Send(ISendable sendable)
+        {
+            LastOutOpcode = sendable.Command;
+            sendable.Send(stream);
+        }
+
+        void Send(byte[] buffer)
+        {
+            LastOutOpcode = (AuthCommand)buffer[0];
+            stream.Write(buffer, 0, buffer.Length);
         }
 
         #region Handlers
@@ -225,7 +262,7 @@ namespace Client.Authentication.Network
                     };
 
                     Game.UI.LogDebug("Sending logon proof");
-                    proof.Send(stream);
+                    Send(proof);
 
                     #endregion
 
@@ -300,8 +337,7 @@ namespace Client.Authentication.Network
                 Game.UI.LogLine("Authentication succeeded!");
                 failedAuthentications = 0;
                 Game.UI.LogLine("Requesting realm list", LogLevel.Detail);
-                var buffer = new byte[] { (byte)AuthCommand.REALM_LIST, 0x0, 0x0, 0x0, 0x0 };
-                stream.Write(buffer, 0, buffer.Length);
+                Send(new byte[] { (byte)AuthCommand.REALM_LIST, 0x0, 0x0, 0x0, 0x0 });
             }
 
             // get next command
@@ -359,6 +395,7 @@ namespace Client.Authentication.Network
                 }
 
                 AuthCommand command = (AuthCommand)ReceiveData[0];
+                LastInOpcode = command;
 
                 CommandHandler handler;
                 if (Handlers.TryGetValue(command, out handler))

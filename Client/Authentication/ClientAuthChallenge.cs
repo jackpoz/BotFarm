@@ -17,13 +17,20 @@ namespace Client.Authentication
         const ushort build = 12340;
 
         #region ISendable Members
+        public AuthCommand Command
+        {
+            get
+            {
+                return AuthCommand.LOGON_CHALLENGE;
+            }
+        }
 
         public void Send(NetworkStream writer)
         {
             using (var stream = new MemoryStream(128))
             {
                 var binaryStream = new BinaryWriter(stream);
-                binaryStream.Write((byte)AuthCommand.LOGON_CHALLENGE);
+                binaryStream.Write((byte)Command);
                 binaryStream.Write((byte)6);
                 binaryStream.Write((UInt16)(username.Length + 30));
                 binaryStream.Write("WoW".ToCString());

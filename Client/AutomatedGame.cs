@@ -33,18 +33,18 @@ namespace Client
         public int RealmID { get; private set; }
         public int Character { get; private set; }
         public bool Connected { get; private set; }
-        public WorldCommand LastSentPacket
+        public string LastSentPacket
         {
             get
             {
-                return (socket as WorldSocket)?.LastOutOpcode ?? WorldCommand.MSG_NULL_ACTION;
+                return socket.LastOutOpcodeName;
             }
         }
-        public WorldCommand LastReceivedPacket
+        public string LastReceivedPacket
         {
             get
             {
-                return (socket as WorldSocket)?.LastInOpcode ?? WorldCommand.MSG_NULL_ACTION;
+                return socket.LastInOpcodeName;
             }
         }
         public DateTime LastUpdate

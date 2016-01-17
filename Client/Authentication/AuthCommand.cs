@@ -1,7 +1,7 @@
 ﻿
 namespace Client.Authentication
 {
-    enum AuthCommand : byte
+    public enum AuthCommand : byte
     {
         LOGON_CHALLENGE = 0x00,
         LOGON_PROOF = 0x01,

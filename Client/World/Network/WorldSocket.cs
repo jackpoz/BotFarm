@@ -136,6 +136,13 @@ namespace Client.World.Network
         private long received;
         public long Received { get { return received; } }
 
+        public override string LastOutOpcodeName
+        {
+            get
+            {
+                return LastOutOpcode?.ToString();
+            }
+        }
         public WorldCommand? LastOutOpcode
         {
             get
@@ -144,6 +151,13 @@ namespace Client.World.Network
             }
         }
         protected OutPacket lastOutPacket;
+        public override string LastInOpcodeName
+        {
+            get
+            {
+                return LastInOpcode?.ToString();
+            }
+        }
         public WorldCommand? LastInOpcode
         {
             get

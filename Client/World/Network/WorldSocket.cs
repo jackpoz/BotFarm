@@ -145,12 +145,9 @@ namespace Client.World.Network
         }
         public WorldCommand? LastOutOpcode
         {
-            get
-            {
-                return lastOutPacket?.Header.Command;
-            }
+            get;
+            protected set;
         }
-        protected OutPacket lastOutPacket;
         public override string LastInOpcodeName
         {
             get
@@ -160,12 +157,9 @@ namespace Client.World.Network
         }
         public WorldCommand? LastInOpcode
         {
-            get
-            {
-                return lastInPacket?.Header.Command;
-            }
+            get;
+            protected set;
         }
-        protected InPacket lastInPacket;
 
         BatchQueue<InPacket> packetsQueue = new BatchQueue<InPacket>();
 
@@ -278,8 +272,8 @@ namespace Client.World.Network
             catch(SocketException ex)
             {
                 Game.UI.LogException(ex);
-                Game.UI.LogLine("Last InPacket: " + lastInPacket.ToString(), LogLevel.Warning);
-                Game.UI.LogLine("Last OutPacket: " + lastOutPacket.ToString(), LogLevel.Warning);
+                Game.UI.LogLine("Last InPacket: " + LastInOpcodeName, LogLevel.Warning);
+                Game.UI.LogLine("Last OutPacket: " + LastOutOpcodeName, LogLevel.Warning);
                 Game.Reconnect();
             }
         }
@@ -412,7 +406,7 @@ namespace Client.World.Network
         {
             try
             {
-                lastInPacket = packet;
+                LastInOpcode = packet.Header.Command;
                 PacketHandler handler;
                 if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
                 {
@@ -476,7 +470,7 @@ namespace Client.World.Network
 
         public void Send(OutPacket packet)
         {
-            lastOutPacket = packet;
+            LastOutOpcode = packet.Header.Command;
             byte[] data = packet.Finalize(authenticationCrypto);
 
             try

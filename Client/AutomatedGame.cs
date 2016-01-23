@@ -86,6 +86,7 @@ namespace Client
             }
         }
         UpdateObjectHandler updateObjectHandler;
+        Stack<IGameAI> AIs;
 
         protected Dictionary<ulong, WorldObject> Objects
         {
@@ -125,6 +126,7 @@ namespace Client
             Objects = new Dictionary<ulong, WorldObject>();
             CompletedAchievements = new HashSet<uint>();
             AchievementCriterias = new Dictionary<uint, ulong>();
+            AIs = new Stack<IGameAI>(new[] { new EmptyAI() });
 
             this.Hostname = hostname;
             this.Port = port;
@@ -179,6 +181,8 @@ namespace Client
 
             if (World.SelectedCharacter == null)
                 return;
+
+            AIs.Peek().Update();
 
             while (scheduledActions.Count != 0)
             {

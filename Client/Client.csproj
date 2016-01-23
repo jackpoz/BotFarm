@@ -88,6 +88,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSocket.cs" />
+    <Compile Include="IGameAI.cs" />
     <Compile Include="Schedule.cs" />
     <Compile Include="Trigger.cs" />
     <Compile Include="UI\LogLevel.cs" />

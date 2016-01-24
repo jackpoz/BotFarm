@@ -126,7 +126,8 @@ namespace Client
             Objects = new Dictionary<ulong, WorldObject>();
             CompletedAchievements = new HashSet<uint>();
             AchievementCriterias = new Dictionary<uint, ulong>();
-            AIs = new Stack<IGameAI>(new[] { new EmptyAI() });
+            AIs = new Stack<IGameAI>();
+            PushAI(new EmptyAI());
 
             this.Hostname = hostname;
             this.Port = port;
@@ -182,7 +183,7 @@ namespace Client
             if (World.SelectedCharacter == null)
                 return;
 
-            AIs.Peek().Update();
+            AIs.Peek().Update(this);
 
             while (scheduledActions.Count != 0)
             {
@@ -404,6 +405,43 @@ namespace Client
                 return name;
             else
                 return "";
+        }
+
+        public bool PushAI(IGameAI ai)
+        {
+            if (AIs.Count == 0)
+            {
+                AIs.Push(ai);
+                ai.Activate();
+                return true;
+            }
+
+            var currentAI = AIs.Peek();
+            if (currentAI.AllowPause())
+            {
+                currentAI.Pause();
+                AIs.Push(ai);
+                ai.Activate();
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool PopAI(IGameAI ai)
+        {
+            if (AIs.Count <= 1)
+                return false;
+
+            var currentAI = AIs.Peek();
+            if (currentAI != ai)
+                return false;
+
+            currentAI.Deactivate();
+            AIs.Pop();
+
+            AIs.Peek().Resume();
+            return true;
         }
         #endregion
 

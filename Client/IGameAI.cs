@@ -8,12 +8,34 @@ namespace Client
 {
     public interface IGameAI
     {
-        void Update();
+        void Activate();
+        void Deactivate();
+        void Pause();
+        void Resume();
+        void Update(AutomatedGame game);
+        bool AllowPause();
     }
 
     public class EmptyAI : IGameAI
     {
-        public void Update()
+        public void Activate()
         { }
+
+        public void Deactivate()
+        { }
+
+        public void Pause()
+        { }
+
+        public void Resume()
+        { }
+
+        public void Update(AutomatedGame game)
+        { }
+
+        public bool AllowPause()
+        {
+            return true;
+        }
     }
 }

@@ -19,10 +19,6 @@ namespace BotFarm
 {
     class BotGame : AutomatedGame
     {
-        const float MovementEpsilon = 0.5f;
-        const float FollowMovementEpsilon = 5f;
-        const float FollowTargetRecalculatePathEpsilon = 5f;
-
         public bool SettingUp
         {
             get;
@@ -36,8 +32,6 @@ namespace BotFarm
         }
 
         #region Player members
-        public UInt64 GroupLeaderGuid { get; private set; }
-        public List<UInt64> GroupMembersGuids = new List<UInt64>();
         DateTime CorpseReclaim;
         ulong TraderGUID
         {
@@ -270,42 +264,6 @@ namespace BotFarm
                 SendPacket(new OutPacket(WorldCommand.CMSG_GROUP_ACCEPT, 4));
         }
 
-        [PacketHandler(WorldCommand.SMSG_GROUP_LIST)]
-        protected void HandlePartyList(InPacket packet)
-        {
-            GroupType groupType = (GroupType)packet.ReadByte();
-            packet.ReadByte();
-            packet.ReadByte();
-            packet.ReadByte();
-            if (groupType.HasFlag(GroupType.GROUPTYPE_LFG))
-            {
-                packet.ReadByte();
-                packet.ReadUInt32();
-            }
-            packet.ReadUInt64();
-            packet.ReadUInt32();
-            uint membersCount = packet.ReadUInt32();
-            GroupMembersGuids.Clear();
-            for(uint index = 0; index < membersCount; index++)
-            {
-                packet.ReadCString();
-                UInt64 memberGuid = packet.ReadUInt64();
-                GroupMembersGuids.Add(memberGuid);
-                packet.ReadByte();
-                packet.ReadByte();
-                packet.ReadByte();
-                packet.ReadByte();
-            }
-            GroupLeaderGuid = packet.ReadUInt64();
-        }
-
-        [PacketHandler(WorldCommand.SMSG_GROUP_DESTROYED)]
-        protected void HandlePartyDisband(InPacket packet)
-        {
-            GroupLeaderGuid = 0;
-            GroupMembersGuids.Clear();
-        }
-
         [PacketHandler(WorldCommand.SMSG_RESURRECT_REQUEST)]
         protected void HandleResurrectRequest(InPacket packet)
         {
@@ -476,123 +434,6 @@ namespace BotFarm
 
                     HandleTriggerInput(TriggerActionType.DestinationReached, true);
                 }
-            }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
-        }
-
-        public void Follow(WorldObject target)
-        {
-            if (target == null)
-                return;
-
-            Path path = null;
-            bool moving = false;
-            Position pathEndPosition = target.GetPosition();
-            DateTime previousMovingTime = DateTime.MinValue;
-
-            ScheduleAction(() =>
-            {
-                if (target.MapID != Player.MapID)
-                {
-                    Log("Trying to follow a target on another map", Client.UI.LogLevel.Warning);
-                    CancelActionsByFlag(ActionFlag.Movement);
-                    return;
-                }
-
-                var distance = target - Player.GetPosition();
-                // check if we even need to move
-                if (distance.Length < FollowMovementEpsilon)
-                {
-                    if (path != null)
-                    {
-                        var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
-                        {
-                            GUID = Player.GUID,
-                            X = Player.X,
-                            Y = Player.Y,
-                            Z = Player.Z,
-                            O = Player.O
-                        };
-                        SendPacket(stopMoving);
-                        Player.SetPosition(stopMoving.GetPosition());
-                        moving = false;
-                        path = null;
-                        HandleTriggerInput(TriggerActionType.DestinationReached, true);
-                    }
-
-                    return;
-                }
-
-                float targetMovement = (target - pathEndPosition).Length;
-                if (targetMovement > FollowTargetRecalculatePathEpsilon)
-                    path = null;
-                else if (distance.Length >= FollowMovementEpsilon && distance.Length <= FollowTargetRecalculatePathEpsilon)
-                    path = null;
-
-                if (path == null)
-                {
-                    using (var detour = new DetourCLI.Detour())
-                    {
-                        List<MapCLI.Point> resultPath;
-                        var findPathResult = detour.FindPath(Player.X, Player.Y, Player.Z,
-                                                target.X, target.Y, target.Z,
-                                                Player.MapID, out resultPath);
-                        if (findPathResult != PathType.Complete)
-                        {
-                            HandleTriggerInput(TriggerActionType.DestinationReached, false);
-                            CancelActionsByFlag(ActionFlag.Movement);
-                            return;
-                        }
-
-                        path = new Path(resultPath, Player.Speed, Player.MapID);
-                        pathEndPosition = target.GetPosition();
-                    }
-                }
-
-                if (!moving)
-                {
-                    moving = true;
-                    var facing = new MovementPacket(WorldCommand.MSG_MOVE_SET_FACING)
-                    {
-                        GUID = Player.GUID,
-                        flags = MovementFlags.MOVEMENTFLAG_FORWARD,
-                        X = Player.X,
-                        Y = Player.Y,
-                        Z = Player.Z,
-                        O = path.CurrentOrientation
-                    };
-
-                    SendPacket(facing);
-                    Player.SetPosition(facing.GetPosition());
-
-                    var startMoving = new MovementPacket(WorldCommand.MSG_MOVE_START_FORWARD)
-                    {
-                        GUID = Player.GUID,
-                        flags = MovementFlags.MOVEMENTFLAG_FORWARD,
-                        X = Player.X,
-                        Y = Player.Y,
-                        Z = Player.Z,
-                        O = path.CurrentOrientation
-                    };
-                    SendPacket(startMoving);
-
-                    previousMovingTime = DateTime.Now;
-                    return;
-                }
-
-                Point progressPosition = path.MoveAlongPath((float)(DateTime.Now - previousMovingTime).TotalSeconds);
-                Player.SetPosition(progressPosition.X, progressPosition.Y, progressPosition.Z);
-                previousMovingTime = DateTime.Now;
-
-                var heartbeat = new MovementPacket(WorldCommand.MSG_MOVE_HEARTBEAT)
-                {
-                    GUID = Player.GUID,
-                    flags = MovementFlags.MOVEMENTFLAG_FORWARD,
-                    X = Player.X,
-                    Y = Player.Y,
-                    Z = Player.Z,
-                    O = path.CurrentOrientation
-                };
-                SendPacket(heartbeat);
             }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
         }
 

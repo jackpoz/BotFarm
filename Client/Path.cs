@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using DetourCLI;
 using MapCLI;
 
-namespace BotFarm
+namespace Client
 {
-    class Path
+    public class Path
     {
         Point[] points;
         int NextPointIndex;

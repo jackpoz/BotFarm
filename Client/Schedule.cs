@@ -39,12 +39,19 @@ namespace Client
             set;
         }
 
-        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags)
+        public int id
+        {
+            get;
+            set;
+        }
+
+        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags, int id)
         {
             this.action = action;
             this.scheduledTime = scheduledTime;
             this.interval = interval;
             this.flags = flags;
+            this.id = id;
         }
     }
 

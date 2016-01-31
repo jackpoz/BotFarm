@@ -14,6 +14,7 @@ using Client.World.Entities;
 using DetourCLI;
 using MapCLI;
 using DBCStoresCLI;
+using BotFarm.AI;
 
 namespace BotFarm
 {
@@ -158,22 +159,7 @@ namespace BotFarm
             #region FollowGroupLeader
             if (Behavior.FollowGroupLeader)
             {
-                ScheduleAction(() =>
-                {
-                    if (!Player.IsAlive)
-                        return;
-
-                    // Check if we are in a party and follow the party leader
-                    if (GroupLeaderGuid == 0)
-                        return;
-
-                    WorldObject groupLeader;
-                    if (Objects.TryGetValue(GroupLeaderGuid, out groupLeader))
-                    {
-                        CancelActionsByFlag(ActionFlag.Movement);
-                        Follow(groupLeader);
-                    }
-                }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
+                PushAI(new FollowGroupLeaderAI());
             }
             #endregion
 

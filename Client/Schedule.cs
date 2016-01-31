@@ -140,6 +140,11 @@ namespace Client
             return actions.RemoveAll(action => action.flags.HasFlag(flag));
         }
 
+        public bool Remove(int actionId)
+        {
+            return actions.RemoveAll(action => action.id == actionId) > 0;
+        }
+
         public IEnumerator<RepeatingAction> GetEnumerator()
         {
             return actions.GetEnumerator();

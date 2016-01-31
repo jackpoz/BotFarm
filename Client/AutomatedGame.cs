@@ -242,6 +242,7 @@ namespace Client
         public override async Task Exit()
         {
             ClearTriggers();
+            ClearAIs();
             if (LoggedIn)
             {
                 OutPacket logout = new OutPacket(WorldCommand.CMSG_LOGOUT_REQUEST);
@@ -322,6 +323,11 @@ namespace Client
         public void CancelActionsByFlag(ActionFlag flag)
         {
             scheduledActions.RemoveByFlag(flag);
+        }
+
+        public void CancelAction(int actionId)
+        {
+            scheduledActions.Remove(actionId);
         }
 
         public void DisableActionsByFlag(ActionFlag flag)
@@ -437,10 +443,15 @@ namespace Client
             var currentAI = AIs.Peek();
             if (currentAI.AllowPause())
             {
-                currentAI.Pause();
-                AIs.Push(ai);
-                ai.Activate(this);
-                return true;
+                if (ai.GetType() == currentAI.GetType())
+                    return false;
+                else
+                {
+                    currentAI.Pause();
+                    AIs.Push(ai);
+                    ai.Activate(this);
+                    return true;
+                }
             }
             else
                 return false;
@@ -460,6 +471,15 @@ namespace Client
 
             AIs.Peek().Resume();
             return true;
+        }
+
+        public void ClearAIs()
+        {
+            while (AIs.Count > 1)
+            {
+                var currentAI = AIs.Pop();
+                currentAI.Deactivate();
+            }
         }
         #endregion
 

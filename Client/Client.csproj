@@ -92,6 +92,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameSocket.cs" />
     <Compile Include="IGameAI.cs" />
+    <Compile Include="IteratedList.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Schedule.cs" />
     <Compile Include="Trigger.cs" />
@@ -126,9 +127,7 @@
     <Compile Include="UI\IGameUI.cs" />
     <Compile Include="World\Definitions\Extensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

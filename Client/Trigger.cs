@@ -11,6 +11,12 @@ namespace Client
 {
     public class Trigger
     {
+        public int Id
+        {
+            get;
+            set;
+        }
+
         public List<TriggerAction> TriggerActions
         {
             get;

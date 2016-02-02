@@ -131,7 +131,7 @@ namespace Client
             this.Character = character;
             scheduledActions = new ScheduledActions();
             updateObjectHandler = new UpdateObjectHandler(this);
-            Triggers = new List<Trigger>();
+            Triggers = new IteratedList<Trigger>();
             World = new GameWorld();
             Player = new Player();
             Player.OnFieldUpdated += OnFieldUpdate;
@@ -325,9 +325,9 @@ namespace Client
             scheduledActions.RemoveByFlag(flag);
         }
 
-        public void CancelAction(int actionId)
+        public bool CancelAction(int actionId)
         {
-            scheduledActions.Remove(actionId);
+            return scheduledActions.Remove(actionId);
         }
 
         public void DisableActionsByFlag(ActionFlag flag)
@@ -417,7 +417,7 @@ namespace Client
             return closestObject;
         }
 
-        protected string GetPlayerName(WorldObject obj)
+        public string GetPlayerName(WorldObject obj)
         {
             return GetPlayerName(obj.GUID);
         }
@@ -1255,16 +1255,28 @@ namespace Client
         #endregion
 
         #region Triggers Handling
-        List<Trigger> Triggers;
+        IteratedList<Trigger> Triggers;
+        int triggerCounter;
 
-        public void AddTrigger(Trigger trigger)
+        public int AddTrigger(Trigger trigger)
         {
+            triggerCounter++;
+            trigger.Id = triggerCounter;
             Triggers.Add(trigger);
+            return triggerCounter;
         }
 
-        public void AddTriggers(IEnumerable<Trigger> triggers)
+        public IEnumerable<int> AddTriggers(IEnumerable<Trigger> triggers)
         {
-            Triggers.AddRange(triggers);
+            var triggerIds = new List<int>();
+            foreach (var trigger in triggers)
+                triggerIds.Add(AddTrigger(trigger));
+            return triggerIds;
+        }
+
+        public bool RemoveTrigger(int triggerId)
+        {
+            return Triggers.RemoveAll(trigger => trigger.Id == triggerId) > 0;
         }
 
         public void ClearTriggers()

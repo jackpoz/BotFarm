@@ -89,7 +89,6 @@ namespace Client
             {
                 actions[index] = value;
                 Sort();
-
             }
         }
 

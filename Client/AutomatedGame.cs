@@ -436,8 +436,13 @@ namespace Client
             if (AIs.Count == 0)
             {
                 AIs.Push(ai);
-                ai.Activate(this);
-                return true;
+                if (ai.Activate(this))
+                    return true;
+                else
+                {
+                    AIs.Pop();
+                    return false;
+                }
             }
 
             var currentAI = AIs.Peek();
@@ -449,8 +454,14 @@ namespace Client
                 {
                     currentAI.Pause();
                     AIs.Push(ai);
-                    ai.Activate(this);
-                    return true;
+                    if (ai.Activate(this))
+                        return true;
+                    else
+                    {
+                        AIs.Pop();
+                        currentAI.Resume();
+                        return false;
+                    }
                 }
             }
             else

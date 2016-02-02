@@ -13,10 +13,13 @@ namespace BotFarm.AI
         int trigger;
         BotGame game;
 
-        public void Activate(AutomatedGame game)
+        public bool Activate(AutomatedGame game)
         {
-            this.game = (BotGame)game;
+            this.game = game as BotGame;
+            if (game == null)
+                return false;
             ScheduledBegging();
+            return true;
         }
 
         void ScheduledBegging()

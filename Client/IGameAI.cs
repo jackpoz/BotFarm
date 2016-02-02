@@ -8,7 +8,7 @@ namespace Client
 {
     public interface IGameAI
     {
-        void Activate(AutomatedGame game);
+        bool Activate(AutomatedGame game);
         void Deactivate();
         void Pause();
         void Resume();
@@ -18,8 +18,10 @@ namespace Client
 
     public class EmptyAI : IGameAI
     {
-        public void Activate(AutomatedGame game)
-        { }
+        public bool Activate(AutomatedGame game)
+        {
+            return true;
+        }
 
         public void Deactivate()
         { }

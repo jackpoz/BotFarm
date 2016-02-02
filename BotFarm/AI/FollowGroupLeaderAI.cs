@@ -13,10 +13,11 @@ namespace BotFarm.AI
         int scheduledAction;
         AutomatedGame game;
 
-        public void Activate(AutomatedGame game)
+        public bool Activate(AutomatedGame game)
         {
             this.game = game;
             ScheduleFollowLeader();
+            return true;
         }
 
         void ScheduleFollowLeader()

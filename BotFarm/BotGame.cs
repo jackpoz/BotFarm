@@ -34,12 +34,16 @@ namespace BotFarm
 
         #region Player members
         DateTime CorpseReclaim;
-        ulong TraderGUID
+        public ulong TraderGUID
         {
             get;
-            set;
+            private set;
         }
-        HashSet<ulong> TradedGUIDs = new HashSet<ulong>();
+        public HashSet<ulong> TradedGUIDs
+        {
+            get;
+            private set;
+        } = new HashSet<ulong>();
         #endregion
 
         public BotGame(string hostname, int port, string username, string password, int realmId, int character, BotBehaviorSettings behavior)
@@ -115,17 +119,6 @@ namespace BotFarm
                 }, null));
             }
             #endregion
-
-            #region Begger
-            if (Behavior.Begger)
-            {
-                // Beg a player only once
-                AddTrigger(new Trigger(new[]
-                {
-                    new AlwaysTrueTriggerAction(TriggerActionType.TradeCompleted)
-                }, () => TradedGUIDs.Add(TraderGUID)));
-            }
-            #endregion
         }
 
         public override void Start()
@@ -138,21 +131,7 @@ namespace BotFarm
             #region Begger
             if (Behavior.Begger)
             {
-                // Follow player trigger
-                //  - find closest player and follow him begging for money with chat messages (unless its a bot)
-                ScheduleAction(() =>
-                {
-                    if (TraderGUID != 0)
-                        return;
-
-                    CancelActionsByFlag(ActionFlag.Movement);
-                    var target = FindClosestNonBotPlayer(obj => !TradedGUIDs.Contains(obj.GUID));
-                    if (target != null)
-                    {
-                        DoSayChat("Please " + GetPlayerName(target) + ", give me some money");
-                        Follow(target);
-                    }
-                }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 30));
+                PushAI(new BeggerAI());
             }
             #endregion
 
@@ -230,7 +209,7 @@ namespace BotFarm
             BotFactory.Instance.RemoveBot(this);
         }
 
-        WorldObject FindClosestNonBotPlayer(Func<WorldObject, bool> additionalCheck = null)
+        public WorldObject FindClosestNonBotPlayer(Func<WorldObject, bool> additionalCheck = null)
         {
             return FindClosestObject(HighGuid.Player, obj =>
             {

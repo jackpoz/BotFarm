@@ -587,6 +587,9 @@ namespace Client
 
             ScheduleAction(() =>
             {
+                if (!target.IsValid)
+                    return;
+
                 if (target.MapID != Player.MapID)
                 {
                     Log("Trying to follow a target on another map", Client.UI.LogLevel.Warning);
@@ -1090,7 +1093,7 @@ namespace Client
 
 #if DEBUG
                                 if (game.Objects.ContainsKey(guid))
-                                    game.Log(updateType + " called with guid " + guid + " already added", LogLevel.Error);
+                                    game.Log($"{updateType} called with guid 0x{guid:X} already added", LogLevel.Error);
 #endif
                                 game.Objects[guid] = worldObject;
 

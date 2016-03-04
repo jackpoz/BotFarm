@@ -25,6 +25,7 @@ namespace Client.Authentication.Network
         private int Port;
         int failedAuthentications;
         const int MAX_FAILED_AUTENTICATIONS = 10;
+        bool reconnecting;
 
         Dictionary<AuthCommand, CommandHandler> Handlers;
 
@@ -314,7 +315,8 @@ namespace Client.Authentication.Network
 
             if (proof.error != AuthResult.SUCCESS)
             {
-                SendLogonChallenge();
+                reconnecting = true;
+                Disconnect();
                 return;
             }
 
@@ -441,6 +443,14 @@ namespace Client.Authentication.Network
             return true;
         }
 
+        public override void Disconnected()
+        {
+            if (reconnecting)
+            {
+                reconnecting = false;
+                Connect();
+            }
+        }
         #endregion
     }
 }

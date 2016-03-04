@@ -466,6 +466,10 @@ namespace Client.World.Network
             return true;
         }
 
+        public override void Disconnected()
+        {
+        }
+
         #endregion
 
         public void Send(OutPacket packet)

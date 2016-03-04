@@ -29,12 +29,6 @@ namespace Client
             get { return connection.Connected; }
         }
 
-        public bool Disposed
-        {
-            get;
-            private set;
-        }
-
         protected bool Disposing
         {
             get;
@@ -80,7 +74,7 @@ namespace Client
         public void Dispose()
         {
             Disposing = true;
-            if (!Disposed)
+            if (IsConnected)
                 Disconnect();
         }
 
@@ -95,11 +89,13 @@ namespace Client
                 }
                 else
                 {
-                    Disposed = true;
                     connection.Close();
+                    Disconnected();
                 }
             }
         }
+
+        public abstract void Disconnected();
 
         void SocketShutdownCallback(IAsyncResult result)
         {
@@ -108,8 +104,8 @@ namespace Client
                 connection.Client.BeginReceive(_receiveData, 0, _receiveData.Length, SocketFlags.None, SocketShutdownCallback, null);
             else
             {
-                Disposed = true;
                 connection.Close();
+                Disconnected();
             }
         }
 

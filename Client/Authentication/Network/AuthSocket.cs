@@ -58,7 +58,7 @@ namespace Client.Authentication.Network
         {
             this.Game = program;
 
-            this.Username = username;
+            this.Username = username.ToUpper();
             this.Hostname = hostname;
             this.Port = port;
             

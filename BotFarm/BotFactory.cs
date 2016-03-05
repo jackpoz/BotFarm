@@ -289,7 +289,7 @@ namespace BotFarm
             foreach (var bot in bots)
                 botsDisposing.Add(bot.Dispose());
 
-            Task.WaitAll(botsDisposing.ToArray());
+            Task.WaitAll(botsDisposing.ToArray(), new TimeSpan(0, 2, 0));
 
             factoryGame.Dispose().Wait();
 

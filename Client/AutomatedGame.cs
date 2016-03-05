@@ -1104,7 +1104,7 @@ namespace Client
 
 #if DEBUG
                                 if (game.Objects.ContainsKey(guid))
-                                    game.Log($"{updateType} called with guid 0x{guid:X} already added", LogLevel.Error);
+                                    game.Log($"{updateType} called with guid 0x{guid:X} already added", LogLevel.Debug);
 #endif
                                 game.Objects[guid] = worldObject;
 

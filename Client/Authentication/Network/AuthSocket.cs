@@ -417,6 +417,10 @@ namespace Client.Authentication.Network
                 Game.UI.LogException(ex);
                 Game.Reconnect();
             }
+            catch(EndOfStreamException ex)
+            {
+                Game.Reconnect();
+            }
         }
 
         public override bool Connect()

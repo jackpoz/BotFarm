@@ -10,6 +10,23 @@ namespace BotFarm.UnitTests
     public class Maps
     {
         [TestMethod]
+        public void MMapsSimplePath()
+        {
+            DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);
+            VMapCLI.VMap.Initialize(Settings.Default.VMAPsFolderPath);
+            MapCLI.Map.Initialize(Settings.Default.MAPsFolderPath);
+
+            using (var detour = new DetourCLI.Detour())
+            {
+                List<MapCLI.Point> resultPath;
+                var result = detour.FindPath(-8896.072266f, -82.352325f, 86.421661f,
+                                        -8915.272461f, -111.634041f, 82.275642f,
+                                        0, out resultPath);
+                Assert.IsTrue(result == DetourCLI.PathType.Complete);
+            }
+        }
+
+        [TestMethod]
         public void MMapsRaceConditions()
         {
             DetourCLI.Detour.Initialize(Settings.Default.MMAPsFolderPath);

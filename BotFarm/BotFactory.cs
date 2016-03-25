@@ -242,13 +242,13 @@ namespace BotFarm
         {
             if (String.IsNullOrEmpty(botname))
             {
+                foreach (var bot in bots)
+                    DisplayStatistics(bot);
+
                 // Display stats about all bots
                 Console.WriteLine(bots.Where(bot => bot.Running).Count() + " bots are active");
                 Console.WriteLine(bots.Where(bot => bot.Connected).Count() + " bots are connected");
                 Console.WriteLine(bots.Where(bot => bot.LoggedIn).Count() + " bots are ingame");
-
-                foreach (var bot in bots)
-                    DisplayStatistics(bot);
             }
             else
             {

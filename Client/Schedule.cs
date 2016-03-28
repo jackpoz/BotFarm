@@ -15,43 +15,43 @@ namespace Client
 
     public class RepeatingAction
     {
-        public Action action
+        public Action Action
         {
             get;
-            set;
+            private set;
         }
 
-        public DateTime scheduledTime
+        public DateTime ScheduledTime
         {
             get;
-            set;
+            private set;
         }
 
-        public TimeSpan interval
+        public TimeSpan Interval
         {
             get;
-            set;
+            private set;
         }
 
-        public ActionFlag flags
+        public ActionFlag Flags
         {
             get;
-            set;
+            private set;
         }
 
-        public int id
+        public int Id
         {
             get;
-            set;
+            private set;
         }
 
         public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags, int id)
         {
-            this.action = action;
-            this.scheduledTime = scheduledTime;
-            this.interval = interval;
-            this.flags = flags;
-            this.id = id;
+            this.Action = action;
+            this.ScheduledTime = scheduledTime;
+            this.Interval = interval;
+            this.Flags = flags;
+            this.Id = id;
         }
     }
 
@@ -136,12 +136,12 @@ namespace Client
 
         public int RemoveByFlag(ActionFlag flag)
         {
-            return actions.RemoveAll(action => action.flags.HasFlag(flag));
+            return actions.RemoveAll(action => action.Flags.HasFlag(flag));
         }
 
         public bool Remove(int actionId)
         {
-            return actions.RemoveAll(action => action.id == actionId) > 0;
+            return actions.RemoveAll(action => action.Id == actionId) > 0;
         }
 
         public IEnumerator<RepeatingAction> GetEnumerator()
@@ -156,7 +156,7 @@ namespace Client
 
         void Sort()
         {
-            actions.Sort((a, b) => (int)(a.scheduledTime - b.scheduledTime).TotalMilliseconds);
+            actions.Sort((a, b) => (int)(a.ScheduledTime - b.ScheduledTime).TotalMilliseconds);
         }
     }
 }

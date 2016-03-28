@@ -200,14 +200,14 @@ namespace Client
             while (scheduledActions.Count != 0)
             {
                 var scheduledAction = scheduledActions.First();
-                if (scheduledAction.scheduledTime <= DateTime.Now)
+                if (scheduledAction.ScheduledTime <= DateTime.Now)
                 {
                     scheduledActions.RemoveAt(0);
-                    if (scheduledAction.interval > TimeSpan.Zero)
-                        ScheduleAction(scheduledAction.action, DateTime.Now + scheduledAction.interval, scheduledAction.interval, scheduledAction.flags);
+                    if (scheduledAction.Interval > TimeSpan.Zero)
+                        ScheduleAction(scheduledAction.Action, DateTime.Now + scheduledAction.Interval, scheduledAction.Interval, scheduledAction.Flags);
                     try
                     {
-                        scheduledAction.action();
+                        scheduledAction.Action();
                     }
                     catch(Exception ex)
                     {

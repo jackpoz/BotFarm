@@ -21,6 +21,12 @@ namespace Client
             private set;
         }
 
+        public Action Cancel
+        {
+            get;
+            private set;
+        }
+
         public DateTime ScheduledTime
         {
             get;
@@ -45,9 +51,10 @@ namespace Client
             private set;
         }
 
-        public RepeatingAction(Action action, DateTime scheduledTime, TimeSpan interval, ActionFlag flags, int id)
+        public RepeatingAction(Action action, Action cancel, DateTime scheduledTime, TimeSpan interval, ActionFlag flags, int id)
         {
             this.Action = action;
+            this.Cancel = cancel ?? new Action(() => { });
             this.ScheduledTime = scheduledTime;
             this.Interval = interval;
             this.Flags = flags;
@@ -76,7 +83,15 @@ namespace Client
 
         public void RemoveAt(int index)
         {
+            RemoveAt(index, true);
+        }
+
+        public void RemoveAt(int index, bool cancel)
+        {
+            var action = actions[index];
             actions.RemoveAt(index);
+            if (cancel)
+                action.Cancel();
         }
 
         public RepeatingAction this[int index]
@@ -100,7 +115,18 @@ namespace Client
 
         public void Clear()
         {
-            actions.Clear();
+            Clear(true);
+        }
+
+        public void Clear(bool cancel)
+        {
+            if (cancel)
+            {
+                while (actions.Count > 0)
+                    RemoveAt(0, true);
+            }
+            else
+                actions.Clear();
         }
 
         public bool Contains(RepeatingAction item)
@@ -131,17 +157,33 @@ namespace Client
 
         public bool Remove(RepeatingAction item)
         {
-            return actions.Remove(item);
+            return Remove(item, true);
         }
 
-        public int RemoveByFlag(ActionFlag flag)
+        public bool Remove(RepeatingAction item, bool cancel)
         {
-            return actions.RemoveAll(action => action.Flags.HasFlag(flag));
+            var removed = actions.Remove(item);
+            if (cancel)
+                item.Cancel();
+            return removed;
         }
 
-        public bool Remove(int actionId)
+        public int RemoveByFlag(ActionFlag flag, bool cancel = true)
         {
-            return actions.RemoveAll(action => action.Id == actionId) > 0;
+            var actionsWithFlag = actions.Where(action => action.Flags.HasFlag(flag)).ToList();
+            actions.RemoveAll(action => action.Flags.HasFlag(flag));
+            if (cancel)
+                actionsWithFlag.ForEach(action => action.Cancel());
+            return actionsWithFlag.Count;
+        }
+
+        public bool Remove(int actionId, bool cancel = true)
+        {
+            var actionsWithId = actions.Where(action => action.Id == actionId).ToList();
+            actions.RemoveAll(action => action.Id == actionId);
+            if (cancel)
+                actionsWithId.ForEach(action => action.Cancel());
+            return actionsWithId.Count > 0;
         }
 
         public IEnumerator<RepeatingAction> GetEnumerator()

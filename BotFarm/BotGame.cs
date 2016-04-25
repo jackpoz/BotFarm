@@ -165,7 +165,6 @@ namespace BotFarm
                         targetLocation = null;
                     }
 
-                    CancelActionsByFlag(ActionFlag.Movement);
                     currentPosition = Player.GetPosition();
 
                     if (missingLocations == null)
@@ -173,7 +172,10 @@ namespace BotFarm
 
                     missingLocations = missingLocations.Where(loc => !HasExploreCriteria(loc.CriteriaID)).ToList();
                     if (missingLocations.Count == 0)
+                    {
+                        CancelActionsByFlag(ActionFlag.Movement);
                         return;
+                    }
 
                     float closestDistance = float.MaxValue;
                     var playerPosition = new Point(Player.X, Player.Y, Player.Z);
@@ -297,6 +299,8 @@ namespace BotFarm
         #region Actions
         public void MoveTo(Position destination)
         {
+            CancelActionsByFlag(ActionFlag.Movement, false);
+
             if (destination.MapID != Player.MapID)
             {
                 Log("Trying to move to another map", Client.UI.LogLevel.Warning);
@@ -395,11 +399,23 @@ namespace BotFarm
                     SendPacket(stopMoving);
                     Player.SetPosition(stopMoving.GetPosition());
 
-                    CancelActionsByFlag(ActionFlag.Movement);
+                    CancelActionsByFlag(ActionFlag.Movement, false);
 
                     HandleTriggerInput(TriggerActionType.DestinationReached, true);
                 }
-            }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
+            }, new TimeSpan(0, 0, 0, 0, 100), ActionFlag.Movement,
+            () =>
+            {
+                var stopMoving = new MovementPacket(WorldCommand.MSG_MOVE_STOP)
+                {
+                    GUID = Player.GUID,
+                    X = Player.X,
+                    Y = Player.Y,
+                    Z = Player.Z,
+                    O = path.CurrentOrientation
+                };
+                SendPacket(stopMoving);
+            });
         }
 
         public void Resurrect()

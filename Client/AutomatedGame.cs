@@ -202,9 +202,9 @@ namespace Client
                 var scheduledAction = scheduledActions.First();
                 if (scheduledAction.ScheduledTime <= DateTime.Now)
                 {
-                    scheduledActions.RemoveAt(0);
+                    scheduledActions.RemoveAt(0, false);
                     if (scheduledAction.Interval > TimeSpan.Zero)
-                        ScheduleAction(scheduledAction.Action, DateTime.Now + scheduledAction.Interval, scheduledAction.Interval, scheduledAction.Flags);
+                        ScheduleAction(scheduledAction.Action, DateTime.Now + scheduledAction.Interval, scheduledAction.Interval, scheduledAction.Flags, scheduledAction.Cancel);
                     try
                     {
                         scheduledAction.Action();
@@ -303,26 +303,26 @@ namespace Client
             throw new NotImplementedException();
         }
 
-        public int ScheduleAction(Action action, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
+        public int ScheduleAction(Action action, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None, Action cancel = null)
         {
-            return ScheduleAction(action, DateTime.Now, interval, flags);
+            return ScheduleAction(action, DateTime.Now, interval, flags, cancel);
         }
 
-        public int ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None)
+        public int ScheduleAction(Action action, DateTime time, TimeSpan interval = default(TimeSpan), ActionFlag flags = ActionFlag.None, Action cancel = null)
         {
             if (Running && (flags == ActionFlag.None || !disabledActions.HasFlag(flags)))
             {
                 scheduledActionCounter++;
-                scheduledActions.Add(new RepeatingAction(action, time, interval, flags, scheduledActionCounter));
+                scheduledActions.Add(new RepeatingAction(action, cancel, time, interval, flags, scheduledActionCounter));
                 return scheduledActionCounter;
             }
             else
                 return 0;
         }
 
-        public void CancelActionsByFlag(ActionFlag flag)
+        public void CancelActionsByFlag(ActionFlag flag, bool cancel = true)
         {
-            scheduledActions.RemoveByFlag(flag);
+            scheduledActions.RemoveByFlag(flag, cancel);
         }
 
         public bool CancelAction(int actionId)
@@ -604,7 +604,7 @@ namespace Client
                 if (target.MapID != Player.MapID)
                 {
                     Log("Trying to follow a target on another map", Client.UI.LogLevel.Warning);
-                    CancelActionsByFlag(ActionFlag.Movement);
+                    CancelActionsByFlag(ActionFlag.Movement, false);
                     return;
                 }
 
@@ -751,7 +751,7 @@ namespace Client
             Player.Z = packet.ReadSingle();
             Player.O = packet.ReadSingle();
 
-            CancelActionsByFlag(ActionFlag.Movement);
+            CancelActionsByFlag(ActionFlag.Movement, false);
 
             OutPacket result = new OutPacket(WorldCommand.MSG_MOVE_TELEPORT_ACK);
             result.WritePacketGuid(Player.GUID);

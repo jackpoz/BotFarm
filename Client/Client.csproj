@@ -68,6 +68,9 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\ICombatAI.cs" />
+    <Compile Include="AI\IDecisionAI.cs" />
+    <Compile Include="AI\IMovementAI.cs" />
     <Compile Include="BatchQueue.cs" />
     <Compile Include="Authentication\AuthCommand.cs" />
     <Compile Include="Authentication\AuthResult.cs" />
@@ -91,7 +94,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSocket.cs" />
-    <Compile Include="IGameAI.cs" />
+    <Compile Include="AI\IGameAI.cs" />
     <Compile Include="IteratedList.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Schedule.cs" />

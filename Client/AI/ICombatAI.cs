@@ -4,19 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Client.AI
 {
-    public interface IGameAI
+    public interface ICombatAI : IGameAI
     {
-        bool Activate(AutomatedGame game);
-        void Deactivate();
-        void Pause();
-        void Resume();
-        void Update();
-        bool AllowPause();
     }
 
-    public class EmptyAI : IGameAI
+    public class EmptyCombatAI : ICombatAI
     {
         public bool Activate(AutomatedGame game)
         {

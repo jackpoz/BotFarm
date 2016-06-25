@@ -1,4 +1,5 @@
 ﻿using Client;
+using Client.AI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BotFarm.AI
 {
-    class BeggerAI : IGameAI
+    class BeggerAI : IDecisionAI
     {
         int scheduledAction;
         int trigger;

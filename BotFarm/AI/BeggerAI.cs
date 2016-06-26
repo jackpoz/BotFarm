@@ -17,7 +17,7 @@ namespace BotFarm.AI
         public bool Activate(AutomatedGame game)
         {
             this.game = game as BotGame;
-            if (game == null)
+            if (this.game == null)
                 return false;
             ScheduledBegging();
             return true;

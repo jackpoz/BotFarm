@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Client.AI
 {
-    public interface ICombatAI : IGameAI
+    public interface IStrategicAI : IGameAI
     {
     }
 
-    public class EmptyCombatAI : ICombatAI
+
+    public class EmptyStrategicAI : IStrategicAI
     {
         public bool Activate(AutomatedGame game)
         {

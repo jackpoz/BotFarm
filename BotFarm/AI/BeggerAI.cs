@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BotFarm.AI
 {
-    class BeggerAI : IDecisionAI
+    class BeggerAI : IStrategicAI
     {
         int scheduledAction;
         int trigger;

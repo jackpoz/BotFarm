@@ -68,9 +68,9 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\ICombatAI.cs" />
-    <Compile Include="AI\IDecisionAI.cs" />
-    <Compile Include="AI\IMovementAI.cs" />
+    <Compile Include="AI\ITacticalAI.cs" />
+    <Compile Include="AI\IStrategicAI.cs" />
+    <Compile Include="AI\IOperationalAI.cs" />
     <Compile Include="BatchQueue.cs" />
     <Compile Include="Authentication\AuthCommand.cs" />
     <Compile Include="Authentication\AuthResult.cs" />

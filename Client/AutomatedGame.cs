@@ -97,9 +97,9 @@ namespace Client
         }
         UpdateObjectHandler updateObjectHandler;
 
-        Stack<IDecisionAI> DecisionAIs;
-        Stack<ICombatAI> CombatAIs;
-        Stack<IMovementAI> MovementAIs;
+        Stack<IStrategicAI> StrategicAIs;
+        Stack<ITacticalAI> TacticalAIs;
+        Stack<IOperationalAI> OperationalAIs;
 
         public Dictionary<ulong, WorldObject> Objects
         {
@@ -142,12 +142,12 @@ namespace Client
             Objects = new Dictionary<ulong, WorldObject>();
             CompletedAchievements = new HashSet<uint>();
             AchievementCriterias = new Dictionary<uint, ulong>();
-            DecisionAIs = new Stack<IDecisionAI>();
-            MovementAIs = new Stack<IMovementAI>();
-            CombatAIs = new Stack<ICombatAI>();
-            PushDecisionAI(new EmptyDecisionAI());
-            PushCombatAI(new EmptyCombatAI());
-            PushMovementAI(new EmptyMovementAI());
+            StrategicAIs = new Stack<IStrategicAI>();
+            TacticalAIs = new Stack<ITacticalAI>();
+            OperationalAIs = new Stack<IOperationalAI>();
+            PushStrategicAI(new EmptyStrategicAI());
+            PushTacticalAI(new EmptyTacticalAI());
+            PushOperationalAI(new EmptyOperationalAI());
 
             this.Hostname = hostname;
             this.Port = port;
@@ -203,9 +203,9 @@ namespace Client
             if (World.SelectedCharacter == null)
                 return;
 
-            DecisionAIs.Peek().Update();
-            CombatAIs.Peek().Update();
-            MovementAIs.Peek().Update();
+            StrategicAIs.Peek().Update();
+            TacticalAIs.Peek().Update();
+            OperationalAIs.Peek().Update();
 
             while (scheduledActions.Count != 0)
             {
@@ -441,9 +441,9 @@ namespace Client
                 return "";
         }
 
-        public bool PushDecisionAI(IDecisionAI ai) => PushAI(ai, DecisionAIs);
-        public bool PushCombatAI(ICombatAI ai) => PushAI(ai, CombatAIs);
-        public bool PushMovementAI(IMovementAI ai) => PushAI(ai, MovementAIs);
+        public bool PushStrategicAI(IStrategicAI ai) => PushAI(ai, StrategicAIs);
+        public bool PushTacticalAI(ITacticalAI ai) => PushAI(ai, TacticalAIs);
+        public bool PushOperationalAI(IOperationalAI ai) => PushAI(ai, OperationalAIs);
         bool PushAI<T>(T ai, Stack<T> AIs) where T : IGameAI
         {
             if (AIs.Count == 0)
@@ -481,9 +481,9 @@ namespace Client
                 return false;
         }
 
-        public bool PopDecisionAI(IDecisionAI ai) => PopAI(ai, DecisionAIs);
-        public bool PopCombatAI(ICombatAI ai) => PopAI(ai, CombatAIs);
-        public bool PopMovementAI(IMovementAI ai) => PopAI(ai, MovementAIs);
+        public bool PopStrategicAI(IStrategicAI ai) => PopAI(ai, StrategicAIs);
+        public bool PopTacticalAI(ITacticalAI ai) => PopAI(ai, TacticalAIs);
+        public bool PopOperationalAI(IOperationalAI ai) => PopAI(ai, OperationalAIs);
         public bool PopAI<T>(T ai, Stack<T> AIs) where T : class, IGameAI
         {
             if (AIs.Count <= 1)
@@ -502,21 +502,21 @@ namespace Client
 
         public void ClearAIs()
         {
-            while (DecisionAIs.Count > 1)
+            while (StrategicAIs.Count > 1)
             {
-                var currentAI = DecisionAIs.Pop();
+                var currentAI = StrategicAIs.Pop();
                 currentAI.Deactivate();
             }
 
-            while (CombatAIs.Count > 1)
+            while (TacticalAIs.Count > 1)
             {
-                var currentAI = CombatAIs.Pop();
+                var currentAI = TacticalAIs.Pop();
                 currentAI.Deactivate();
             }
 
-            while (MovementAIs.Count > 1)
+            while (OperationalAIs.Count > 1)
             {
-                var currentAI = MovementAIs.Pop();
+                var currentAI = OperationalAIs.Pop();
                 currentAI.Deactivate();
             }
         }

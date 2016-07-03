@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BotFarm.AI
 {
-    class FollowGroupLeaderAI : IDecisionAI
+    class FollowGroupLeaderAI : IStrategicAI
     {
         int scheduledAction;
         AutomatedGame game;

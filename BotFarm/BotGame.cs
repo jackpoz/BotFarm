@@ -131,14 +131,14 @@ namespace BotFarm
             #region Begger
             if (Behavior.Begger)
             {
-                PushDecisionAI(new BeggerAI());
+                PushStrategicAI(new BeggerAI());
             }
             #endregion
 
             #region FollowGroupLeader
             if (Behavior.FollowGroupLeader)
             {
-                PushDecisionAI(new FollowGroupLeaderAI());
+                PushStrategicAI(new FollowGroupLeaderAI());
             }
             #endregion
 

@@ -24,7 +24,7 @@ namespace Client.World
         uint PetInfoId;
         uint PetLevel;
         uint PetFamilyId;
-        Item[] Items = new Item[20];
+        Item[] Items = new Item[19];
 
         public Character(InPacket packet)
         {
@@ -49,7 +49,7 @@ namespace Client.World
             PetFamilyId = packet.ReadUInt32();
 
             // read items
-            for (int i = 0; i < Items.Length - 1; ++i)
+            for (int i = 0; i < Items.Length; ++i)
                 Items[i] = new Item(packet);
 
             // read bags

@@ -90,8 +90,16 @@ namespace Client
             {
                 if (connection.Connected)
                 {
-                    connection.Client.Shutdown(SocketShutdown.Send);
-                    connection.Client.BeginReceive(_receiveData, 0, _receiveData.Length, SocketFlags.None, SocketShutdownCallback, null);
+                    try
+                    {
+                        connection.Client.Shutdown(SocketShutdown.Send);
+                        connection.Client.BeginReceive(_receiveData, 0, _receiveData.Length, SocketFlags.None, SocketShutdownCallback, null);
+                    }
+                    catch(SocketException)
+                    {
+                        Disposed = true;
+                        connection.Close();
+                    }
                 }
                 else
                 {

@@ -127,6 +127,11 @@ namespace BotFarm
 
             // Anti-kick for being afk
             ScheduleAction(() => DoTextEmote(TextEmote.Yawn), DateTime.Now.AddMinutes(5), new TimeSpan(0, 5, 0));
+            ScheduleAction(() =>
+            {
+                if (LoggedIn)
+                    SendPacket(new OutPacket(WorldCommand.CMSG_KEEP_ALIVE));
+            }, DateTime.Now.AddSeconds(15), new TimeSpan(0, 0, 30));
 
             #region Begger
             if (Behavior.Begger)

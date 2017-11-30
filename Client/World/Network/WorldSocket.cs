@@ -148,6 +148,8 @@ namespace Client.World.Network
             get;
             protected set;
         }
+        public override DateTime LastOutOpcodeTime => _lastOutOpcodeTime;
+        protected DateTime _lastOutOpcodeTime;
         public override string LastInOpcodeName
         {
             get
@@ -160,6 +162,8 @@ namespace Client.World.Network
             get;
             protected set;
         }
+        public override DateTime LastInOpcodeTime => _lastInOpcodeTime;
+        protected DateTime _lastInOpcodeTime;
 
         BatchQueue<InPacket> packetsQueue = new BatchQueue<InPacket>();
 
@@ -407,6 +411,7 @@ namespace Client.World.Network
             try
             {
                 LastInOpcode = packet.Header.Command;
+                _lastInOpcodeTime = DateTime.Now;
                 PacketHandler handler;
                 if (PacketHandlers.TryGetValue(packet.Header.Command, out handler))
                 {
@@ -471,6 +476,7 @@ namespace Client.World.Network
         public void Send(OutPacket packet)
         {
             LastOutOpcode = packet.Header.Command;
+            _lastOutOpcodeTime = DateTime.Now;
             byte[] data = packet.Finalize(authenticationCrypto);
 
             try

@@ -276,8 +276,11 @@ namespace BotFarm
             else
                 Console.WriteLine("\tGroup Leader: " + bot.World.PlayerNameLookup[bot.GroupLeaderGuid]);
             Console.WriteLine("\tLast Received Packet: " + bot.LastReceivedPacket);
+            Console.WriteLine("\tLast Received Packet Time: " + bot.LastReceivedPacketTime.ToLongTimeString());
             Console.WriteLine("\tLast Sent Packet: " + bot.LastSentPacket);
+            Console.WriteLine("\tLast Sent Packet Time: " + bot.LastSentPacketTime.ToLongTimeString());
             Console.WriteLine("\tLast Update() call: " + bot.LastUpdate.ToLongTimeString());
+            Console.WriteLine("\tSchedule Actions: " + bot.ScheduledActionsCount);
         }
 
         public void Dispose()

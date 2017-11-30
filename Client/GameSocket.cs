@@ -128,7 +128,17 @@ namespace Client
             get;
         }
 
+        public abstract DateTime LastInOpcodeTime
+        {
+            get;
+        }
+
         public abstract string LastOutOpcodeName
+        {
+            get;
+        }
+
+        public abstract DateTime LastOutOpcodeTime
         {
             get;
         }

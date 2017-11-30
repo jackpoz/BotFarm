@@ -49,11 +49,25 @@ namespace Client
                 return socket.LastOutOpcodeName;
             }
         }
+        public DateTime LastSentPacketTime
+        {
+            get
+            {
+                return socket.LastOutOpcodeTime;
+            }
+        }
         public string LastReceivedPacket
         {
             get
             {
                 return socket.LastInOpcodeName;
+            }
+        }
+        public DateTime LastReceivedPacketTime
+        {
+            get
+            {
+                return socket.LastInOpcodeTime;
             }
         }
         public DateTime LastUpdate
@@ -62,6 +76,7 @@ namespace Client
             private set;
         }
         TaskCompletionSource<bool> loggedOutEvent = new TaskCompletionSource<bool>();
+        public int ScheduledActionsCount => scheduledActions.Count;
         ScheduledActions scheduledActions;
         ActionFlag disabledActions;
         int scheduledActionCounter;

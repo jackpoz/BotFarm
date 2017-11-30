@@ -40,6 +40,8 @@ namespace Client.Authentication.Network
             get;
             protected set;
         }
+        public override DateTime LastOutOpcodeTime => _lastOutOpcodeTime;
+        protected DateTime _lastOutOpcodeTime;
         public override string LastInOpcodeName
         {
             get
@@ -52,6 +54,8 @@ namespace Client.Authentication.Network
             get;
             protected set;
         }
+        public override DateTime LastInOpcodeTime => _lastInOpcodeTime;
+        protected DateTime _lastInOpcodeTime;
 
         public AuthSocket(IGame program, string hostname, int port, string username, string password)
         {
@@ -90,12 +94,14 @@ namespace Client.Authentication.Network
         void Send(ISendable sendable)
         {
             LastOutOpcode = sendable.Command;
+            _lastOutOpcodeTime = DateTime.Now;
             sendable.Send(stream);
         }
 
         void Send(byte[] buffer)
         {
             LastOutOpcode = (AuthCommand)buffer[0];
+            _lastOutOpcodeTime = DateTime.Now;
             stream.Write(buffer, 0, buffer.Length);
         }
 
@@ -396,6 +402,7 @@ namespace Client.Authentication.Network
 
                 AuthCommand command = (AuthCommand)ReceiveData[0];
                 LastInOpcode = command;
+                _lastInOpcodeTime = DateTime.Now;
 
                 CommandHandler handler;
                 if (Handlers.TryGetValue(command, out handler))

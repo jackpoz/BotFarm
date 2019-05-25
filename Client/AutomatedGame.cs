@@ -229,7 +229,7 @@ namespace Client
                 {
                     scheduledActions.RemoveAt(0, false);
                     if (scheduledAction.Interval > TimeSpan.Zero)
-                        ScheduleAction(scheduledAction.Action, DateTime.Now + scheduledAction.Interval, scheduledAction.Interval, scheduledAction.Flags, scheduledAction.Cancel);
+                        RescheduleAction(scheduledAction);
                     try
                     {
                         scheduledAction.Action();
@@ -343,6 +343,14 @@ namespace Client
             }
             else
                 return 0;
+        }
+
+        private void RescheduleAction(RepeatingAction action)
+        {
+            if (Running && (action.Flags == ActionFlag.None || !disabledActions.HasFlag(action.Flags)))
+                scheduledActions.Add(new RepeatingAction(action.Action, action.Cancel, DateTime.Now + action.Interval, action.Interval, action.Flags, action.Id));
+            else
+                return;
         }
 
         public void CancelActionsByFlag(ActionFlag flag, bool cancel = true)

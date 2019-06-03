@@ -4,6 +4,7 @@ using Client.UI;
 using Client.World;
 using Client.World.Network;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +16,7 @@ using DetourCLI;
 using MapCLI;
 using DBCStoresCLI;
 using BotFarm.AI;
+using Client.Chat.Definitions;
 
 namespace BotFarm
 {
@@ -198,6 +200,348 @@ namespace BotFarm
                 }, DateTime.Now.AddSeconds(30), new TimeSpan(0, 0, 5));
             }
             #endregion
+
+            
+            {
+                var messages = new List<string>()
+                {
+                    "1 |_|r3",
+                    "2 |r3",
+                    "3 |cFF",
+                    "4 |cGGGGGGGG",
+                    "5 |1",
+                    "6 |2",
+                    "7 |3",
+                    "8 |3-",
+                    "9 |3-0",
+                    "10 |3--1",
+                    "11 |3-2",
+                    "12 |3-5555",
+                    "13 |3-9999999999999",
+                    "14 |4",
+                    "15 |HKIA_LINK:KIA_R" + "" + " | h" + "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r" + " | h",
+                    "16 |cffFF4E00|Hlevelup:-1:LEVEL_UP_TYPE_CHARACTER|hHey, guess what I just got? its [Fetish of the Bloodthirsty Gladiator] |h|r",
+                    "17 |cffFF4E00|Hlevelup:2:LEVEL_UP_TYPE_CHARACTER|h[Level 2]|h|r",
+                    "18 |cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r",
+                    "19 :||",
+                    "20 ||",
+                    "21 |",
+                    "22 |cFFDDD000|Hquest:|htest|h|r",
+                    "23 |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "24 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "25 |cff808080|Hquest:9832:255|h[The Second and Third Fragments]|h|r",
+                    "26 |cff808080|Hquest:9832:256|h[The Second and Third Fragments]|h|r|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "27 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:55555:70|h[The Second and Third Fragments]|h|r",
+                    "28 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "29 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:",
+                    "30 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:|h[The Second and Third Fragments]|h|r",
+                    "31 |cFFDDD000|Hquest:|hhey||r",
+                    "32 |cff808080|Hquest:9832:0|h[The Second and Third Fragments]|h|r",
+                    "33 |3-1 [Errormode]",
+                    "34 |3-4 (keepsm)",
+                    "35 \u0124cffffff00\u0124Hquest:11318\u0124h[А теперь гонки на баранах... Или вроде того.]\u0124h\u0124r",
+                    "36 |cffffff00|Hquest:11318|h[А теперь гонки на баранах... Или вроде того.]|h|r",
+                    "Finished"
+                };
+                int index = 0;
+
+                int actionId = -1;
+                actionId = ScheduleAction(() =>
+                {
+                    if (index >= messages.Count)
+                    {
+                        CancelAction(actionId);
+                        return;
+                    }
+
+                    var message = messages[index++];
+
+                    var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+                    response.Write((uint)ChatMessageType.Whisper);
+                    var race = World.SelectedCharacter.Race;
+                    var language = race.IsHorde() ? Language.Orcish : Language.Common;
+                    response.Write((uint)language);
+                    response.Write("User".ToCString());
+                    response.Write(message.ToCString());
+                    SendPacket(response);
+
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 10));
+            }
+
+            {
+                var channels = new List<string>()
+                {
+                    "test",
+                    "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0377\u0377\u0377\u0377\u0000\u0000\u0000\u0000<\u0330\u0000\u0000\u0301\u0337\u0000\u0000<\u0330\u0000\u0000\u0377\u0337\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0247HW\u0377\u0177"
+                    + "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+                    + "\u0361\u0000\u0000\u0005\u0002"
+                    + "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+                    + "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0340\u0250HW\u0377\u0177\u0000\u0000ЦHW\u0377\u0177\u0000\u0000P\u0250HW\u0377\u0177\u0000\u0000\u0362\u0000\u0000\u0005\u0002"
+                    + "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+                    + "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0020\u0246HW\u0377\u0177\u0000\u0000p\u0246HW\u0377\u0177\u0000\u0000 \u0250HW\u0377\u0177\u0000\u0000",
+                    "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    +"\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277",
+                    "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217",
+                    "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277",
+                    "|_|r3",
+                    "|r3",
+                    "|cFF",
+                    "|cGGGGGGGG",
+                    "|1",
+                    "|2",
+                    "|3",
+                    "|3-",
+                    "|3-0",
+                    "|3--1",
+                    "|3-2",
+                    "|3-5555",
+                    "|3-9999999999999",
+                    "|4",
+                    "|HKIA_LINK:KIA_R" + "" + " | h" + "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r" + " | h",
+                    "|cffFF4E00|Hlevelup:-1:LEVEL_UP_TYPE_CHARACTER|hHey, guess what I just got? its [Fetish of the Bloodthirsty Gladiator] |h|r",
+                    "|cffFF4E00|Hlevelup:2:LEVEL_UP_TYPE_CHARACTER|h[Level 2]|h|r",
+                    "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r",
+                    ":||",
+                    "||",
+                    "|",
+                    "|cFFDDD000|Hquest:|htest|h|r",
+                    "|cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:255|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:256|h[The Second and Third Fragments]|h|r|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:55555:70|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:",
+                    "|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:|h[The Second and Third Fragments]|h|r",
+                    "|cFFDDD000|Hquest:|hhey||r",
+                    "|cff808080|Hquest:9832:0|h[The Second and Third Fragments]|h|r",
+                    "|3-1 [Errormode]",
+                    "|3-4 (keepsm)",
+                    "\r",
+                    "\n",
+                    "\t",
+                    "\u0037",
+                    "\r\n\t\u0037"
+                };
+
+                for (int i = 0; i <= 256; i++)
+                    channels.Add(Convert.ToChar(i).ToString());
+
+                int index = -1;
+
+                int actionId = -1;
+                actionId = ScheduleAction(() =>
+                {
+                    byte[] channelBytes;
+                    if (index == -1)
+                    {
+                        var channelName = "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                    + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277";
+
+                        channelBytes = channelName.ToCString().Take(255).ToArray();
+                        channelBytes[channelBytes.Length - 1] = 0;
+                        index++;
+                    }
+                    else
+                    {
+
+                        if (index >= channels.Count)
+                        {
+                            CancelAction(actionId);
+                            return;
+                        }
+                        channelBytes = channels[index++].ToCString();
+                    }
+
+                    var response = new OutPacket(WorldCommand.CMSG_JOIN_CHANNEL);
+
+                    response.Write((uint)0);
+                    response.Write((byte)0);
+                    response.Write((byte)0);
+                    response.Write(channelBytes);
+                    response.Write("".ToCString());
+                    SendPacket(response);
+
+                    response = new OutPacket(WorldCommand.CMSG_CHANNEL_INVITE);
+                    response.Write(channelBytes);
+                    response.Write("User".ToCString());
+                    SendPacket(response);
+
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 50));
+            }
+
+            {
+                var messages = new List<string>()
+                {
+                    "1 |_|r3",
+                    "2 |r3",
+                    "3 |cFF",
+                    "4 |cGGGGGGGG",
+                    "5 |1",
+                    "6 |2",
+                    "7 |3",
+                    "8 |3-",
+                    "9 |3-0",
+                    "10 |3--1",
+                    "11 |3-2",
+                    "12 |3-5555",
+                    "13 |3-9999999999999",
+                    "14 |4",
+                    "15 |HKIA_LINK:KIA_R" + "" + " | h" + "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r" + " | h",
+                    "16 |cffFF4E00|Hlevelup:-1:LEVEL_UP_TYPE_CHARACTER|hHey, guess what I just got? its [Fetish of the Bloodthirsty Gladiator] |h|r",
+                    "17 |cffFF4E00|Hlevelup:2:LEVEL_UP_TYPE_CHARACTER|h[Level 2]|h|r",
+                    "18 |cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r",
+                    "19 :||",
+                    "20 ||",
+                    "21 |",
+                    "22 |cFFDDD000|Hquest:|htest|h|r",
+                    "23 |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "24 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "25 |cff808080|Hquest:9832:255|h[The Second and Third Fragments]|h|r",
+                    "26 |cff808080|Hquest:9832:256|h[The Second and Third Fragments]|h|r|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "27 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:55555:70|h[The Second and Third Fragments]|h|r",
+                    "28 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "29 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:",
+                    "30 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:|h[The Second and Third Fragments]|h|r",
+                    "31 |cFFDDD000|Hquest:|hhey||r",
+                    "32 |cff808080|Hquest:9832:0|h[The Second and Third Fragments]|h|r",
+                    "33 |3-1 [Errormode]",
+                    "34 |3-4 (keepsm)",
+                    "35 \u0124cffffff00\u0124Hquest:11318\u0124h[А теперь гонки на баранах... Или вроде того.]\u0124h\u0124r",
+                    "36 |cffffff00|Hquest:11318|h[А теперь гонки на баранах... Или вроде того.]|h|r",
+                    "Finished"
+                };
+                int index = 0;
+
+                int actionId = -1;
+                actionId = ScheduleAction(() =>
+                {
+                    if (index >= messages.Count)
+                    {
+                        CancelAction(actionId);
+                        return;
+                    }
+
+                    var message = messages[index++];
+
+                    var response = new OutPacket(WorldCommand.CMSG_SEND_MAIL);
+
+                    response.Write((ulong)0);
+                    response.Write("User".ToCString());
+                    response.Write(message.ToCString());
+                    response.Write(message.ToCString());
+                    response.Write((uint)0);
+                    response.Write((uint)0);
+                    response.Write((byte)0);
+                    response.Write((uint)0);
+                    response.Write((uint)0);
+                    response.Write((ulong)0);
+                    response.Write((byte)0);
+
+
+                    response.Write("User".ToCString());
+                    response.Write(message.ToCString());
+                    SendPacket(response);
+
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 1, 0));
+            }
+            
+
+            /*ScheduleAction(() =>
+            {
+                var message = (
+                "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217"
+                ).ToCString();
+
+                for (int i = 0; i < 1; i++)
+                {
+                    var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+                    response.Write((uint)ChatMessageType.Whisper);
+                    var race = World.SelectedCharacter.Race;
+                    var language = race.IsHorde() ? Language.Orcish : Language.Common;
+                    response.Write((uint)language);
+                    response.Write("User".ToCString());
+                    response.Write(message);
+                    SendPacket(response);
+                }
+
+            }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 1));*/
+
+            /*
+            ScheduleAction(() =>
+            {
+                var message = (
+                "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                + "\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277\u0360\u0237\u0217\u0201\u0360\u0237\u0217\u0277"
+                ).ToCString();
+
+                message[255] = 0;
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+                    response.Write((uint)ChatMessageType.Whisper);
+                    var race = World.SelectedCharacter.Race;
+                    //var language = race.IsHorde() ? Language.Orcish : Language.Common;
+                    var language = Language.Addon;
+                    response.Write((uint)language);
+                    response.Write("User".ToCString());
+                    response.Write(message);
+                    SendPacket(response);
+                }
+
+            }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 1));
+            */
         }
 
         public override void NoCharactersFound()

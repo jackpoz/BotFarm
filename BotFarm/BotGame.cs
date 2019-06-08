@@ -201,7 +201,12 @@ namespace BotFarm
             }
             #endregion
 
-            
+            // Skip Language.Universal since it's discarded anyway from Worldserver
+            var languages = Enum.GetValues(typeof(Language))
+                .Cast<Language>()
+                .Except(new[] { Language.Universal })
+                .ToArray();
+
             if (false)
             {
                 var messages = new List<byte[]>()
@@ -257,7 +262,7 @@ namespace BotFarm
 
                     var message = messages[index++];
 
-                    foreach (var language in Enum.GetValues(typeof(Language)))
+                    foreach (var language in languages)
                     {
                         var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
 
@@ -281,13 +286,23 @@ namespace BotFarm
                 {
                     random.NextBytes(message);
 
+                    // remove filtered characters
+                    for (int index = 0; index < message.Length; index++)
+                    {
+                        if (message[index] <= 31 && message[index] != 9)
+                        {
+                            message[index] = (byte)random.Next(1, byte.MaxValue);
+                            // check the new character just set
+                            index--;
+                        }
+                    }
+
                     // with the random result first
-                    foreach (var language in Enum.GetValues(typeof(Language)))
+                    foreach (var language in languages)
                     {
                         var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
 
                         response.Write((uint)ChatMessageType.Whisper);
-                        var race = World.SelectedCharacter.Race;
                         response.Write((uint)language);
                         response.Write("User".ToCString());
                         response.Write(message);
@@ -297,14 +312,13 @@ namespace BotFarm
                     // remove all '\0' characters as another try
                     for (int index = 0; index < message.Length; index++)
                         if (message[index] == 0)
-                            message[index] = (byte)random.Next(1, byte.MaxValue);
+                            message[index] = (byte)random.Next(32, byte.MaxValue);
 
-                    foreach (var language in Enum.GetValues(typeof(Language)))
+                    foreach (var language in languages)
                     {
                         var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
 
                         response.Write((uint)ChatMessageType.Whisper);
-                        var race = World.SelectedCharacter.Race;
                         response.Write((uint)language);
                         response.Write("User".ToCString());
                         response.Write(message);
@@ -313,12 +327,11 @@ namespace BotFarm
 
                     // try with max length 255
                     message[message.Length - 1] = 0;
-                    foreach (var language in Enum.GetValues(typeof(Language)))
+                    foreach (var language in languages)
                     {
                         var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
 
                         response.Write((uint)ChatMessageType.Whisper);
-                        var race = World.SelectedCharacter.Race;
                         response.Write((uint)language);
                         response.Write("User".ToCString());
                         response.Write(message);

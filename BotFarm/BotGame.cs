@@ -209,45 +209,49 @@ namespace BotFarm
 
             if (false)
             {
-                var messages = new List<byte[]>()
+                var messages = new List<string>()
                 {
-                    "1 |_|r3".ToCString(),
-                    "2 |r3".ToCString(),
-                    "3 |cFF".ToCString(),
-                    "4 |cGGGGGGGG".ToCString(),
-                    "5 |1".ToCString(),
-                    "6 |2".ToCString(),
-                    "7 |3".ToCString(),
-                    "8 |3-".ToCString(),
-                    "9 |3-0".ToCString(),
-                    "10 |3--1".ToCString(),
-                    "11 |3-2".ToCString(),
-                    "12 |3-5555".ToCString(),
-                    "13 |3-9999999999999".ToCString(),
-                    "14 |4".ToCString(),
-                    ("15 |HKIA_LINK:KIA_R" + "" + " | h" + "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r" + " | h").ToCString(),
-                    "16 |cffFF4E00|Hlevelup:-1:LEVEL_UP_TYPE_CHARACTER|hHey, guess what I just got? its [Fetish of the Bloodthirsty Gladiator] |h|r".ToCString(),
-                    "17 |cffFF4E00|Hlevelup:2:LEVEL_UP_TYPE_CHARACTER|h[Level 2]|h|r".ToCString(),
-                    "18 |cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r".ToCString(),
-                    "19 :||".ToCString(),
-                    "20 ||".ToCString(),
-                    "21 |".ToCString(),
-                    "22 |cFFDDD000|Hquest:|htest|h|r".ToCString(),
-                    "23 |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "24 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "25 |cff808080|Hquest:9832:255|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "26 |cff808080|Hquest:9832:256|h[The Second and Third Fragments]|h|r|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "27 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:55555:70|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "28 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "29 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:".ToCString(),
-                    "30 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "31 |cFFDDD000|Hquest:|hhey||r".ToCString(),
-                    "32 |cff808080|Hquest:9832:0|h[The Second and Third Fragments]|h|r".ToCString(),
-                    "33 |3-1 [Errormode]".ToCString(),
-                    "34 |3-4 (keepsm)".ToCString(),
-                    "35 \u0124cffffff00\u0124Hquest:11318\u0124h[А теперь гонки на баранах... Или вроде того.]\u0124h\u0124r".ToCString(),
-                    "36 |cffffff00|Hquest:11318|h[А теперь гонки на баранах... Или вроде того.]|h|r".ToCString(),
-                    "Finished".ToCString()
+                    "1 |_|r3",
+                    "2 |r3",
+                    "3 |cFF",
+                    "4 |cGGGGGGGG",
+                    "5 |1",
+                    "6 |2",
+                    "7 |3",
+                    "8 |3-",
+                    "9 |3-0",
+                    "10 |3--1",
+                    "11 |3-2",
+                    "12 |3-5555",
+                    "13 |3-9999999999999",
+                    "14 |4",
+                    ("15 |HKIA_LINK:KIA_R" + "" + " | h" + "|cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r" + " | h"),
+                    "16 |cffFF4E00|Hlevelup:-1:LEVEL_UP_TYPE_CHARACTER|hHey, guess what I just got? its [Fetish of the Bloodthirsty Gladiator] |h|r",
+                    "17 |cffFF4E00|Hlevelup:2:LEVEL_UP_TYPE_CHARACTER|h[Level 2]|h|r",
+                    "18 |cffa335ee|Hitem:29434:0:0:0:0:0:0:0:80|h[Знак справедливости]|h|r",
+                    "19 :||",
+                    "20 ||",
+                    "21 |",
+                    "22 |cFFDDD000|Hquest:|htest|h|r",
+                    "23 |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "24 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "25 |cff808080|Hquest:9832:255|h[The Second and Third Fragments]|h|r",
+                    "26 |cff808080|Hquest:9832:256|h[The Second and Third Fragments]|h|r|cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r",
+                    "27 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:55555:70|h[The Second and Third Fragments]|h|r",
+                    "28 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r |cff808080|Hquest:9832:|h[The Second and Third Fragments]|h|r",
+                    "29 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:",
+                    "30 |cff808080|Hquest:9832:70|h[The Second and Third Fragments]|h|r|cff808080|Hquest:|h[The Second and Third Fragments]|h|r",
+                    "31 |cFFDDD000|Hquest:|hhey||r",
+                    "32 |cff808080|Hquest:9832:0|h[The Second and Third Fragments]|h|r",
+                    "33 |3-1 [Errormode]",
+                    "34 |3-4 (keepsm)",
+                    "35 \u0124cffffff00\u0124Hquest:11318\u0124h[А теперь гонки на баранах... Или вроде того.]\u0124h\u0124r",
+                    "36 |cffffff00|Hquest:11318|h[А теперь гонки на баранах... Или вроде того.]|h|r",
+                    "37 \u3071",
+                    "38 \uD809\uDC01",
+                    "39 |01",
+                    "40 \\12401",
+                    "Finished"
                 };
                 int index = 0;
 
@@ -260,7 +264,7 @@ namespace BotFarm
                         return;
                     }
 
-                    var message = messages[index++];
+                    var message = messages[index++].ToCString();
 
                     foreach (var language in languages)
                     {
@@ -277,7 +281,7 @@ namespace BotFarm
                 }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 1));
             }
 
-            if (true)
+            if (false)
             {
                 var random = new Random();
                 var message = new byte[255];
@@ -339,6 +343,71 @@ namespace BotFarm
                     }
 
                 }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 100));
+            }
+
+            if (false)
+            {
+                var random = new Random();
+
+                int counter = 15000;
+
+                ScheduleAction(() =>
+                {
+                    var message = BitConverter.GetBytes(counter++);
+
+                    foreach (var language in new[] { Language.Addon, Language.Common })
+                    {
+                        var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
+
+                        response.Write((uint)ChatMessageType.Whisper);
+                        response.Write((uint)language);
+                        response.Write("User".ToCString());
+                        response.Write(message);
+                        SendPacket(response);
+                    }
+
+                    if (counter % 100 == 0)
+                        Console.WriteLine("Sending character: " +  counter);
+
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 10));
+            }
+
+            if (false)
+            {
+                var channels = new List<string>()
+                {
+                    "\u3071",
+                    "\uD809\uDC01"
+                };
+
+
+                int index = 0;
+
+                int actionId = -1;
+                actionId = ScheduleAction(() =>
+                {                    
+                    if (index >= channels.Count)
+                    {
+                        CancelAction(actionId);
+                        return;
+                    }
+                    var channelBytes = channels[index++].ToCString();
+
+                    var response = new OutPacket(WorldCommand.CMSG_JOIN_CHANNEL);
+
+                    response.Write((uint)0);
+                    response.Write((byte)0);
+                    response.Write((byte)0);
+                    response.Write(channelBytes);
+                    response.Write("".ToCString());
+                    SendPacket(response);
+
+                    response = new OutPacket(WorldCommand.CMSG_CHANNEL_INVITE);
+                    response.Write(channelBytes);
+                    response.Write("User".ToCString());
+                    SendPacket(response);
+
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 50));
             }
 
             if (false)

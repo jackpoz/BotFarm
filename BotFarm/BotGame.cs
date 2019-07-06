@@ -251,6 +251,11 @@ namespace BotFarm
                     "38 \uD809\uDC01",
                     "39 |01",
                     "40 \\12401",
+                    "41 |cff808080|Hquest:9832:70|h[\\124]|h|r",
+                    "42 \u00A6",
+                    "43 |cff808080|Hquest:9832:70|h[|01]|h|r",
+                    "44 |cff808080|Hquest:9832:70 | h[test] | h | r",
+                    "",
                     "Finished"
                 };
                 int index = 0;
@@ -266,14 +271,15 @@ namespace BotFarm
 
                     var message = messages[index++].ToCString();
 
-                    foreach (var language in languages)
+                    //foreach (var language in languages)
+                    foreach(var language in new [] { Language.Common})
                     {
                         var response = new OutPacket(WorldCommand.CMSG_MESSAGECHAT);
 
-                        response.Write((uint)ChatMessageType.Whisper);
+                        response.Write((uint)ChatMessageType.Say);
                         var race = World.SelectedCharacter.Race;
                         response.Write((uint)language);
-                        response.Write("User".ToCString());
+                        //response.Write("User".ToCString());
                         response.Write(message);
                         SendPacket(response);
                     }

@@ -383,7 +383,8 @@ namespace BotFarm
                 var channels = new List<string>()
                 {
                     "\u3071",
-                    "\uD809\uDC01"
+                    "\uD809\uDC01",
+                    "|01fffff1f|cffffff1f|cfffff1ff|cffff1fff|cfff1ffff|cff1fffff|cffffffff|c1fffffff|cf1ffffff|r",
                 };
 
 
@@ -413,7 +414,7 @@ namespace BotFarm
                     response.Write("User".ToCString());
                     SendPacket(response);
 
-                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 0, 50));
+                }, DateTime.Now.AddSeconds(10), new TimeSpan(0, 0, 0, 5, 0));
             }
 
             if (false)

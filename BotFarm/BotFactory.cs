@@ -139,7 +139,6 @@ namespace BotFarm
                                                 Settings.Default.RealmID,
                                                 0,
                                                 botBehavior);
-            game.SettingUp = true;
             if (startBot)
                 game.Start();
             botInfos.Add(new BotInfo(username, password, botBehavior.Name));

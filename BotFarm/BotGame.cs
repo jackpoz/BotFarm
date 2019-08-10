@@ -20,12 +20,6 @@ namespace BotFarm
 {
     class BotGame : AutomatedGame
     {
-        public bool SettingUp
-        {
-            get;
-            set;
-        }
-
         public BotBehaviorSettings Behavior
         {
             get;
@@ -202,13 +196,13 @@ namespace BotFarm
 
         public override void NoCharactersFound()
         {
-            if (!SettingUp)
-            {
-                Log("Removing current bot because there are no characters");
-                BotFactory.Instance.RemoveBot(this);
-            }
-            else
-                CreateCharacter(Race.Human, Class.Priest);
+            CreateCharacter(Race.Human, Class.Priest);
+        }
+
+        public override void CharacterCreationFailed(CommandDetail result)
+        {
+#warning ToDo: create a character with a different name
+            Log($"Bot {Username} failed creating a character with error {result.ToString()}", LogLevel.Error);
         }
 
         public override void InvalidCredentials()

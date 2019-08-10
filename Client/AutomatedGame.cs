@@ -420,6 +420,11 @@ namespace Client
         public virtual void NoCharactersFound()
         { }
 
+        public virtual void CharacterCreationFailed(CommandDetail result)
+        {
+            NoCharactersFound();
+        }
+
         public virtual void InvalidCredentials()
         { }
 
@@ -818,7 +823,7 @@ namespace Client
             if (response == CommandDetail.CHAR_CREATE_SUCCESS)
                 SendPacket(new OutPacket(WorldCommand.CMSG_CHAR_ENUM));
             else
-                NoCharactersFound();
+                CharacterCreationFailed(response);
         }
 
         [PacketHandler(WorldCommand.SMSG_LOGOUT_RESPONSE)]

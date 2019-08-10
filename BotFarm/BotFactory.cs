@@ -109,7 +109,7 @@ namespace BotFarm
             factoryGame.Start();
         }
 
-        public BotGame CreateBot()
+        public BotGame CreateBot(bool startBot)
         {
             Log("Creating new bot");
 
@@ -140,7 +140,8 @@ namespace BotFarm
                                                 0,
                                                 botBehavior);
             game.SettingUp = true;
-            game.Start();
+            if (startBot)
+                game.Start();
             botInfos.Add(new BotInfo(username, password, botBehavior.Name));
 
             return game;
@@ -196,7 +197,7 @@ namespace BotFarm
             {
                 try
                 {
-                    var bot = CreateBot();
+                    var bot = CreateBot(!Settings.Default.CreateAccountOnly);
                     lock (bots)
                     {
                         bots.Add(bot);

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Client.World.Network
 {
-    enum CommandDetail : byte
+    public enum CommandDetail : byte
     {
         AUTH_OK = 12,
         AUTH_FAILED = 13,

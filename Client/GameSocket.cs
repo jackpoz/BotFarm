@@ -71,6 +71,12 @@ namespace Client
                 SocketCallback(sender, e);
         }
 
+        protected void ReceiveAsync()
+        {
+            if (!connection.Client.ReceiveAsync(SocketArgs))
+                CallSocketCallback(this, SocketArgs);
+        }
+
         public abstract void Start();
 
         #endregion

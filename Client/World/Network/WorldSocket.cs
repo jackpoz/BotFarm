@@ -221,7 +221,7 @@ namespace Client.World.Network
             SocketAsyncState = state;
             SocketArgs.SetBuffer(ReceiveData, Index, Remaining);
             SocketCallback = callback;
-            connection.Client.ReceiveAsync(SocketArgs);
+            ReceiveAsync();
         }
 
         /// <summary>

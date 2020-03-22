@@ -1,142 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7A45F050-E215-4388-B0BE-F11001537A25}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Client</RootNamespace>
-    <AssemblyName>Client</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="cli">
       <HintPath>..\BotFarm\lib\cli.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AI\ITacticalAI.cs" />
-    <Compile Include="AI\IStrategicAI.cs" />
-    <Compile Include="AI\IOperationalAI.cs" />
-    <Compile Include="BatchQueue.cs" />
-    <Compile Include="Authentication\AuthCommand.cs" />
-    <Compile Include="Authentication\AuthResult.cs" />
-    <Compile Include="Authentication\CommandHandler.cs" />
-    <Compile Include="Authentication\Network\AuthSocket.cs" />
-    <Compile Include="Authentication\ClientAuthChallenge.cs" />
-    <Compile Include="Authentication\ClientAuthProof.cs" />
-    <Compile Include="Authentication\Network\ISendable.cs" />
-    <Compile Include="Authentication\WorldServerInfo.cs" />
-    <Compile Include="Authentication\WorldServerList.cs" />
-    <Compile Include="Authentication\ServerAuthChallenge.cs" />
-    <Compile Include="Authentication\ServerAuthProof.cs" />
-    <Compile Include="AutomatedGame.cs" />
-    <Compile Include="Chat\ChatChannel.cs" />
-    <Compile Include="Chat\ChatMessage.cs" />
-    <Compile Include="Chat\Definitions\ChatMessageType.cs" />
-    <Compile Include="Chat\Definitions\ChatTag.cs" />
-    <Compile Include="Chat\Definitions\Language.cs" />
-    <Compile Include="Crypto\ARC4.cs" />
-    <Compile Include="Crypto\HashHelper.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="GameSocket.cs" />
-    <Compile Include="AI\IGameAI.cs" />
-    <Compile Include="IteratedList.cs" />
-    <Compile Include="Path.cs" />
-    <Compile Include="Schedule.cs" />
-    <Compile Include="Trigger.cs" />
-    <Compile Include="UI\LogLevel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="World.cs" />
-    <Compile Include="World\CharacterEnumeration.cs" />
-    <Compile Include="World\Definitions\Enums.cs" />
-    <Compile Include="World\Definitions\TextEmote.cs" />
-    <Compile Include="World\Definitions\Gender.cs" />
-    <Compile Include="World\Definitions\PlayerClass.cs" />
-    <Compile Include="World\Definitions\Race.cs" />
-    <Compile Include="World\Definitions\Vector3.cs" />
-    <Compile Include="World\Entities\Player.cs" />
-    <Compile Include="World\Entities\Position.cs" />
-    <Compile Include="World\Entities\Unit.cs" />
-    <Compile Include="World\Entities\WorldObject.cs" />
-    <Compile Include="World\Network\AuthenticationCrypto.cs" />
-    <Compile Include="World\Network\AuthResponse.cs" />
-    <Compile Include="World\Network\ClientHeader.cs" />
-    <Compile Include="World\Network\Header.cs" />
-    <Compile Include="World\Network\InPacket.cs" />
-    <Compile Include="World\Network\OutPacket.cs" />
-    <Compile Include="World\Network\Packet.cs" />
-    <Compile Include="World\Network\PacketHandlers\AuthHandlers.cs" />
-    <Compile Include="World\Network\PacketHandlers\ChatHandlers.cs" />
-    <Compile Include="World\Network\PacketHandlers\QueryHandler.cs" />
-    <Compile Include="World\Network\ServerHeader.cs" />
-    <Compile Include="World\Network\WorldSocket.cs" />
-    <Compile Include="World\PacketHandler.cs" />
-    <Compile Include="World\Utility.cs" />
-    <Compile Include="World\WorldCommand.cs" />
-    <Compile Include="UI\IGameUI.cs" />
-    <Compile Include="World\Definitions\Extensions.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

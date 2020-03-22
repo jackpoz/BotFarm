@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{7A45F050-E215-4388-B0BE-F11001537A25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{7A45F050-E215-4388-B0BE-F11001537A25}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83188726-B64C-4D4C-9DB4-A82C76A2A6F2}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrinityCore UnitTests", "Tr
 		{7A45F050-E215-4388-B0BE-F11001537A25} = {7A45F050-E215-4388-B0BE-F11001537A25}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotFarm", "BotFarm\BotFarm.csproj", "{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotFarm", "BotFarm\BotFarm.csproj", "{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotFarm UnitTests", "BotFarm UnitTests\BotFarm UnitTests.csproj", "{D013693E-11A8-41E3-825F-38D9F47C2B14}"
 EndProject
@@ -30,29 +30,33 @@ Global
 		{7A45F050-E215-4388-B0BE-F11001537A25}.Debug|x64.ActiveCfg = Debug|x64
 		{7A45F050-E215-4388-B0BE-F11001537A25}.Debug|x64.Build.0 = Debug|x64
 		{7A45F050-E215-4388-B0BE-F11001537A25}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7A45F050-E215-4388-B0BE-F11001537A25}.Release|x64.ActiveCfg = Release|x64
-		{7A45F050-E215-4388-B0BE-F11001537A25}.Release|x64.Build.0 = Release|x64
+		{7A45F050-E215-4388-B0BE-F11001537A25}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A45F050-E215-4388-B0BE-F11001537A25}.Release|x64.Build.0 = Release|Any CPU
 		{7A45F050-E215-4388-B0BE-F11001537A25}.Release|x86.ActiveCfg = Release|Any CPU
 		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Debug|x64.ActiveCfg = Debug|x64
 		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Debug|x64.Build.0 = Debug|x64
-		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Debug|x86.ActiveCfg = Debug|x64
 		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Release|x64.ActiveCfg = Release|x64
 		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Release|x64.Build.0 = Release|x64
-		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Release|x86.ActiveCfg = Release|Any CPU
+		{20DB95E0-F311-4E8A-B956-04E995F3184A}.Release|x86.ActiveCfg = Release|x64
 		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Debug|x64.ActiveCfg = Debug|x64
 		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Debug|x64.Build.0 = Debug|x64
 		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Release|x64.ActiveCfg = Release|x64
-		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Release|x64.Build.0 = Release|x64
+		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Release|x64.ActiveCfg = Release|Any CPU
+		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Release|x64.Build.0 = Release|Any CPU
 		{5830EEBA-EAE6-4CF8-8348-8CF807ABBE47}.Release|x86.ActiveCfg = Release|Any CPU
 		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Debug|x64.ActiveCfg = Debug|x64
 		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Debug|x64.Build.0 = Debug|x64
-		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Release|x64.ActiveCfg = Release|Any CPU
-		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Release|x86.ActiveCfg = Release|Any CPU
+		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Debug|x86.ActiveCfg = Debug|x64
+		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Release|x64.ActiveCfg = Release|x64
+		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Release|x64.Build.0 = Release|x64
+		{D013693E-11A8-41E3-825F-38D9F47C2B14}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B717D019-22E7-4B12-9B4A-9B4D86CDD4EC}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = CLIClient\CLI.csproj

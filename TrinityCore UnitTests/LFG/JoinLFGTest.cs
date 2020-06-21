@@ -65,6 +65,7 @@ namespace TrinityCore_UnitTests.LFG
         {
             await game.ScheduleActionAndWait(() =>
             {
+                game.LeaveLFG();
             }, WaitTimeAfterEachTestInms);
         }
 

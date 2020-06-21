@@ -784,7 +784,7 @@ namespace Client
 
         public void JoinLFG(LfgRoleFlag role, IEnumerable<uint> dungeonIDs, string comment = "")
         {
-            var packet = new OutPacket(Client.World.WorldCommand.CMSG_LFG_JOIN);
+            var packet = new OutPacket(WorldCommand.CMSG_LFG_JOIN);
             packet.Write((UInt32)role);
             packet.Write((UInt16)0);
             packet.Write((byte)dungeonIDs.Count());
@@ -792,6 +792,12 @@ namespace Client
                 packet.Write((UInt32)dungeonID);
             packet.Write((UInt32)0);
             packet.Write((comment ?? "").ToCString());
+            SendPacket(packet);
+        }
+
+        public void LeaveLFG()
+        {
+            var packet = new OutPacket(WorldCommand.CMSG_LFG_LEAVE);
             SendPacket(packet);
         }
         #endregion

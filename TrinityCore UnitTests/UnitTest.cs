@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Client;
 using Client.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TrinityCore_UnitTests.Helpers;
 using TrinityCore_UnitTests.Properties;
 
 namespace TrinityCore_UnitTests
@@ -12,9 +14,10 @@ namespace TrinityCore_UnitTests
     public class UnitTest
     {
         static AutomatedGame game;
+        const int WaitTimeAfterEachTestInms = 5000;
 
         [ClassInitialize]
-        public static void UnitTestInitialize(TestContext context)
+        public static async Task UnitTestInitialize(TestContext context)
         {
             var hostname = Settings.Default.Hostname;
             var port = Settings.Default.Port;
@@ -28,43 +31,46 @@ namespace TrinityCore_UnitTests
             int tries = 0;
             while (!game.LoggedIn)
             {
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
                 tries++;
                 if (tries > 15)
                     throw new TimeoutException("Could not login after 15 tries");
             }
-            Thread.Sleep(5000);
-            game.ScheduleAction(() => game.DoSayChat("Connected"));
+            await Task.Delay(5000);
+            await game.ScheduleActionAndWait(() => game.DoSayChat("Connected"), WaitTimeAfterEachTestInms);
         }
 
         [TestMethod]
-        public void Teleport()
+        public async Task Test01_Teleport()
         {
-            game.ScheduleAction(() =>
+            await game.ScheduleActionAndWait(() =>
                 {
                     game.DoSayChat("teleing to start position");
                     game.Tele("goldshire");
-                });
+                }, WaitTimeAfterEachTestInms);
         }
 
         [TestMethod]
-        public void CastSpells()
+        public async Task Test02_CastSpells()
         {
-            game.ScheduleAction(() =>
+            await game.ScheduleActionAndWait(() =>
                 {
                     game.DoSayChat("testing spells");
                     game.DoSayChat(".go xyz -8790.59 349.3 101.02 0 4.57");
-                    game.CastSpell(139);
-                    game.DoSayChat("finished testing spells");
-                });
+                }, 1000);
+
+            await game.ScheduleActionAndWait(() =>
+            {
+                game.CastSpell(139);
+                game.DoSayChat("finished testing spells");
+            }, WaitTimeAfterEachTestInms);
         }
 
         [ClassCleanup]
-        public static void Cleanup()
+        public static async Task Cleanup()
         {
-            game.ScheduleAction(() => game.DoSayChat("Disconnecting"));
-            if (game != null)
-                game.Dispose();
+            await game.ScheduleActionAndWait(() => game.DoSayChat("Disconnecting"), WaitTimeAfterEachTestInms);
+            await game?.Dispose();
         }
     }
 }

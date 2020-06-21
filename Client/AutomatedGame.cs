@@ -345,6 +345,26 @@ namespace Client
                 return 0;
         }
 
+        public async Task ScheduleActionAndWait(Action action, int waitMilliseconds = 0)
+        {
+            await ScheduleActionAndWait(action, DateTime.Now, waitMilliseconds);
+        }
+
+        public async Task ScheduleActionAndWait(Action action, DateTime time, int waitMilliseconds = 0)
+        {
+            var semaphore = new SemaphoreSlim(0);
+            ScheduleAction(() =>
+            {
+                action();
+                semaphore.Release();
+            }, time);
+
+            await semaphore.WaitAsync();
+
+            if (waitMilliseconds > 0)
+                await Task.Delay(waitMilliseconds);
+        }
+
         private void RescheduleAction(RepeatingAction action)
         {
             if (Running && (action.Flags == ActionFlag.None || !disabledActions.HasFlag(action.Flags)))
@@ -609,7 +629,7 @@ namespace Client
         {
             DoSayChat(".cast " + spellid);
             if (chatLog)
-                DoSayChat("Casted spellid " + spellid);
+                DoSayChat("Cast spellid " + spellid);
         }
 
         #endregion

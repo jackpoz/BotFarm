@@ -7,7 +7,7 @@ namespace Client.World.Network
 {
     public partial class WorldSocket
     {
-        [PacketHandler(WorldCommand.ServerAuthChallenge)]
+        [PacketHandler(WorldCommand.SMSG_AUTH_CHALLENGE)]
         protected void HandleServerAuthChallenge(InPacket packet)
         {
             uint one = packet.ReadUInt32();
@@ -32,7 +32,7 @@ namespace Client.World.Network
                 Game.Key.ToCleanByteArray()
             );
 
-            OutPacket response = new OutPacket(WorldCommand.ClientAuthSession);
+            OutPacket response = new OutPacket(WorldCommand.CMSG_AUTH_SESSION);
             response.Write((uint)12340);        // client build
             response.Write(zero);
             response.Write(Game.Username.ToUpper().ToCString());
@@ -53,7 +53,7 @@ namespace Client.World.Network
             authenticationCrypto.Initialize(Game.Key.ToCleanByteArray());
         }
 
-        [PacketHandler(WorldCommand.ServerAuthResponse)]
+        [PacketHandler(WorldCommand.SMSG_AUTH_RESPONSE)]
         protected void HandleServerAuthResponse(InPacket packet)
         {
             CommandDetail detail = (CommandDetail)packet.ReadByte();

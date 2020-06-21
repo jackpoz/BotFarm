@@ -746,4 +746,65 @@ namespace Client.World.Definitions
         GROUPTYPE_LFG = 0x08
         // 0x10, leave/change group?, I saw this flag when leaving group and after leaving BG while in group
     };
+
+    [Flags]
+    public enum LfgRoleFlag
+    {
+        None = 0x00,
+        Leader = 0x01,
+        Tank = 0x02,
+        Healer = 0x04,
+        Damage = 0x08,
+        Unk10 = 0x10,
+        Unk20 = 0x20,
+        Unk40 = 0x40
+    }
+
+    public enum LfgJoinResult
+    {
+        Ok = 0,
+        Failed = 1,
+        GroupFull = 2,
+        InternalError = 4,
+        NotMeetReqs = 5,
+        PartyNotMeetReqs = 6,
+        MixedRaidDungeon = 7,
+        NotFromMultipleRealms = 8,
+        SomeoneIsDisconnected = 9,
+        PartyInfoFailed = 10,
+        DungeonInvalid = 11,
+        HasDeserterFlag = 12,
+        PartyHasDeserterFlag = 13,
+        HasRandomCooldown = 14,
+        PartyHasRandomCooldown = 15,
+        TooMuchMembers = 16,
+        NotWhileUsingBGSystem = 17
+    }
+
+    public enum LfgRoleCheckStatus
+    {
+        None = 0,
+        Success = 1,
+        Initiating = 2,
+        MissingRole = 3,
+        NoInstance = 4,
+        Aborted = 5,
+        NoRole = 6
+    }
+
+    public enum LfgEntryCheckResult
+    {
+        None = 0,
+        InsufficientExpansion = 1,
+        TooLowLevel = 2,
+        TooHighLevel = 3,
+        TooLowGearScore = 4,
+        TooHighGearScore = 5,
+        RaidLocked = 6,
+        AttunementTooLowLevel = 1001,
+        AttunementTooHighLevel = 1002,
+        QuestNotCompleted = 1022,
+        MissingItem = 1025,
+        NotInSeason = 1031
+    }
 }

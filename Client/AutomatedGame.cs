@@ -352,14 +352,14 @@ namespace Client
 
         public async Task ScheduleActionAndWait(Action action, DateTime time, int waitMilliseconds = 0)
         {
-            var semaphore = new SemaphoreSlim(0);
+            var completion = new TaskCompletionSource<object>();
             ScheduleAction(() =>
             {
                 action();
-                semaphore.Release();
+                completion.SetResult(null);
             }, time);
 
-            await semaphore.WaitAsync();
+            await completion.Task;
 
             if (waitMilliseconds > 0)
                 await Task.Delay(waitMilliseconds);
@@ -780,6 +780,19 @@ namespace Client
                 };
                 SendPacket(heartbeat);
             }, new TimeSpan(0, 0, 0, 0, 100), flags: ActionFlag.Movement);
+        }
+
+        public void JoinLFG(LfgRoleFlag role, IEnumerable<uint> dungeonIDs, string comment = "")
+        {
+            var packet = new OutPacket(Client.World.WorldCommand.CMSG_LFG_JOIN);
+            packet.Write((UInt32)role);
+            packet.Write((UInt16)0);
+            packet.Write((byte)dungeonIDs.Count());
+            foreach (var dungeonID in dungeonIDs)
+                packet.Write((UInt32)dungeonID);
+            packet.Write((UInt32)0);
+            packet.Write((comment ?? "").ToCString());
+            SendPacket(packet);
         }
         #endregion
 
@@ -1387,6 +1400,28 @@ namespace Client
         void OnFieldUpdate(object s, UpdateFieldEventArg e)
         {
             HandleTriggerInput(TriggerActionType.UpdateField, e);
+        }
+
+        public async Task<InPacket> WaitForPacket(WorldCommand opcode)
+        {
+            var completion = new TaskCompletionSource<InPacket>();
+            InPacket result = null;
+
+            int triggerId = 0;
+            triggerId = AddTrigger(new Trigger(new[]
+            {
+                new OpcodeTriggerAction(opcode, packet =>
+                {
+                    result = packet as InPacket;
+                    return true;
+                }),
+            }, () =>
+            {
+                completion.SetResult(result);
+                RemoveTrigger(triggerId);
+            }));
+
+            return await completion.Task;
         }
         #endregion
     }

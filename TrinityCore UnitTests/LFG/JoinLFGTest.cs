@@ -45,7 +45,7 @@ namespace TrinityCore_UnitTests.LFG
         }
 
         [TestMethod]
-        public async Task Test01_JoinLFG()
+        public async Task Test01_JoinLFGWithEmptyRole()
         {
             game.ScheduleAction(() =>
             {
@@ -62,6 +62,31 @@ namespace TrinityCore_UnitTests.LFG
 
         [TestMethod]
         public async Task Test02_LeaveLFG()
+        {
+            await game.ScheduleActionAndWait(() =>
+            {
+                game.LeaveLFG();
+            }, WaitTimeAfterEachTestInms);
+        }
+
+        [TestMethod]
+        public async Task Test03_JoinLFGWithInvalidRole()
+        {
+            game.ScheduleAction(() =>
+            {
+                game.JoinLFG((LfgRoleFlag)0x80, new[] { (uint)0x06000105 });
+            });
+
+            var response = await game.WaitForPacket(WorldCommand.SMSG_LFG_JOIN_RESULT, 5000);
+            if (response != null)
+            {
+                var joinResult = new LFG_JOIN_RESULT(response);
+                Assert.AreNotEqual<LfgJoinResult?>(LfgJoinResult.Ok, joinResult.Result);
+            }
+        }
+
+        [TestMethod]
+        public async Task Test04_LeaveLFG()
         {
             await game.ScheduleActionAndWait(() =>
             {

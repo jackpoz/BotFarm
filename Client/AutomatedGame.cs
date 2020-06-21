@@ -609,7 +609,7 @@ namespace Client
         {
             DoSayChat(".cast " + spellid);
             if (chatLog)
-                DoSayChat("Casted spellid " + spellid);
+                DoSayChat("Cast spellid " + spellid);
         }
 
         #endregion

@@ -1402,7 +1402,7 @@ namespace Client
             HandleTriggerInput(TriggerActionType.UpdateField, e);
         }
 
-        public async Task<InPacket> WaitForPacket(WorldCommand opcode)
+        public async Task<InPacket> WaitForPacket(WorldCommand opcode, int waitMilliseconds = -1)
         {
             var completion = new TaskCompletionSource<InPacket>();
             InPacket result = null;
@@ -1421,7 +1421,12 @@ namespace Client
                 RemoveTrigger(triggerId);
             }));
 
-            return await completion.Task;
+            return await Task.WhenAny(completion.Task, Task.Run(async () =>
+            {
+                await Task.Delay(waitMilliseconds);
+                return (InPacket)null;
+            })
+            ).Result;
         }
         #endregion
     }

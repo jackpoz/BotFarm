@@ -52,8 +52,12 @@ namespace TrinityCore_UnitTests.LFG
                 game.JoinLFG(LfgRoleFlag.None, new []{ (uint)0x06000105 });
             });
 
-            var response = new LFG_JOIN_RESULT(await game.WaitForPacket(WorldCommand.SMSG_LFG_JOIN_RESULT));
-            Assert.AreNotEqual<LfgJoinResult>(LfgJoinResult.Ok, response.Result);
+            var response = await game.WaitForPacket(WorldCommand.SMSG_LFG_JOIN_RESULT, 5000);
+            if (response != null)
+            {
+                var joinResult = new LFG_JOIN_RESULT(response);
+                Assert.AreNotEqual<LfgJoinResult?>(LfgJoinResult.Ok, joinResult.Result);
+            }
         }
 
         [TestMethod]

@@ -290,11 +290,11 @@ namespace BotFarm
 
             List<Task> botsDisposing = new List<Task>(bots.Count);
             foreach (var bot in bots)
-                botsDisposing.Add(bot.Dispose());
+                botsDisposing.Add(bot.DisposeAsync().AsTask());
 
             Task.WaitAll(botsDisposing.ToArray(), new TimeSpan(0, 2, 0));
 
-            factoryGame.Dispose().Wait();
+            factoryGame.DisposeAsync().AsTask().Wait();
 
             SaveBotInfos();
 
@@ -336,7 +336,7 @@ namespace BotFarm
                 bots.Remove(bot);
             }
 
-            bot.Dispose().Wait();
+            bot.DisposeAsync().AsTask().Wait();
         }
     }
 }

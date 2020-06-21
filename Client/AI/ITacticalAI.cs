@@ -18,16 +18,24 @@ namespace Client.AI
         }
 
         public void Deactivate()
-        { }
+        {
+            // Default empty implementation
+        }
 
         public void Pause()
-        { }
+        {
+            // Default empty implementation
+        }
 
         public void Resume()
-        { }
+        {
+            // Default empty implementation
+        }
 
         public void Update()
-        { }
+        {
+            // Default empty implementation
+        }
 
         public bool AllowPause()
         {

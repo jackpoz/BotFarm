@@ -326,9 +326,8 @@ namespace Client.Authentication.Network
 
             Game.UI.LogDebug("Received logon proof");
 
-            bool equal = true;
-            equal = m2 != null && m2.Length == 20;
-            for (int i = 0; i < m2.Length && equal; ++i)
+            bool equal = m2 != null && m2.Length == 20;
+            for (int i = 0; equal && i < m2.Length; ++i)
                 if (!(equal = m2[i] == proof.M2[i]))
                     break;
 

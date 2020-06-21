@@ -22,7 +22,7 @@ using Client.AI;
 
 namespace Client
 {
-    public class AutomatedGame : IGameUI, IGame
+    public class AutomatedGame : IGameUI, IGame, IAsyncDisposable
     {
         #region Constants
         protected const float MovementEpsilon = 0.5f;
@@ -90,24 +90,25 @@ namespace Client
             get;
             protected set;
         }
+
         public override LogLevel LogLevel
         {
             get
             {
-                return Client.UI.LogLevel.Error;
+                return _logLevel;
             }
             set
             {
+                _logLevel = value;
             }
         }
+        LogLevel _logLevel = Client.UI.LogLevel.Error;
+
         public override IGame Game
         {
             get
             {
                 return this;
-            }
-            set
-            {
             }
         }
         UpdateObjectHandler updateObjectHandler;
@@ -427,7 +428,7 @@ namespace Client
             SendPacket(createCharacterPacket);
         }
 
-        public async Task Dispose()
+        public async ValueTask DisposeAsync()
         {
             scheduledActions.Clear();
 

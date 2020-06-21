@@ -70,7 +70,7 @@ namespace TrinityCore_UnitTests
         public static async Task Cleanup()
         {
             await game.ScheduleActionAndWait(() => game.DoSayChat("Disconnecting"), WaitTimeAfterEachTestInms);
-            await game?.Dispose();
+            await game.DisposeAsync();
         }
     }
 }

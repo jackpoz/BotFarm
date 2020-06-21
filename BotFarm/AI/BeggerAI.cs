@@ -71,6 +71,7 @@ namespace BotFarm.AI
 
         public void Update()
         {
+            // Nothing to do
         }
     }
 }

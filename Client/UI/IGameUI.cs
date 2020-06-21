@@ -9,7 +9,7 @@ namespace Client.UI
 {
     public abstract class IGameUI
     {
-        public abstract IGame Game { get; set; }
+        public abstract IGame Game { get; }
 
         public abstract LogLevel LogLevel { get; set; }
 

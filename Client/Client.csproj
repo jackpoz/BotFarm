@@ -19,9 +19,4 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="cli">
-      <HintPath>..\BotFarm\lib\cli.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>

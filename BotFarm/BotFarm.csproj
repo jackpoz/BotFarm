@@ -30,19 +30,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-	<ContentWithTargetPath Include="lib\cli.deps.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>cli.deps.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="lib\cli.runtimeconfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>cli.runtimeconfig.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="lib\Ijwhost.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Ijwhost.dll</TargetPath>
-    </ContentWithTargetPath>
+  <ItemGroup>	
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

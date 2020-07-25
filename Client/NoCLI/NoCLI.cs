@@ -17,22 +17,20 @@ namespace DetourCLI
     {
         public Detour()
         {
-            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public PathType FindPath(float startX, float startY, float startZ, float endX, float endY, float endZ, int mapID, out List<Point> path)
         {
-            throw new NotImplementedException();
+            path = new List<Point>();
+            return PathType.None;
         }
 
         public static void Initialize(string mmapsPath)
         {
-            throw new NotImplementedException();
         }
     }
 }
@@ -46,17 +44,15 @@ namespace VMapCLI
 
         public static void Initialize(String vmapsPath)
         {
-            throw new NotImplementedException();
         }
 
         public static void LoadTile(int tileX, int tileY, int mapID)
         {
-            throw new NotImplementedException();
         }
 
         public static float GetHeight(float X, float Y, float Z, int mapID)
         {
-            throw new NotImplementedException();
+            return float.NaN;
         }
     }
 }
@@ -118,12 +114,11 @@ namespace MapCLI
     {
         public static float GetHeight(float X, float Y, float Z, int mapID)
         {
-            throw new NotImplementedException();
+            return float.NaN;
         }
 
         public static void Initialize(string mmapsPath)
         {
-            throw new NotImplementedException();
         }
     }
 }
@@ -134,7 +129,6 @@ namespace DBCStoresCLI
     {
         public AchievementExploreLocation(Point location, uint criteriaID)
         {
-            throw new NotImplementedException();
         }
 
         public uint CriteriaID;
@@ -145,17 +139,15 @@ namespace DBCStoresCLI
     {
         public static void Initialize(String dbcsPath)
         {
-            throw new NotImplementedException();
         }
 
         public static void LoadDBCs()
         {
-            throw new NotImplementedException();
         }
 
         public static List<AchievementExploreLocation> GetAchievementExploreLocations(float x, float y, float z, int mapID)
         {
-            throw new NotImplementedException();
+            return new List<AchievementExploreLocation>();
         }
     }
 }

@@ -319,12 +319,18 @@ namespace BotFarm
 
         public void Log(string message, LogLevel level = LogLevel.Info)
         {
-#if !DEBUG_LOG
-            if (level > LogLevel.Debug)
-#endif
+            try
             {
-                Console.WriteLine(message);
-                logger.WriteLine(message);
+#if !DEBUG_LOG
+                if (level > LogLevel.Debug)
+#endif
+                {
+                    Console.WriteLine(message);
+                    logger.WriteLine(message);
+                }
+            }
+            catch
+            {
             }
         }
 

@@ -205,7 +205,7 @@ namespace Client
                     {
                         // main loop here
                         Update();
-                        await Task.Delay(100);
+                        await Task.Delay(100).ConfigureAwait(false);
                     }
                 });
         }
@@ -273,7 +273,7 @@ namespace Client
             {
                 OutPacket logout = new OutPacket(WorldCommand.CMSG_LOGOUT_REQUEST);
                 SendPacket(logout);
-                await loggedOutEvent.Task;
+                await loggedOutEvent.Task.ConfigureAwait(false);
             }
             else
             {
@@ -348,7 +348,7 @@ namespace Client
 
         public async Task ScheduleActionAndWait(Action action, int waitMilliseconds = 0)
         {
-            await ScheduleActionAndWait(action, DateTime.Now, waitMilliseconds);
+            await ScheduleActionAndWait(action, DateTime.Now, waitMilliseconds).ConfigureAwait(false);
         }
 
         public async Task ScheduleActionAndWait(Action action, DateTime time, int waitMilliseconds = 0)
@@ -360,10 +360,10 @@ namespace Client
                 completion.SetResult(null);
             }, time);
 
-            await completion.Task;
+            await completion.Task.ConfigureAwait(false);
 
             if (waitMilliseconds > 0)
-                await Task.Delay(waitMilliseconds);
+                await Task.Delay(waitMilliseconds).ConfigureAwait(false);
         }
 
         private void RescheduleAction(RepeatingAction action)
@@ -432,7 +432,7 @@ namespace Client
         {
             scheduledActions.Clear();
 
-            await Exit();
+            await Exit().ConfigureAwait(false);
 
             if (socket != null)
                 socket.Dispose();
@@ -1430,10 +1430,10 @@ namespace Client
 
             return await Task.WhenAny(completion.Task, Task.Run(async () =>
             {
-                await Task.Delay(waitMilliseconds);
+                await Task.Delay(waitMilliseconds).ConfigureAwait(false);
                 return (InPacket)null;
             })
-            ).Result;
+            ).Result.ConfigureAwait(false);
         }
         #endregion
     }

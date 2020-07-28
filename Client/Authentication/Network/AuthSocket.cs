@@ -333,7 +333,7 @@ namespace Client.Authentication.Network
 
             if (!equal)
             {
-                Game.UI.LogDebug("Server auth failed!");
+                Game.UI.LogLine("Server auth failed!", LogLevel.Error);
                 SendLogonChallenge();
                 return;
             }

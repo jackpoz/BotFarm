@@ -21,10 +21,7 @@ namespace Client.Authentication
             command = AuthCommand.LOGON_PROOF;
             error = (AuthResult)reader.ReadByte();
             if (error != AuthResult.SUCCESS)
-            {
-                reader.ReadUInt16();
                 return;
-            }
 
             M2 = reader.ReadBytes(20);
             unk1 = reader.ReadUInt32();

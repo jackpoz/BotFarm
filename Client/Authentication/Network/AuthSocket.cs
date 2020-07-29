@@ -272,10 +272,19 @@ namespace Client.Authentication.Network
 
                     #endregion
 
+
+                    // get next command
+                    ReadCommand();
                     break;
                 }
                 case AuthResult.NO_MATCH:
                     Game.UI.LogLine("Unknown account name", LogLevel.Error);
+                    failedAuthentications++;
+                    if (failedAuthentications >= MAX_FAILED_AUTENTICATIONS)
+                    {
+                        Game.InvalidCredentials();
+                        return;
+                    }
                     break;
                 case AuthResult.ACCOUNT_IN_USE:
                     Game.UI.LogLine("Account already logged in", LogLevel.Error);
@@ -285,8 +294,11 @@ namespace Client.Authentication.Network
                     break;
             }
 
-            // get next command
-            ReadCommand();
+            if (challenge.error != AuthResult.SUCCESS)
+            {
+                Game.Reconnect();
+                return;
+            }
         }
 
         void HandleRealmLogonProof()
@@ -445,6 +457,7 @@ namespace Client.Authentication.Network
             catch (SocketException ex)
             {
                 Game.UI.LogLine(string.Format("Auth socket failed. ({0})", (SocketError)ex.ErrorCode), LogLevel.Error);
+                Game.Reconnect();
                 return false;
             }
 

@@ -197,7 +197,8 @@ namespace Client
         public virtual void Start()
         {
             // the initial socket is an AuthSocket - it will initiate its own asynch read
-            Running = socket.Connect();
+            Running = true;
+            socket.Connect();
 
             Task.Run(async () =>
                 {
@@ -215,6 +216,16 @@ namespace Client
             LastUpdate = DateTime.Now;
 
             (socket as WorldSocket)?.HandlePackets();
+
+            // Reconnect if it passed some time since last try of logging in
+            if (!Connected || !LoggedIn)
+            {
+                if (LastSentPacketTime < DateTime.Now.AddSeconds(-60) && LastSentPacketTime != default(DateTime))
+                {
+                    Reconnect();
+                    return;
+                }
+            }
 
             if (World.SelectedCharacter == null)
                 return;

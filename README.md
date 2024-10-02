@@ -1,6 +1,6 @@
 [<image src="https://ci.appveyor.com/api/projects/status/7tdp1nrwatndex5r/branch/master?svg=true">](https://ci.appveyor.com/project/jackpoz/botfarm)
 
-[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=BotFarm&metric=alert_status)](https://sonarcloud.io/dashboard?id=BotFarm)
+[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=jackpoz_BotFarm&metric=alert_status)](https://sonarcloud.io/dashboard?id=jackpoz_BotFarm)
 
 Console application used to spawn multiple WoW automated players.
 
